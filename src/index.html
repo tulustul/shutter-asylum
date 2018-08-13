@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <script type="module">
+      import { init } from '../dist/game.js';
+      init();
+    </script>
+    <style>
+      body {
+        margin: 0;
+        /* cursor: none; */
+      }
+      canvas {
+        image-rendering: pixelated;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas width="360" height="400"></canvas>
+  </body>
+</html>
