@@ -56,7 +56,7 @@ export class ProjectileSystem extends EntitySystem<ProjectileComponent> {
     colisionSystem.listenColisions<ProjectileComponent, any>(ProjectileComponent, colision => {
       colision.hitter.destroy();
       if (colision.receiver instanceof AgentComponent) {
-        colision.receiver.destroy();
+        colision.receiver.hit();
       }
     });
   }

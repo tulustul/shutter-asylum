@@ -29,24 +29,28 @@ export class PlayerSystem extends EntitySystem<PlayerComponent> {
 
   weaponIndex = 0;
 
+  player: PlayerComponent;
+
   constructor(private control: Control, private camera: Camera) {
     super();
   }
 
   add(entity: PlayerComponent) {
-    super.add(entity);
+    super.add(entity)
+    this.player = entity;
     this.nextWeapon();
     window.addEventListener('keypress', event => {
       if (event.key === 'q') {
         this.nextWeapon();
+      } else if (event.key === 'r') {
+        this.player.agent.weapon.reload();
       }
     });
   }
 
   nextWeapon() {
-    const player = this.entities[0];
     const weapon = new Gun(this.engine, WEAPONS[this.weaponIndex]);
-    weapon.setOwner(player.agent);
+    weapon.setOwner(this.player.agent);
 
     this.weaponIndex++;
     if (this.weaponIndex >= WEAPONS.length) {

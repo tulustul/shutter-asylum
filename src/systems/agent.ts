@@ -20,6 +20,8 @@ export class AgentComponent extends Entity {
 
   weapon: Gun;
 
+  health = 5;
+
   constructor(private engine: EntityEngine, pos: Vector2) {
     super();
     this.engine.getSystem(AgentSystem).add(this);
@@ -63,6 +65,13 @@ export class AgentComponent extends Entity {
   shoot() {
     if (this.weapon) {
       this.weapon.shoot();
+    }
+  }
+
+  hit() {
+    this.health--;
+    if (!this.health) {
+      this.destroy();
     }
   }
 

@@ -58,8 +58,17 @@ export class Renderer {
 
     this.context.fillStyle = 'red';
     const weapon = player.agent.weapon;
-    const reloadingText = weapon.reloading ? 'RELOADING' : '';
-    const text = `${weapon.options.name} ${weapon.bulletsInMagazine} / ${weapon.options.magazineCapacity} (${weapon.totalBullets}) ${reloadingText}`;
+
+    if (weapon.reloading) {
+      this.context.fillText('REL', 170, 220);
+    }
+
+    const text = `
+${weapon.options.name}
+${weapon.bulletsInMagazine} / ${weapon.options.magazineCapacity}
+(${weapon.totalBullets})
+health: ${player.agent.health / 5 * 100}%
+`;
     this.context.fillText(text, 0, 380);
   }
 

@@ -68,22 +68,20 @@ export class Gun {
   reloading = false;
 
   constructor(private engine: EntityEngine, public options: GunOptions) {
-    Object.assign(this, options);
     this.bulletsInMagazine = this.options.magazineCapacity;
     this.projectileSystem = engine.getSystem<ProjectileSystem>(ProjectileSystem);
   }
 
   shoot() {
-    if (this.bulletsInMagazine === 0) {
-      return;
-    }
+    const onCooldown =
+      this.engine.time - this.lastShootTime < this.options.shootSpeed;
 
-    if (this.engine.time - this.lastShootTime < this.options.shootSpeed) {
+    if (onCooldown || this.bulletsInMagazine === 0 || this.reloading) {
       return;
     }
 
     const rotation = this.owner.rot + Math.random() * this.options.spread;
-    const offset = new Vector2(-5, 11).rotate(this.owner.rot);
+    const offset = new Vector2(0, 11).rotate(this.owner.rot);
     const vel = new Vector2(0, this.options.bulletSpeed).rotate(rotation);
     this.projectileSystem.makeProjectile(
       this.owner.posAndVel.pos.copy().add(offset), vel, this.options.bulletLifetime
