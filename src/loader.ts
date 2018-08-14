@@ -15,7 +15,7 @@ export async function loadLevel(engine: EntityEngine, levelName: string): Promis
   for (let y = 0; y < cells.length; y++) {
     const line = cells[y];
     for (let x = 0; x < line.length; x++) {
-      const pos = new Vector2(x * TILE_SIZE + TILE_SIZE / 2, y * TILE_SIZE + TILE_SIZE / 2);
+      const pos = new Vector2(x * TILE_SIZE, y * TILE_SIZE);
       if (line[x] === "S") {
         new PlayerComponent(engine, Object.create(pos));
         new PropComponent(engine, pos, "grey");

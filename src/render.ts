@@ -4,6 +4,7 @@ import { AgentSystem } from './systems/agent.js';
 import { PropsSystem } from "./systems/props.js";
 import { TILE_SIZE } from './constants.js';
 import { ProjectileSystem } from './systems/projectile.js';
+import { PlayerSystem } from './systems/player.js';
 
 export class Renderer {
 
@@ -52,6 +53,16 @@ export class Renderer {
     }
   }
 
+  renderInterface() {
+    const player = this.engine.getSystem<PlayerSystem>(PlayerSystem).entities[0];
+
+    this.context.fillStyle = 'red';
+    const weapon = player.agent.weapon;
+    const reloadingText = weapon.reloading ? 'RELOADING' : '';
+    const text = `${weapon.options.name} ${weapon.bulletsInMagazine} / ${weapon.options.magazineCapacity} (${weapon.totalBullets}) ${reloadingText}`;
+    this.context.fillText(text, 0, 380);
+  }
+
   render() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -63,5 +74,7 @@ export class Renderer {
     this.renderProjectiles();
 
     this.context.restore();
+
+    this.renderInterface();
   }
 }

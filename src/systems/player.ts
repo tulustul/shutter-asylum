@@ -3,23 +3,55 @@ import { EntitySystem, EntityEngine } from './ecs.js';
 import { Control } from '../control.js';
 import { Camera } from '../camera.js';
 import { Vector2 } from '../vector.js';
+import { Gun, pistolOptions, mgOptions, minigunOptions, flamethrowerOptions } from '../weapons.js';
 
 export class PlayerComponent {
 
   agent: AgentComponent;
 
   constructor(private engine: EntityEngine, pos: Vector2) {
-    engine.getSystem(PlayerSystem).add(this);
     this.agent = new AgentComponent(this.engine, pos);
     this.agent.posAndVel.friction = 1.1;
+    engine.getSystem(PlayerSystem).add(this);
   }
 
 }
 
+const WEAPONS = [
+  pistolOptions,
+  mgOptions,
+  minigunOptions,
+  flamethrowerOptions,
+];
+
+
 export class PlayerSystem extends EntitySystem<PlayerComponent> {
+
+  weaponIndex = 0;
 
   constructor(private control: Control, private camera: Camera) {
     super();
+  }
+
+  add(entity: PlayerComponent) {
+    super.add(entity);
+    this.nextWeapon();
+    window.addEventListener('keypress', event => {
+      if (event.key === 'q') {
+        this.nextWeapon();
+      }
+    });
+  }
+
+  nextWeapon() {
+    const player = this.entities[0];
+    const weapon = new Gun(this.engine, WEAPONS[this.weaponIndex]);
+    weapon.setOwner(player.agent);
+
+    this.weaponIndex++;
+    if (this.weaponIndex >= WEAPONS.length) {
+      this.weaponIndex = 0;
+    }
   }
 
   update() {

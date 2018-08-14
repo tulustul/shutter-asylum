@@ -48,4 +48,8 @@ export class Vector2 {
   getLength() {
     return Math.sqrt(this.x * this.x + this.y * this.y);
   }
+
+  distanceTo(v: Vector2) {
+    return Math.sqrt(Math.pow(this.x - v.x, 2) + Math.pow(this.y - v.y, 2));
+  }
 }

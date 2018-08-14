@@ -1,9 +1,10 @@
 import { EntitySystem, EntityEngine, Entity } from "./ecs.js";
 import { PosAndVel } from './velocity.js';
-import { ColisionSystem } from "./colision.js";
+import { ColisionSystem, Shape, Collidable } from "./colision.js";
 import { ProjectileSystem } from "./projectile.js";
 import { Vector2 } from "../vector.js";
 import { TILE_SIZE } from "../constants.js";
+import { Gun, flamethrowerOptions, pistolOptions, mgOptions, minigunOptions } from "../weapons.js";
 
 export class AgentComponent extends Entity {
 
@@ -13,20 +14,30 @@ export class AgentComponent extends Entity {
 
   posAndVel: PosAndVel;
 
+  collidable: Collidable;
+
   rot: number;
+
+  weapon: Gun;
 
   constructor(private engine: EntityEngine, pos: Vector2) {
     super();
     this.engine.getSystem(AgentSystem).add(this);
     this.posAndVel = new PosAndVel(this.engine, pos);
-    this.engine.getSystem<ColisionSystem>(ColisionSystem).makeCollidable({
+    this.collidable = this.engine.getSystem<ColisionSystem>(ColisionSystem).makeCollidable({
       pos: this.posAndVel.pos,
+      shape: Shape.circle,
       radius: TILE_SIZE / 2,
       canHit: true,
       canReceive: true,
       shouldDecouple: true,
       parent: this,
     });
+  }
+
+  destroy() {
+    super.destroy();
+    this.engine.getSystem<ColisionSystem>(ColisionSystem).remove(this.collidable);
   }
 
   moveTop() {
@@ -50,11 +61,9 @@ export class AgentComponent extends Entity {
   }
 
   shoot() {
-    const offset = new Vector2(-5, 11).rotate(this.rot);
-    const vel = new Vector2(0, 5).rotate(this.rot);
-    this.engine.getSystem<ProjectileSystem>(ProjectileSystem).makeProjectile(
-      this.posAndVel.pos.copy().add(offset), vel,
-    );
+    if (this.weapon) {
+      this.weapon.shoot();
+    }
   }
 
   private updateVelocity(acc: Vector2) {

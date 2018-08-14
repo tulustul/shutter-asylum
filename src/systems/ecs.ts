@@ -4,6 +4,8 @@ export class EntityEngine {
 
   systems: EntitySystem<any>[] = [];
 
+  time: number;
+
   getSystem<T extends EntitySystem<any>>(systemClass: Function) {
     return this.systemsMap.get(systemClass) as T;
   }
@@ -20,7 +22,8 @@ export class EntityEngine {
     }
   }
 
-  update() {
+  update(time: number) {
+    this.time = time;
     for (const system of this.systems) {
       system.update();
     }

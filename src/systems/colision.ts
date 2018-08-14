@@ -2,8 +2,15 @@ import { EntitySystem } from './ecs.js';
 import { Vector2 } from '../vector.js';
 import { TILE_SIZE } from '../constants.js';
 
+export enum Shape {
+  gridCell,
+  point,
+  circle,
+}
+
 export interface Collidable {
   pos: Vector2;
+  shape: Shape;
   radius: number;
   canHit: boolean;
   canReceive: boolean;
@@ -46,6 +53,18 @@ export class ColisionSystem extends EntitySystem<Collidable> {
     if (collidable.canHit) {
       this.entities.push(collidable);
     }
+
+    return collidable;
+  }
+
+  remove(entity: Collidable) {
+    super.remove(entity);
+    if (entity.canReceive && entity.canHit) {
+      const index = this.dynamicReceivers.indexOf(entity);
+      if (index !== -1) {
+        this.dynamicReceivers.splice(index, 1);
+      }
+    }
   }
 
   clear() {
@@ -61,69 +80,86 @@ export class ColisionSystem extends EntitySystem<Collidable> {
       this.putToGrid(this.dynamicGrid, entity);
     }
 
+    const pairsToCheck = this.broadPhase();
+    this.narrowPhase(pairsToCheck);
+  }
+
+  private broadPhase() {
+    const pairsToCheck: Collidable[][] = [];
+
     for (const hitter of this.entities) {
       for (const cell of this.getCellsOf(hitter)) {
+
         if (this.staticGrid.has(cell)) {
           for (const receiver of this.staticGrid.get(cell)) {
-            if (receiver !== hitter) {
-              this.checkColisions(hitter, receiver)
-            }
+            // staticGrid is Shape.gridCell only. No need for narrow phase
+            this.onColision(hitter, receiver);
           }
         }
 
         if (this.dynamicGrid.has(cell)) {
           for (const receiver of this.dynamicGrid.get(cell)) {
             if (receiver !== hitter) {
-              this.checkColisions(hitter, receiver)
+              pairsToCheck.push([hitter, receiver]);
             }
           }
         }
       }
     }
+    return pairsToCheck;
+  }
+
+  private narrowPhase(pairsToCheck: Collidable[][]) {
+    for (const [hitter, receiver] of pairsToCheck) {
+      this.checkColisions(hitter, receiver);
+    }
   }
 
   private checkColisions(hitter: Collidable, receiver: Collidable) {
-    // if (hitter.radius === TILE_SIZE / 2) {
-      if (hitter.shouldDecouple) {
-        this.decouple(hitter);
-      }
-      this.emitColision(hitter, receiver, null, 0);
-    // } else {
-    //   if (
-    //     hitter.pos.x + hitter.radius >= receiver.pos.x - receiver.radius ||
-    //     hitter.pos.x - hitter.radius >= receiver.pos.x + receiver.radius ||
-    //     hitter.pos.y + hitter.radius >= receiver.pos.y - receiver.radius ||
-    //     hitter.pos.y - hitter.radius >= receiver.pos.y + receiver.radius
-    //   ) {
-    //     this.emitColision(hitter, receiver, null, 0);
-    //   }
-    // }
+    // Receiver must be circle for now (agent)
+    // Hitter must be point for now (projectile)
+    const distance = hitter.pos.distanceTo(receiver.pos);
+    if (distance < receiver.radius) {
+      this.onColision(hitter, receiver);
+    }
+  }
+
+  private onColision(hitter: Collidable, receiver: Collidable) {
+    if (hitter.shouldDecouple) {
+      this.decouple(hitter);
+    }
+    this.emitColision(hitter, receiver, null, 0);
   }
 
   private decouple(hitter: Collidable) {
     const pos = hitter.parent.posAndVel.floatPos;
-    const vel = hitter.parent.posAndVel.vel;
+    const vel: Vector2 = hitter.parent.posAndVel.vel;
     const originalPos = pos.copy();
 
     this.snapToGrid(pos, hitter);
 
-    const cell = this.getIndexOf(
-      Math.round(pos.x / TILE_SIZE),
-      Math.round(pos.y / TILE_SIZE),
+    const cell = this.getIndexOfCell(
+      Math.floor(pos.x / TILE_SIZE),
+      Math.floor(pos.y / TILE_SIZE),
     );
 
-    const x = vel.x > 0 ? 1 : -1;
-    if (!this.staticGrid.has(cell + x * 1000)) {
-      pos.x = originalPos.x;
-    } else {
+    const xDir = vel.x > 0 ? 1 : -1;
+    const x = originalPos.x + vel.x + hitter.radius * xDir;
+    const cellX = this.getIndexOfPos(new Vector2(x, pos.y));
+    if (this.staticGrid.has(cellX)) {
       vel.x = 0;
+    } else {
+      pos.x = originalPos.x;
     }
 
-    const y = vel.y > 0 ? 1 : -1;
-    if (!this.staticGrid.has(cell + y)) {
-      pos.y = originalPos.y;
-    } else {
+
+    const yDir = vel.y > 0 ? 1 : -1;
+    const y = originalPos.y + vel.y + hitter.radius * yDir;
+    const cellY = this.getIndexOfPos(new Vector2(pos.x, y));
+    if (this.staticGrid.has(cellY)) {
       vel.y = 0;
+    } else {
+      pos.y = originalPos.y;
     }
 
     hitter.parent.posAndVel.pos.x = Math.round(hitter.parent.posAndVel.floatPos.x);
@@ -131,8 +167,8 @@ export class ColisionSystem extends EntitySystem<Collidable> {
   }
 
   private snapToGrid(pos: Vector2, hitter: Collidable) {
-    pos.x = Math.round(pos.x / TILE_SIZE * TILE_SIZE);
-    pos.y = Math.round(pos.y / TILE_SIZE * TILE_SIZE);
+    pos.x = Math.floor(pos.x / TILE_SIZE) * TILE_SIZE + TILE_SIZE / 2;
+    pos.y = Math.floor(pos.y / TILE_SIZE) * TILE_SIZE + TILE_SIZE / 2;
   }
 
   listenColisions<H, R>(
@@ -146,14 +182,17 @@ export class ColisionSystem extends EntitySystem<Collidable> {
   }
 
   private putToGrid(grid: ColisionGrid, entity: Collidable) {
-    // for (const cell of this.getCellsOf(entity)) {
-    //   this.addToGrid(grid, cell, entity);
-    // }
-    const cell = this.getIndexOf(
-      Math.ceil(entity.pos.x / TILE_SIZE),
-      Math.ceil(entity.pos.y / TILE_SIZE),
-    );
-    this.addToGrid(grid, cell, entity);
+    if (entity.shape === Shape.circle) {
+      for (const cell of this.getCellsOf(entity)) {
+        this.addToGrid(grid, cell, entity);
+      }
+    } else {
+      const cell = this.getIndexOfCell(
+        Math.floor(entity.pos.x / TILE_SIZE),
+        Math.floor(entity.pos.y / TILE_SIZE),
+      );
+      this.addToGrid(grid, cell, entity);
+    }
   }
 
   private addToGrid(grid: ColisionGrid, cell: number, entity: Collidable) {
@@ -165,39 +204,38 @@ export class ColisionSystem extends EntitySystem<Collidable> {
   }
 
   private *getCellsOf(entity: Collidable) {
-    const minX = Math.round((entity.pos.x - entity.radius) / TILE_SIZE);
-    const maxX = Math.round((entity.pos.x + entity.radius) / TILE_SIZE);
+    if (entity.shape === Shape.point) {
+      yield this.getIndexOfCell(
+        Math.floor(entity.pos.x / TILE_SIZE),
+        Math.floor(entity.pos.y / TILE_SIZE),
+      );
+      return;
+    } else {
+      const minX = Math.floor((entity.pos.x - entity.radius) / TILE_SIZE);
+      const maxX = Math.floor((entity.pos.x + entity.radius - 1) / TILE_SIZE);
 
-    const minY = Math.round((entity.pos.y - entity.radius) / TILE_SIZE);
-    const maxY = Math.round((entity.pos.y + entity.radius) / TILE_SIZE);
+      const minY = Math.floor((entity.pos.y - entity.radius) / TILE_SIZE);
+      const maxY = Math.floor((entity.pos.y + entity.radius - 1) / TILE_SIZE);
 
-    for (let x = minX; x <= maxX; x++) {
-      for (let y = minY; y <= maxY; y++) {
-        yield this.getIndexOf(x, y);
+      // console.log(`${entity.pos.x}x${entity.pos.y} ${minX}-${maxX} ${minY}-${maxY}`)
+
+      for (let x = minX; x <= maxX; x++) {
+        for (let y = minY; y <= maxY; y++) {
+          yield this.getIndexOfCell(x, y);
+        }
       }
     }
-
-    // const maxX = Math.ceil(entity.pos.x / TILE_SIZE);
-    // const minX = Math.floor(entity.pos.x / TILE_SIZE);
-
-    // const minY = Math.floor(entity.pos.y / TILE_SIZE);
-    // const maxY = Math.ceil(entity.pos.y / TILE_SIZE);
-
-    // yield this.getIndexOf(minX, minY);
-
-    // if (minX !== maxX) {
-    //   yield this.getIndexOf(maxX, minY);
-    // }
-    // if (minY !== maxY) {
-    //   yield this.getIndexOf(minX, maxY);
-    // }
-    // if (minX !== maxX && minY !== maxY) {
-    //   yield this.getIndexOf(maxX, maxY);
-    // }
   }
 
-  private getIndexOf(x: number, y: number) {
+  private getIndexOfCell(x: number, y: number) {
     return x * 1000 + y;
+  }
+
+  private getIndexOfPos(pos: Vector2) {
+    return this.getIndexOfCell(
+      Math.floor(pos.x / TILE_SIZE),
+      Math.floor(pos.y / TILE_SIZE),
+    );
   }
 
   private emitColision(hitter: Collidable, receiver: Collidable, vec: Vector2, penetration: number) {

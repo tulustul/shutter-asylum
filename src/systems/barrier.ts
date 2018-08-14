@@ -1,13 +1,14 @@
 import { EntitySystem, EntityEngine, Entity } from "./ecs.js";
 import { PropComponent } from "./props.js";
 import { Vector2 } from "../vector.js";
-import { ColisionSystem } from "./colision.js";
+import { ColisionSystem, Shape } from "./colision.js";
 
 export class BarrierComponent extends Entity {
 
   colision = this.engine.getSystem<ColisionSystem>(ColisionSystem).makeCollidable({
     pos: this.pos,
-    radius: 5,
+    shape: Shape.gridCell,
+    radius: 0,
     canHit: false,
     canReceive: true,
     shouldDecouple: false,

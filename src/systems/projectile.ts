@@ -1,7 +1,7 @@
 import { EntitySystem, EntityEngine, Entity } from "./ecs.js";
 import { PropComponent } from "./props.js";
 import { Vector2 } from "../vector.js";
-import { ColisionSystem, Collidable } from "./colision.js";
+import { ColisionSystem, Collidable, Shape } from "./colision.js";
 import { PosAndVel } from "./velocity.js";
 import { AgentComponent } from "./agent.js";
 
@@ -11,7 +11,14 @@ export class ProjectileComponent extends Entity {
 
   collidable: Collidable;
 
-  constructor(private engine: EntityEngine, pos: Vector2, vel: Vector2) {
+  bornAt: number;
+
+  constructor(
+    private engine: EntityEngine,
+    pos: Vector2,
+    vel: Vector2,
+    public maxLifetime: number,
+  ) {
     super();
 
     const posCopy = pos.copy();
@@ -21,12 +28,15 @@ export class ProjectileComponent extends Entity {
 
     this.collidable = {
       pos: posCopy,
-      radius: 1,
+      shape: Shape.point,
+      radius: 0,
       canHit: true,
       canReceive: false,
       shouldDecouple: false,
       parent: this,
     }
+
+    this.bornAt = this.engine.time;
 
     this.engine.getSystem<ColisionSystem>(ColisionSystem).makeCollidable(this.collidable);
   }
@@ -51,11 +61,16 @@ export class ProjectileSystem extends EntitySystem<ProjectileComponent> {
     });
   }
 
-  makeProjectile(pos: Vector2, vel: Vector2) {
-    this.add(new ProjectileComponent(this.engine, pos, vel));
+  makeProjectile(pos: Vector2, vel: Vector2, maxLifetime: number) {
+    this.add(new ProjectileComponent(this.engine, pos, vel, maxLifetime));
   }
 
   update() {
+    for (const projectile of this.entities) {
+      if (this.engine.time > projectile.bornAt + projectile.maxLifetime) {
+        this.remove(projectile);
+      }
+    }
     // if (this.entities.length) {
     //   console.log(this.entities)
     // }

@@ -50,7 +50,7 @@ function tick(timestamp: number) {
   cumulativeTime += steps * timeStep;
 
   for (let i = 0; i < steps; i++) {
-    engine.update();
+    engine.update(cumulativeTime);
   }
 
   renderer.render();
