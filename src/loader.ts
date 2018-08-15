@@ -28,10 +28,10 @@ export async function loadLevel(engine: EntityEngine, levelName: string): Promis
       } else if (line[x] === "X") {
         new BarrierComponent(engine, pos, "wall");
       } else if (line[x] === "B") {
-        new LightComponent(engine, pos, {broken: true, enabled: true});
+        new LightComponent(engine, pos, {broken: true, enabled: true, size: 300});
         new PropComponent(engine, pos, "floor");
       } else if (line[x] === "L") {
-        new LightComponent(engine, pos, {broken: false, enabled: true});
+        new LightComponent(engine, pos, {broken: false, enabled: true, size: 300});
         new PropComponent(engine, pos, "floor");
       }
     }

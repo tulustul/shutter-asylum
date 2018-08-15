@@ -2,6 +2,7 @@ import { ProjectileSystem } from './systems/projectile';
 import { AgentComponent } from './systems/agent';
 import { EntityEngine } from './systems/ecs';
 import { Vector2 } from './vector';
+import { LightComponent } from './systems/lighting';
 
 interface GunOptions {
   name: string;
@@ -57,7 +58,7 @@ export class Gun {
 
   bulletsInMagazine: number;
 
-  projectileSystem: ProjectileSystem
+  projectileSystem: ProjectileSystem;
 
   owner: AgentComponent;
 
@@ -91,6 +92,8 @@ export class Gun {
     this.totalBullets--;
     this.lastShootTime = this.engine.time;
 
+    this.makeLight();
+
     if (this.bulletsInMagazine === 0) {
       this.reload();
     }
@@ -109,5 +112,16 @@ export class Gun {
   setOwner(agent: AgentComponent) {
     this.owner = agent;
     agent.weapon = this;
+  }
+
+  makeLight() {
+    const offset = new Vector2(0, 13).rotate(this.owner.rot);
+    const pos = this.owner.posAndVel.pos.copy().add(offset);
+    const light = new LightComponent(this.engine, pos, {
+      enabled: true,
+      size: 50,
+    });
+
+    setTimeout(() => light.destroy(), 0);
   }
 }

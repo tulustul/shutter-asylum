@@ -92,6 +92,8 @@ export class Renderer {
 
   texture: HTMLImageElement;
 
+  gradientCache = new Map<number, CanvasGradient>();
+
   constructor(
     private engine: EntityEngine,
     public camera: Camera,
@@ -178,16 +180,24 @@ export class Renderer {
 
   renderLights() {
     const lightsSystem = this.engine.getSystem<LightsSystem>(LightsSystem);
-    const lightSize = TILE_SIZE * 15;
-
-    const gradient = this.context.createRadialGradient(lightSize / 2, lightSize / 2, 30, lightSize / 2, lightSize / 2, lightSize / 2);
-    gradient.addColorStop(0, 'rgba(255, 255, 255, 100');
-    gradient.addColorStop(1, 'transparent');
-
-    this.context.fillStyle = gradient;
 
     for (const light of lightsSystem.entities) {
       if (light.options.enabled) {
+        const lightSize = light.options.size;
+        const gradient = this.gradientCache.get(light.options.size)
+
+        if (!gradient) {
+          const gradient = this.context.createRadialGradient(
+            lightSize / 2, lightSize / 2, lightSize / 10,
+            lightSize / 2, lightSize / 2, lightSize / 2,
+          );
+          gradient.addColorStop(0, 'rgba(255, 255, 255, 100');
+          gradient.addColorStop(1, 'transparent');
+          this.gradientCache.set(lightSize, gradient);
+        }
+
+        this.context.fillStyle = gradient;
+
         this.context.save()
         this.context.translate(
           light.pos.x - lightSize / 2, light.pos.y - lightSize / 2,

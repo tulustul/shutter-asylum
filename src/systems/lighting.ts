@@ -6,7 +6,8 @@ import { ColisionSystem, Collidable, Shape } from "./colision";
 interface LightOptions {
   physical?: boolean;
   enabled: boolean;
-  broken: boolean;
+  broken?: boolean;
+  size: number;
 }
 
 const updateFrequency = 200;
