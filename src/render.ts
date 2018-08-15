@@ -18,6 +18,7 @@ type SpriteMap = {[key: string]: SpriteMetadata};
 const SPRITES_MAP: SpriteMap = {
   'floor': {x: 0, y: 0, width: 20, height: 20},
   'wall': {x: 0, y: 20, width: 20, height: 20},
+  'agent': {x: 20, y: 0, width: 20, height: 30},
 }
 
 export class Renderer {
@@ -57,6 +58,7 @@ export class Renderer {
   }
 
   renderAgents() {
+    const sprite = SPRITES_MAP.agent;
     for (const agent of this.engine.getSystem<AgentSystem>(AgentSystem).entities) {
       this.context.save();
       this.context.translate(
@@ -66,13 +68,20 @@ export class Renderer {
       this.context.save();
 
       this.context.rotate(agent.rot);
-      this.context.fillStyle = 'green';
-      this.context.fillRect(-TILE_SIZE / 2, -TILE_SIZE / 2, TILE_SIZE, TILE_SIZE);
+      // this.context.fillStyle = 'green';
+      // this.context.fillRect(-TILE_SIZE / 2, -TILE_SIZE / 2, TILE_SIZE, TILE_SIZE);
+      this.context.drawImage(
+        this.texture,
+        sprite.x, sprite.y,
+        sprite.width, sprite.height,
+        -TILE_SIZE / 2, -TILE_SIZE / 2,
+        sprite.width, sprite.height,
+      )
       this.context.restore();
 
       this.context.fillStyle = 'red';
       const healthBar = agent.health * 4;
-      this.context.fillRect(-TILE_SIZE / 2, -TILE_SIZE / 2, healthBar, 1);
+      this.context.fillRect(-TILE_SIZE / 2, TILE_SIZE / 2 + 5, healthBar, 1);
 
       this.context.restore();
     }
@@ -94,7 +103,7 @@ export class Renderer {
       const weapon = player.agent.weapon;
 
       if (weapon.reloading) {
-        this.context.fillText('REL', 170, 220);
+        this.context.fillText('REL', 170, 230);
       }
 
       const text = `
