@@ -6,6 +6,7 @@ import { PlayerComponent } from "./systems/player";
 import { PropComponent } from "./systems/props";
 import { BarrierComponent } from './systems/barrier';
 import { AIComponent } from './systems/ai';
+import { LightComponent } from './systems/lighting';
 
 export async function loadLevel(engine: EntityEngine, levelName: string): Promise<void> {
   const response = await fetch(`../levels/${levelName}.txt`, {});
@@ -26,6 +27,12 @@ export async function loadLevel(engine: EntityEngine, levelName: string): Promis
         new PropComponent(engine, pos, "floor");
       } else if (line[x] === "X") {
         new BarrierComponent(engine, pos, "wall");
+      } else if (line[x] === "B") {
+        new LightComponent(engine, pos, {broken: true, enabled: true});
+        new PropComponent(engine, pos, "floor");
+      } else if (line[x] === "L") {
+        new LightComponent(engine, pos, {broken: false, enabled: true});
+        new PropComponent(engine, pos, "floor");
       }
     }
   }

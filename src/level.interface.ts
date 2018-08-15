@@ -1,6 +1,6 @@
 import { Vector2 } from "./vector";
 
-export type Cell = " " | "." | "X" | "S" | 'E';
+export type Cell = " " | "." | "X" | "S" | 'E' | 'L' | 'B';
 
 export interface Level {
   cells: Cell[][];
