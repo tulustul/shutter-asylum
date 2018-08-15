@@ -1,6 +1,6 @@
 XXXXXXXXXXX
-X.........XXXXXXXXX
-X....L............X
+X....L....XXXXXXXXX
+X.................X
 X.........XXXXX...X
 X.........X   X...X
 XXXXX...XXX   X...XXXXXXXXXXXXXXXXXX
@@ -11,15 +11,15 @@ XXXXX...XXX   X...XXXXXXXXXXXXXXXXXX
 XXXXX...XXXXXXX...X................X
 X.................XXXXXXXXXXXX.....X
 X..........E.................X.....X
-X.....X............................X
+XL....X............................X
 X...................XXXXX..........X
 X...................X   X....XXXXXXX
 X........XXXXXXXX..XX   X....X
-XX...L.....X....L...X   XXXXXX
- X.........X........X
- X.........X........X
- X...B.....L....L...X
- X..................X
+XX........X........X   XXXXXX
+ X........X.......LX
+ X........X........X
+ X........L........X
+ X...B.............X
  XXXXXX...S...XXXXXXX
       X.......X
       XXXXXXXXX
