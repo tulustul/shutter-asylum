@@ -48,8 +48,8 @@ export const flamethrowerOptions: GunOptions = {
   magazineCapacity: 30000,
   reloadTime: 1,
   shootSpeed: 0,
-  bulletSpeed: 1,
-  bulletLifetime: 2000,
+  bulletSpeed: 3.5,
+  bulletLifetime: 600,
   spread: Math.PI / 6,
 }
 

@@ -18,14 +18,14 @@ export async function loadLevel(engine: EntityEngine, levelName: string): Promis
       const pos = new Vector2(x * TILE_SIZE, y * TILE_SIZE);
       if (line[x] === "S") {
         new PlayerComponent(engine, Object.create(pos));
-        new PropComponent(engine, pos, "grey");
+        new PropComponent(engine, pos, "floor");
       } else if (line[x] === "E") {
         new AIComponent(engine, Object.create(pos));
-        new PropComponent(engine, pos, "grey");
+        new PropComponent(engine, pos, "floor");
       } else if (line[x] === ".") {
-        new PropComponent(engine, pos, "grey");
+        new PropComponent(engine, pos, "floor");
       } else if (line[x] === "X") {
-        new BarrierComponent(engine, pos, "yellow");
+        new BarrierComponent(engine, pos, "wall");
       }
     }
   }
