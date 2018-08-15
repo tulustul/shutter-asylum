@@ -5,7 +5,7 @@ import { EntityEngine } from "./systems/ecs.js";
 import { PlayerComponent } from "./systems/player.js";
 import { PropComponent } from "./systems/props.js";
 import { BarrierComponent } from './systems/barrier.js';
-import { AgentComponent } from './systems/agent.js';
+import { AIComponent } from './systems/ai.js';
 
 export async function loadLevel(engine: EntityEngine, levelName: string): Promise<void> {
   const response = await fetch(`../levels/${levelName}.txt`, {});
@@ -20,7 +20,7 @@ export async function loadLevel(engine: EntityEngine, levelName: string): Promis
         new PlayerComponent(engine, Object.create(pos));
         new PropComponent(engine, pos, "grey");
       } else if (line[x] === "E") {
-        new AgentComponent(engine, Object.create(pos));
+        new AIComponent(engine, Object.create(pos));
         new PropComponent(engine, pos, "grey");
       } else if (line[x] === ".") {
         new PropComponent(engine, pos, "grey");

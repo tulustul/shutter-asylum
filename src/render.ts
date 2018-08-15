@@ -34,14 +34,18 @@ export class Renderer {
         agent.posAndVel.pos.x,
         agent.posAndVel.pos.y,
       );
+      this.context.save();
+
       this.context.rotate(agent.rot);
       this.context.fillStyle = 'green';
       this.context.fillRect(-TILE_SIZE / 2, -TILE_SIZE / 2, TILE_SIZE, TILE_SIZE);
-      // this.context.fillRect(-7, -7, 4, 15);
-      // this.context.fillRect(1, -7, 4, 15);
-      // this.context.fillRect(-7, -7, 10, 7);
       this.context.restore();
-      // this.context.fillRect(agent.posAndVel.pos.x, agent.posAndVel.pos.y, 1, 1);
+
+      this.context.fillStyle = 'red';
+      const healthBar = agent.health * 4;
+      this.context.fillRect(-TILE_SIZE / 2, -TILE_SIZE / 2, healthBar, 1);
+
+      this.context.restore();
     }
   }
 
@@ -57,19 +61,23 @@ export class Renderer {
     const player = this.engine.getSystem<PlayerSystem>(PlayerSystem).entities[0];
 
     this.context.fillStyle = 'red';
-    const weapon = player.agent.weapon;
+    if (player) {
+      const weapon = player.agent.weapon;
 
-    if (weapon.reloading) {
-      this.context.fillText('REL', 170, 220);
+      if (weapon.reloading) {
+        this.context.fillText('REL', 170, 220);
+      }
+
+      const text = `
+  ${weapon.options.name}
+  ${weapon.bulletsInMagazine} / ${weapon.options.magazineCapacity}
+  (${weapon.totalBullets})
+  health: ${player.agent.health / 5 * 100}%
+  `;
+      this.context.fillText(text, 0, 380);
+    } else {
+      this.context.fillText('GAME OVER', 200, 200);
     }
-
-    const text = `
-${weapon.options.name}
-${weapon.bulletsInMagazine} / ${weapon.options.magazineCapacity}
-(${weapon.totalBullets})
-health: ${player.agent.health / 5 * 100}%
-`;
-    this.context.fillText(text, 0, 380);
   }
 
   render() {

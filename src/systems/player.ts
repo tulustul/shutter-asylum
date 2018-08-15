@@ -1,18 +1,25 @@
 import { AgentComponent } from './agent.js';
-import { EntitySystem, EntityEngine } from './ecs.js';
+import { EntitySystem, EntityEngine, Entity } from './ecs.js';
 import { Control } from '../control.js';
 import { Camera } from '../camera.js';
 import { Vector2 } from '../vector.js';
 import { Gun, pistolOptions, mgOptions, minigunOptions, flamethrowerOptions } from '../weapons.js';
 
-export class PlayerComponent {
+export class PlayerComponent extends Entity {
 
   agent: AgentComponent;
 
-  constructor(private engine: EntityEngine, pos: Vector2) {
+  constructor(public engine: EntityEngine, pos: Vector2) {
+    super();
     this.agent = new AgentComponent(this.engine, pos);
     this.agent.posAndVel.friction = 1.1;
+    this.agent.parent = this;
     engine.getSystem(PlayerSystem).add(this);
+  }
+
+  destroy() {
+    super.destroy();
+    this.agent.destroy();
   }
 
 }
@@ -46,6 +53,11 @@ export class PlayerSystem extends EntitySystem<PlayerComponent> {
         this.player.agent.weapon.reload();
       }
     });
+  }
+
+  remove(entity: PlayerComponent) {
+    super.remove(entity);
+    this.player = null;
   }
 
   nextWeapon() {

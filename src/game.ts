@@ -1,6 +1,5 @@
 import { loadLevel } from "./loader.js";
 import { Renderer } from "./render.js";
-import { Level } from "./level.interface";
 import { Control } from "./control.js";
 import { Camera } from "./camera.js";
 
@@ -12,6 +11,7 @@ import { VelocitySystem } from "./systems/velocity.js";
 import { PropsSystem } from "./systems/props.js";
 import { BarrierSystem } from "./systems/barrier.js";
 import { ProjectileSystem } from "./systems/projectile.js";
+import { AISystem } from "./systems/ai.js";
 
 let engine: EntityEngine;
 let control: Control;
@@ -36,6 +36,7 @@ export async function init() {
   engine.register(new VelocitySystem());
   engine.register(new ProjectileSystem());
   engine.register(new ColisionSystem());
+  engine.register(new AISystem());
 
   engine.init();
 

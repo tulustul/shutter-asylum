@@ -78,6 +78,16 @@ export class Entity {
 
   system: EntitySystem<any>;
 
+  parent: Entity;
+
+  getTopParent() {
+    let topParent: Entity = this;
+    while (topParent.parent) {
+      topParent = this.parent;
+    }
+    return topParent;
+  }
+
   destroy() {
     this.system.remove(this);
   }

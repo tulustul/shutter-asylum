@@ -26,7 +26,8 @@ export class AgentComponent extends Entity {
     super();
     this.engine.getSystem(AgentSystem).add(this);
     this.posAndVel = new PosAndVel(this.engine, pos);
-    this.collidable = this.engine.getSystem<ColisionSystem>(ColisionSystem).makeCollidable({
+    this.collidable = this.engine.getSystem<ColisionSystem>(ColisionSystem)
+    .makeCollidable({
       pos: this.posAndVel.pos,
       shape: Shape.circle,
       radius: TILE_SIZE / 2,
@@ -68,10 +69,21 @@ export class AgentComponent extends Entity {
     }
   }
 
+  shootAt(pos: Vector2) {
+    const thisPos = this.posAndVel.pos;
+
+    this.rot = Math.PI - Math.atan2(
+      thisPos.x - pos.x,
+      thisPos.y - pos.y,
+    )
+
+    this.shoot();
+  }
+
   hit() {
     this.health--;
     if (!this.health) {
-      this.destroy();
+      this.getTopParent().destroy();
     }
   }
 
