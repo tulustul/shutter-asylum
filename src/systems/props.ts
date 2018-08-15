@@ -1,5 +1,5 @@
-import { EntitySystem, EntityEngine } from './ecs.js';
-import { Vector2 } from '../vector.js';
+import { EntitySystem, EntityEngine } from './ecs';
+import { Vector2 } from '../vector';
 
 export class PropComponent {
   constructor(engine: EntityEngine, public pos: Vector2, public sprite: string) {

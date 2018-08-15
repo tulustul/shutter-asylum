@@ -1,7 +1,7 @@
-import { EntitySystem, EntityEngine, Entity } from "./ecs.js";
-import { PropComponent } from "./props.js";
-import { Vector2 } from "../vector.js";
-import { ColisionSystem, Shape } from "./colision.js";
+import { EntitySystem, EntityEngine, Entity } from "./ecs";
+import { PropComponent } from "./props";
+import { Vector2 } from "../vector";
+import { ColisionSystem, Shape } from "./colision";
 
 export class BarrierComponent extends Entity {
 

@@ -1,9 +1,9 @@
-import { AgentComponent } from './agent.js';
-import { EntitySystem, EntityEngine, Entity } from './ecs.js';
-import { Control } from '../control.js';
-import { Camera } from '../camera.js';
-import { Vector2 } from '../vector.js';
-import { Gun, pistolOptions, mgOptions, minigunOptions, flamethrowerOptions } from '../weapons.js';
+import { AgentComponent } from './agent';
+import { EntitySystem, EntityEngine, Entity } from './ecs';
+import { Control } from '../control';
+import { Camera } from '../camera';
+import { Vector2 } from '../vector';
+import { Gun, pistolOptions, mgOptions, minigunOptions, flamethrowerOptions } from '../weapons';
 
 export class PlayerComponent extends Entity {
 

@@ -1,9 +1,8 @@
-import { EntitySystem, EntityEngine, Entity } from "./ecs.js";
-import { PropComponent } from "./props.js";
-import { Vector2 } from "../vector.js";
-import { ColisionSystem, Collidable, Shape } from "./colision.js";
-import { PosAndVel } from "./velocity.js";
-import { AgentComponent } from "./agent.js";
+import { EntitySystem, EntityEngine, Entity } from "./ecs";
+import { Vector2 } from "../vector";
+import { ColisionSystem, Collidable, Shape } from "./colision";
+import { PosAndVel } from "./velocity";
+import { AgentComponent } from "./agent";
 
 export class ProjectileComponent extends Entity {
 

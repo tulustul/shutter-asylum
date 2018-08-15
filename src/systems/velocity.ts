@@ -1,6 +1,5 @@
-import { EntitySystem, EntityEngine, Entity } from './ecs.js';
-import { Vector2 } from '../vector.js';
-import { ColisionSystem } from './colision.js';
+import { EntitySystem, EntityEngine, Entity } from './ecs';
+import { Vector2 } from '../vector';
 
 export class PosAndVel extends Entity {
   vel = new Vector2();

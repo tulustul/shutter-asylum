@@ -1,10 +1,9 @@
-import { EntitySystem, EntityEngine, Entity } from "./ecs.js";
-import { PosAndVel } from './velocity.js';
-import { ColisionSystem, Shape, Collidable } from "./colision.js";
-import { ProjectileSystem } from "./projectile.js";
-import { Vector2 } from "../vector.js";
-import { TILE_SIZE } from "../constants.js";
-import { Gun, flamethrowerOptions, pistolOptions, mgOptions, minigunOptions } from "../weapons.js";
+import { EntitySystem, EntityEngine, Entity } from "./ecs";
+import { PosAndVel } from './velocity';
+import { ColisionSystem, Shape, Collidable } from "./colision";
+import { Vector2 } from "../vector";
+import { TILE_SIZE } from "../constants";
+import { Gun } from "../weapons";
 
 export class AgentComponent extends Entity {
 

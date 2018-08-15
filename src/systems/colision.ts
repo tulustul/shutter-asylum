@@ -1,6 +1,6 @@
-import { EntitySystem } from './ecs.js';
-import { Vector2 } from '../vector.js';
-import { TILE_SIZE } from '../constants.js';
+import { EntitySystem } from './ecs';
+import { Vector2 } from '../vector';
+import { TILE_SIZE } from '../constants';
 
 export enum Shape {
   gridCell,

@@ -1,5 +1,5 @@
-import { Vector2 } from './vector.js';
-import { PlayerComponent } from './systems/player.js';
+import { Vector2 } from './vector';
+import { PlayerComponent } from './systems/player';
 
 export class Camera {
 

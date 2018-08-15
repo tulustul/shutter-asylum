@@ -1,17 +1,17 @@
-import { loadLevel } from "./loader.js";
-import { Renderer } from "./render.js";
-import { Control } from "./control.js";
-import { Camera } from "./camera.js";
+import { loadLevel } from "./loader";
+import { Renderer } from "./render";
+import { Control } from "./control";
+import { Camera } from "./camera";
 
-import { EntityEngine } from "./systems/ecs.js";
-import { AgentSystem } from "./systems/agent.js";
-import { ColisionSystem } from "./systems/colision.js";
-import { PlayerSystem } from "./systems/player.js";
-import { VelocitySystem } from "./systems/velocity.js";
-import { PropsSystem } from "./systems/props.js";
-import { BarrierSystem } from "./systems/barrier.js";
-import { ProjectileSystem } from "./systems/projectile.js";
-import { AISystem } from "./systems/ai.js";
+import { EntityEngine } from "./systems/ecs";
+import { AgentSystem } from "./systems/agent";
+import { ColisionSystem } from "./systems/colision";
+import { PlayerSystem } from "./systems/player";
+import { VelocitySystem } from "./systems/velocity";
+import { PropsSystem } from "./systems/props";
+import { BarrierSystem } from "./systems/barrier";
+import { ProjectileSystem } from "./systems/projectile";
+import { AISystem } from "./systems/ai";
 
 let engine: EntityEngine;
 let control: Control;
@@ -21,7 +21,7 @@ let renderer: Renderer;
 let cumulativeTime = 0;
 const timeStep = 1000 / 60;
 
-export async function init() {
+async function init() {
   const canvas = document.getElementsByTagName("canvas")[0];
 
   engine = new EntityEngine();
@@ -57,3 +57,5 @@ function tick(timestamp: number) {
   renderer.render();
   requestAnimationFrame(tick);
 }
+
+init();

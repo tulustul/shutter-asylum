@@ -1,9 +1,9 @@
-import { EntitySystem, EntityEngine, Entity } from "./ecs.js";
-import { AgentComponent } from "./agent.js";
-import { PlayerSystem } from "./player.js";
-import { ColisionSystem } from "./colision.js";
-import { Vector2 } from "../vector.js";
-import { Gun, mgOptions } from "../weapons.js";
+import { EntitySystem, EntityEngine, Entity } from "./ecs";
+import { AgentComponent } from "./agent";
+import { PlayerSystem } from "./player";
+import { ColisionSystem } from "./colision";
+import { Vector2 } from "../vector";
+import { Gun, mgOptions } from "../weapons";
 
 const THINKING_FREQ = 300;
 

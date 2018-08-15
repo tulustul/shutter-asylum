@@ -1,11 +1,11 @@
 import { Cell } from './level.interface';
-import { Vector2 } from './vector.js';
-import { TILE_SIZE } from './constants.js';
-import { EntityEngine } from "./systems/ecs.js";
-import { PlayerComponent } from "./systems/player.js";
-import { PropComponent } from "./systems/props.js";
-import { BarrierComponent } from './systems/barrier.js';
-import { AIComponent } from './systems/ai.js';
+import { Vector2 } from './vector';
+import { TILE_SIZE } from './constants';
+import { EntityEngine } from "./systems/ecs";
+import { PlayerComponent } from "./systems/player";
+import { PropComponent } from "./systems/props";
+import { BarrierComponent } from './systems/barrier';
+import { AIComponent } from './systems/ai';
 
 export async function loadLevel(engine: EntityEngine, levelName: string): Promise<void> {
   const response = await fetch(`../levels/${levelName}.txt`, {});

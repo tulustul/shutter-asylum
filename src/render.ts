@@ -1,10 +1,10 @@
-import { Camera } from './camera.js';
-import { EntityEngine } from './systems/ecs.js';
-import { AgentSystem } from './systems/agent.js';
-import { PropsSystem } from "./systems/props.js";
-import { TILE_SIZE } from './constants.js';
-import { ProjectileSystem } from './systems/projectile.js';
-import { PlayerSystem } from './systems/player.js';
+import { Camera } from './camera';
+import { EntityEngine } from './systems/ecs';
+import { AgentSystem } from './systems/agent';
+import { PropsSystem } from "./systems/props";
+import { TILE_SIZE } from './constants';
+import { ProjectileSystem } from './systems/projectile';
+import { PlayerSystem } from './systems/player';
 
 interface SpriteMetadata {
   x: number;
@@ -37,7 +37,7 @@ export class Renderer {
 
     this.texture = new Image();
     // imageObj.onload = () => this.texture = imageObj;
-    this.texture.src = '/assets/tex.png';
+    this.texture.src = 'tex.png';
 
   }
 

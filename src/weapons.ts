@@ -1,7 +1,7 @@
-import { ProjectileSystem } from './systems/projectile.js';
-import { AgentComponent } from './systems/agent.js';
-import { EntityEngine } from './systems/ecs.js';
-import { Vector2 } from './vector.js';
+import { ProjectileSystem } from './systems/projectile';
+import { AgentComponent } from './systems/agent';
+import { EntityEngine } from './systems/ecs';
+import { Vector2 } from './vector';
 
 interface GunOptions {
   name: string;
