@@ -122,6 +122,6 @@ export class Gun {
       size: 50,
     });
 
-    setTimeout(() => light.destroy(), 0);
+    setTimeout(() => light.destroy());
   }
 }

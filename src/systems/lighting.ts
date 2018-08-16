@@ -55,6 +55,16 @@ export class LightsSystem extends EntitySystem<LightComponent> {
 
   needRerender = true;
 
+  add(entity: LightComponent) {
+    super.add(entity);
+    this.needRerender = true;
+  }
+
+  remove(entity: LightComponent) {
+    super.remove(entity);
+    this.needRerender = true;
+  }
+
   update() {
     for (const light of this.entities) {
       if (light.options.broken) {
