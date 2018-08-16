@@ -13,9 +13,11 @@ export async function loadLevel(engine: EntityEngine, levelName: string): Promis
   const data = await response.text();
   const cells = data.split('\n').map(line => Array.from(line)) as Cell[][];
 
+  let maxWidth = 0;
   for (let y = 0; y < cells.length; y++) {
     const line = cells[y];
     for (let x = 0; x < line.length; x++) {
+      maxWidth = Math.max(maxWidth, line.length);
       const pos = new Vector2(x * TILE_SIZE, y * TILE_SIZE);
       if (line[x] === "S") {
         new PlayerComponent(engine, Object.create(pos));
@@ -36,4 +38,6 @@ export async function loadLevel(engine: EntityEngine, levelName: string): Promis
       }
     }
   }
+  engine.worldHeight = cells.length * TILE_SIZE;
+  engine.worldWidth = maxWidth * TILE_SIZE;
 }

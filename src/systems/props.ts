@@ -1,4 +1,4 @@
-import { EntitySystem, EntityEngine } from './ecs';
+import { EntitySystem, EntityEngine, Entity } from './ecs';
 import { Vector2 } from '../vector';
 
 interface PropOptions {
@@ -15,6 +15,8 @@ export class PropComponent {
 
   rot = 0;
 
+  needRerender = false;
+
   constructor(engine: EntityEngine, options: PropOptions) {
     Object.assign(this, options);
     engine.getSystem(PropsSystem).add(this);
@@ -22,6 +24,18 @@ export class PropComponent {
 }
 
 export class PropsSystem extends EntitySystem<PropComponent> {
+
+  toRender: PropComponent[] = [];
+
+  add(entity: PropComponent) {
+    super.add(entity);
+    this.toRender.push(entity);
+  }
+
+  markAsRendered() {
+    this.toRender = [];
+  }
+
   update() {
 
   }

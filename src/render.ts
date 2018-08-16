@@ -16,8 +16,10 @@ interface SpriteMetadata {
 
 interface LayerOptions {
   canvas?: HTMLCanvasElement;
+  renderWholeWorld?: boolean;
   followPlayer?: boolean;
   fillBlack?: boolean;
+  clear?: boolean;
 }
 
 type SpriteMap = {[key: string]: SpriteMetadata};
@@ -25,7 +27,7 @@ type SpriteMap = {[key: string]: SpriteMetadata};
 const SPRITES_MAP: SpriteMap = {
   'floor': {x: 0, y: 0, width: 20, height: 20},
   'wall': {x: 0, y: 20, width: 20, height: 20},
-  'agent': {x: 20, y: 0, width: 20, height: 30},
+  'agent': {x: 21, y: 0, width: 20, height: 30},
   'corpse': {x: 40, y: 0, width: 40, height: 20},
 }
 
@@ -79,6 +81,10 @@ class Layer {
 
   fillBlack = true;
 
+  renderWholeWorld = false;
+
+  clear = true;
+
   context: CanvasRenderingContext2D;
 
   constructor(private renderer: Renderer, options: LayerOptions = {}) {
@@ -86,10 +92,16 @@ class Layer {
 
     if (!this.canvas) {
       this.canvas = document.createElement('canvas');
-      this.canvas.width = renderer.canvas.width;
-      this.canvas.height = renderer.canvas.height;
+      if (this.renderWholeWorld) {
+        this.canvas.width = renderer.engine.worldWidth;
+        this.canvas.height = renderer.engine.worldHeight;
+      } else {
+        this.canvas.width = renderer.canvas.width;
+        this.canvas.height = renderer.canvas.height;
+      }
     }
     this.context = this.canvas.getContext('2d');
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
   activate() {
@@ -100,7 +112,9 @@ class Layer {
     this.renderer.activeLayer = this;
     this.renderer.context = this.context;
 
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    if (this.clear) {
+      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
 
     if (this.fillBlack) {
       this.context.fillStyle = 'black';
@@ -137,6 +151,7 @@ class Postprocessing {
     this.gl.linkProgram(shaderProgram);
     this.gl.useProgram(shaderProgram);
 
+    // DEBUG
     // const compiled = this.gl.getShaderParameter(fragShader, this.gl.COMPILE_STATUS);
     // console.log('Shader compiled successfully: ' + compiled);
     // const compilationLog = this.gl.getShaderInfoLog(fragShader);
@@ -164,7 +179,6 @@ class Postprocessing {
     this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, layer.canvas);
     this.gl.drawArrays(this.gl.TRIANGLES, 0, VERTS.length / 2);
   }
-
 }
 
 export class Renderer {
@@ -175,15 +189,26 @@ export class Renderer {
 
   baseLayer = new Layer(this, {followPlayer: false});
 
-  lightsLayer = new Layer(this);
+  lightsLayer = new Layer(this, {
+    renderWholeWorld: true,
+    followPlayer: false,
+  });
 
-  propsLayer = new Layer(this);
+  propsLayer = new Layer(this, {
+    renderWholeWorld: true,
+    followPlayer: false,
+    fillBlack: false,
+    clear: false,
+  });
+
+  movingPropsLayer = new Layer(this, {fillBlack: false});
 
   particlesLayer = new Layer(this, {fillBlack: false});
 
   interfaceLayer = new Layer(this, {followPlayer: false, fillBlack: false});
 
-  checkColorsLayer = new Layer(this);
+  // DEBUG
+  checkColorsLayer: Layer; // = new Layer(this);
 
   postprocessing: Postprocessing;
 
@@ -193,8 +218,10 @@ export class Renderer {
 
   gradientCache = new Map<number, CanvasGradient>();
 
+  ready = false;
+
   constructor(
-    private engine: EntityEngine,
+    public engine: EntityEngine,
     public camera: Camera,
     public canvas: HTMLCanvasElement,
   ) {
@@ -202,11 +229,13 @@ export class Renderer {
 
     this.texture = new Image();
     this.texture.src = 'tex.png';
+    this.texture.onload = () => this.ready = true;
   }
 
   renderProps() {
     const propsSystem = this.engine.getSystem<PropsSystem>(PropsSystem);
-    for (const prop of propsSystem.entities) {
+
+    for (const prop of propsSystem.toRender) {
       const sprite = SPRITES_MAP[prop.sprite];
       if (prop.rot) {
         this.context.save();
@@ -224,6 +253,7 @@ export class Renderer {
         this.context.restore();
       }
     }
+    propsSystem.markAsRendered();
   }
 
   renderAgents() {
@@ -285,8 +315,15 @@ export class Renderer {
   }
 
   renderLights() {
-    this.context.globalCompositeOperation = 'lighten';
     const lightsSystem = this.engine.getSystem<LightsSystem>(LightsSystem);
+
+    if (!lightsSystem.needRerender) {
+      return;
+    }
+    lightsSystem.needRerender = false;
+
+    this.lightsLayer.activate();
+    this.context.globalCompositeOperation = 'lighten';
 
     for (const light of lightsSystem.entities) {
       if (light.options.enabled) {
@@ -317,11 +354,16 @@ export class Renderer {
   }
 
   render() {
-    this.lightsLayer.activate();
+    if (!this.ready) {
+      return;
+    }
+
     this.renderLights();
 
     this.propsLayer.activate();
     this.renderProps();
+
+    this.movingPropsLayer.activate();
     this.renderAgents();
 
     this.particlesLayer.activate();
@@ -335,6 +377,7 @@ export class Renderer {
 
     this.postprocessing.postprocess(this.baseLayer);
 
+    // DEBUG
     // if (Math.round(this.engine.time) % 300 === 0) {
     //   this.checkDistinctColors();
     // }
@@ -342,14 +385,25 @@ export class Renderer {
 
   composite() {
     this.context.globalCompositeOperation = 'source-over'
-    this.context.drawImage(this.propsLayer.canvas, 0, 0);
+    this.drawLayer(this.propsLayer);
+
+    this.context.drawImage(this.movingPropsLayer.canvas, 0, 0);
 
     this.context.globalCompositeOperation = 'overlay';
-    this.context.drawImage(this.lightsLayer.canvas, 0, 0);
+    this.drawLayer(this.lightsLayer);
 
     this.context.globalCompositeOperation = 'source-over'
     this.context.drawImage(this.particlesLayer.canvas, 0, 0);
     this.context.drawImage(this.interfaceLayer.canvas, 0, 0);
+  }
+
+  drawLayer(layer: Layer) {
+    this.context.drawImage(layer.canvas,
+      -this.camera.pos.x, -this.camera.pos.y,
+      this.canvas.width, this.canvas.height,
+      0, 0,
+      this.canvas.width, this.canvas.height,
+    );
   }
 
   checkDistinctColors() {

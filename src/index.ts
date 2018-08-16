@@ -25,10 +25,10 @@ const timeStep = 1000 / 60;
 async function init() {
   const canvas = document.getElementsByTagName("canvas")[0];
 
-  engine = new EntityEngine();
   camera = new Camera(canvas);
-  renderer = new Renderer(engine, camera, canvas);
   control = new Control(canvas);
+
+  engine = new EntityEngine();
 
   engine.register(new PropsSystem());
   engine.register(new BarrierSystem());
@@ -43,6 +43,8 @@ async function init() {
   engine.init();
 
   await loadLevel(engine, "level1");
+
+  renderer = new Renderer(engine, camera, canvas);
 
   requestAnimationFrame(tick);
 }

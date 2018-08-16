@@ -6,6 +6,10 @@ export class EntityEngine {
 
   time: number;
 
+  worldWidth: number;
+
+  worldHeight: number;
+
   getSystem<T extends EntitySystem<any>>(systemClass: Function) {
     return this.systemsMap.get(systemClass) as T;
   }
