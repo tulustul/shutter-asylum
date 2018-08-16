@@ -55,16 +55,29 @@ export class AISystem extends EntitySystem<AIComponent> {
 
   process(entity: AIComponent) {
     if (this.canSeePlayer(entity)) {
-      entity.agent.shootAt(this.playerSystem.player.agent.posAndVel.pos);
+      this.shootAtPlayer(entity);
     }
+  }
+
+  shootAtPlayer(entity: AIComponent) {
+    const posAndVel = entity.agent.posAndVel;
+    const targetPos = this.playerPosAndVel.pos.copy();
+    const distance = posAndVel.pos.distanceTo(this.playerPosAndVel.pos);
+    const bulletTravelTime = distance / entity.weapon.options.bulletSpeed;
+    targetPos.add(this.playerPosAndVel.vel.copy().mul(bulletTravelTime));
+    entity.agent.shootAt(targetPos);
   }
 
   canSeePlayer(entity: AIComponent) {
     return !this.colisionSystem.castRay(
       entity.agent.posAndVel.pos,
-      this.playerSystem.player.agent.posAndVel.pos,
+      this.playerPosAndVel.pos,
       entity.agent.collidable,
     );
+  }
+
+  get playerPosAndVel() {
+    return this.playerSystem.player.agent.posAndVel;
   }
 
 }
