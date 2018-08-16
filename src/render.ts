@@ -14,6 +14,13 @@ interface SpriteMetadata {
   height: number;
 }
 
+interface LayerOptions {
+  canvas?: HTMLCanvasElement;
+  followPlayer?: boolean;
+  fillBlack?: boolean;
+  webgl?: boolean;
+}
+
 type SpriteMap = {[key: string]: SpriteMetadata};
 
 const SPRITES_MAP: SpriteMap = {
@@ -22,11 +29,40 @@ const SPRITES_MAP: SpriteMap = {
   'agent': {x: 20, y: 0, width: 20, height: 30},
 }
 
-interface LayerOptions {
-  canvas?: HTMLCanvasElement;
-  followPlayer?: boolean;
-  fillBlack?: boolean;
+const VERTEX_SHADER = `
+attribute vec4 pos;
+varying highp vec2 uv;
+
+void main() {
+  gl_Position = pos;
+  uv = vec2(pos.x / 2.0 + 0.5, -pos.y / 2.0 + 0.5);
+}`;
+
+const FRAGMENT_SHADER = `
+precision mediump float;
+varying highp vec2 uv;
+uniform sampler2D u_texture;
+
+const float colors = 16.0;
+float limit(float x) {
+  return floor(x * 255.0 / colors) / colors;
 }
+
+void main(void) {
+  vec4 color = texture2D(u_texture, uv);
+  gl_FragColor = vec4(limit(color.r), limit(color.g), limit(color.b), 1.0);
+}`;
+
+const VERTS = new Float32Array([
+  // First triangle
+  -1.0,  1.0,
+  1.0, 1.0,
+  1.0, -1.0,
+  // Second triangle
+  -1.0,  1.0,
+  1.0, -1.0,
+  -1.0,  -1.0,
+]);
 
 class Layer {
 
@@ -38,7 +74,11 @@ class Layer {
 
   fillBlack = true;
 
+  webgl = false;
+
   context: CanvasRenderingContext2D;
+
+  gl: WebGLRenderingContext;
 
   constructor(private renderer: Renderer, options: LayerOptions = {}) {
     Object.assign(this, options);
@@ -48,7 +88,11 @@ class Layer {
       this.canvas.width = renderer.canvas.width;
       this.canvas.height = renderer.canvas.height;
     }
-    this.context = this.canvas.getContext('2d');
+    if (this.webgl) {
+      this.gl = this.canvas.getContext('webgl');
+    } else {
+      this.context = this.canvas.getContext('2d');
+    }
     this.context.imageSmoothingEnabled = false;
   }
 
@@ -74,9 +118,66 @@ class Layer {
   }
 }
 
+class Postprocessing {
+
+  gl: WebGLRenderingContext;
+
+  constructor(renderer: Renderer) {
+    this.gl = renderer.canvas.getContext('webgl');
+
+    this.gl.viewport(0, 0, renderer.canvas.width, renderer.canvas.height);
+
+    const fragShader = this.gl.createShader(this.gl.FRAGMENT_SHADER);
+    this.gl.shaderSource(fragShader, FRAGMENT_SHADER);
+    this.gl.compileShader(fragShader);
+
+    const vertexShader = this.gl.createShader(this.gl.VERTEX_SHADER);
+    this.gl.shaderSource(vertexShader, VERTEX_SHADER);
+    this.gl.compileShader(vertexShader);
+
+    const shaderProgram = this.gl.createProgram();
+    this.gl.attachShader(shaderProgram, vertexShader);
+    this.gl.attachShader(shaderProgram, fragShader);
+    this.gl.linkProgram(shaderProgram);
+    this.gl.useProgram(shaderProgram);
+
+    const  compiled = this.gl.getShaderParameter(fragShader, this.gl.COMPILE_STATUS);
+    console.log('Shader compiled successfully: ' + compiled);
+    const  compilationLog = this.gl.getShaderInfoLog(fragShader);
+    console.log('Shader compiler log: ' + compilationLog);
+
+    const vertexPositionAttribute = this.gl.getAttribLocation(shaderProgram, "pos");
+
+    const quad_vertex_buffer = this.gl.createBuffer();
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, quad_vertex_buffer);
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, VERTS, this.gl.STATIC_DRAW);
+
+    this.gl.vertexAttribPointer(vertexPositionAttribute, 2, this.gl.FLOAT, false, 0, 0);
+    this.gl.enableVertexAttribArray(vertexPositionAttribute)
+
+    const texture = this.gl.createTexture();
+    this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
+    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
+    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);
+
+    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
+    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
+  }
+
+  postprocess(layer: Layer) {
+    this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, layer.canvas);
+    this.gl.drawArrays(this.gl.TRIANGLES, 0, VERTS.length / 2);
+  }
+
+}
+
 export class Renderer {
 
   context: CanvasRenderingContext2D;
+
+  gl: WebGLRenderingContext;
+
+  baseLayer = new Layer(this, {followPlayer: false});
 
   lightsLayer = new Layer(this);
 
@@ -86,7 +187,7 @@ export class Renderer {
 
   interfaceLayer = new Layer(this, {followPlayer: false, fillBlack: false});
 
-  baseLayer: Layer;
+  postprocessing: Postprocessing;
 
   activeLayer: Layer;
 
@@ -99,7 +200,7 @@ export class Renderer {
     public camera: Camera,
     public canvas: HTMLCanvasElement,
   ) {
-    this.baseLayer = new Layer(this, {canvas, followPlayer: false});
+    this.postprocessing = new Postprocessing(this);
 
     this.texture = new Image();
     this.texture.src = 'tex.png';
@@ -222,12 +323,13 @@ export class Renderer {
     this.interfaceLayer.activate();
     this.renderInterface();
 
+    this.baseLayer.activate();
     this.composite();
+
+    this.postprocessing.postprocess(this.baseLayer);
   }
 
   composite() {
-    this.baseLayer.activate();
-
     this.context.globalCompositeOperation = 'source-over'
     this.context.drawImage(this.propsLayer.canvas, 0, 0);
 

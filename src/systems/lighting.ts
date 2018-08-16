@@ -10,7 +10,7 @@ interface LightOptions {
   size: number;
 }
 
-const updateFrequency = 200;
+const updateFrequency = 0;
 
 export class LightComponent extends Entity {
 
