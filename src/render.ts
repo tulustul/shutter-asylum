@@ -18,7 +18,6 @@ interface LayerOptions {
   canvas?: HTMLCanvasElement;
   followPlayer?: boolean;
   fillBlack?: boolean;
-  webgl?: boolean;
 }
 
 type SpriteMap = {[key: string]: SpriteMetadata};
@@ -50,7 +49,12 @@ float limit(float x) {
 
 void main(void) {
   vec4 color = texture2D(u_texture, uv);
-  gl_FragColor = vec4(limit(color.r), limit(color.g), limit(color.b), 1.0);
+  float r = limit(color.r);
+  float g = limit(color.g);
+  if (r != g) {
+    g = 0.0;
+  }
+  gl_FragColor = vec4(r, g, g, 1.0);
 }`;
 
 const VERTS = new Float32Array([
@@ -74,11 +78,7 @@ class Layer {
 
   fillBlack = true;
 
-  webgl = false;
-
   context: CanvasRenderingContext2D;
-
-  gl: WebGLRenderingContext;
 
   constructor(private renderer: Renderer, options: LayerOptions = {}) {
     Object.assign(this, options);
@@ -88,12 +88,7 @@ class Layer {
       this.canvas.width = renderer.canvas.width;
       this.canvas.height = renderer.canvas.height;
     }
-    if (this.webgl) {
-      this.gl = this.canvas.getContext('webgl');
-    } else {
-      this.context = this.canvas.getContext('2d');
-    }
-    this.context.imageSmoothingEnabled = false;
+    this.context = this.canvas.getContext('2d');
   }
 
   activate() {
@@ -141,10 +136,10 @@ class Postprocessing {
     this.gl.linkProgram(shaderProgram);
     this.gl.useProgram(shaderProgram);
 
-    const  compiled = this.gl.getShaderParameter(fragShader, this.gl.COMPILE_STATUS);
-    console.log('Shader compiled successfully: ' + compiled);
-    const  compilationLog = this.gl.getShaderInfoLog(fragShader);
-    console.log('Shader compiler log: ' + compilationLog);
+    // const compiled = this.gl.getShaderParameter(fragShader, this.gl.COMPILE_STATUS);
+    // console.log('Shader compiled successfully: ' + compiled);
+    // const compilationLog = this.gl.getShaderInfoLog(fragShader);
+    // console.log('Shader compiler log: ' + compilationLog);
 
     const vertexPositionAttribute = this.gl.getAttribLocation(shaderProgram, "pos");
 
@@ -186,6 +181,8 @@ export class Renderer {
   particlesLayer = new Layer(this, {fillBlack: false});
 
   interfaceLayer = new Layer(this, {followPlayer: false, fillBlack: false});
+
+  checkColorsLayer = new Layer(this);
 
   postprocessing: Postprocessing;
 
@@ -327,6 +324,10 @@ export class Renderer {
     this.composite();
 
     this.postprocessing.postprocess(this.baseLayer);
+
+    // if (Math.round(this.engine.time) % 300 === 0) {
+    //   this.checkDistinctColors();
+    // }
   }
 
   composite() {
@@ -338,8 +339,22 @@ export class Renderer {
 
     this.context.globalCompositeOperation = 'source-over'
     this.context.drawImage(this.particlesLayer.canvas, 0, 0);
-
-    this.context.globalCompositeOperation = 'source-over'
     this.context.drawImage(this.interfaceLayer.canvas, 0, 0);
+  }
+
+  checkDistinctColors() {
+    this.checkColorsLayer.context.drawImage(
+      this.canvas, 0, 0, this.canvas.width, this.canvas.height,
+    );
+    const data = this.checkColorsLayer.context.getImageData(
+      0, 0, this.canvas.width, this.canvas.height,
+    ).data;
+    const colors = new Set<string>();
+    for (let i = 0; i < data.length; i += 4) {
+      const color = `${data[i]},${data[i + 1]},${data[i + 2]}`;
+      colors.add(color);
+    }
+    const text = `Number of colors: ${colors.size}`;
+    colors.size > 32 ? console.error(text) : console.log(text);
   }
 }
