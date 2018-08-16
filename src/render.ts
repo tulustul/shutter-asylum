@@ -296,6 +296,7 @@ export class Renderer {
     const player = this.engine.getSystem<PlayerSystem>(PlayerSystem).entities[0];
 
     this.context.fillStyle = 'red';
+    this.context.font = '12px sans-serif';
     if (player) {
       const weapon = player.agent.weapon;
 
@@ -310,7 +311,12 @@ export class Renderer {
   `;
       this.context.fillText(text, 0, 380);
     } else {
-      this.context.fillText('GAME OVER', 200, 200);
+      this.context.font = '20px sans-serif';
+      const gameoverText = 'GAME OVER';
+      const textWidth = this.context.measureText(gameoverText).width;
+      this.context.fillText(
+        gameoverText, this.canvas.width / 2 - textWidth / 2, 200,
+      );
     }
   }
 
