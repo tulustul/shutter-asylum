@@ -1,6 +1,7 @@
 import { EntitySystem, EntityEngine, Entity } from "./ecs";
 import { PosAndVel } from './velocity';
 import { ColisionSystem, Shape, Collidable } from "./colision";
+import { PropComponent } from "./props";
 import { Vector2 } from "../vector";
 import { TILE_SIZE } from "../constants";
 import { Gun } from "../weapons";
@@ -49,8 +50,13 @@ export class AgentComponent extends Entity {
   }
 
   destroy() {
-    super.destroy();
+    new PropComponent(this.engine, {
+      sprite: 'corpse',
+      pos: this.posAndVel.pos,
+      rot: Math.random() * Math.PI * 2,
+    });
     this.engine.getSystem<ColisionSystem>(ColisionSystem).remove(this.collidable);
+    super.destroy();
   }
 
   moveTop() {

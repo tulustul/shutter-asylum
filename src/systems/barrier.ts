@@ -15,9 +15,9 @@ export class BarrierComponent extends Entity {
     parent: this,
   });
 
-  prop = new PropComponent(this.engine, this.pos, this.color);
+  prop = new PropComponent(this.engine, {pos: this.pos, sprite: 'wall'});
 
-  constructor(private engine: EntityEngine, public pos: Vector2, public color: string) {
+  constructor(private engine: EntityEngine, public pos: Vector2) {
     super();
     engine.getSystem(BarrierSystem).add(this);
   }

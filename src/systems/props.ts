@@ -1,8 +1,22 @@
 import { EntitySystem, EntityEngine } from './ecs';
 import { Vector2 } from '../vector';
 
+interface PropOptions {
+  sprite: string;
+  pos: Vector2;
+  rot?: number;
+}
+
 export class PropComponent {
-  constructor(engine: EntityEngine, public pos: Vector2, public sprite: string) {
+
+  sprite: string;
+
+  pos: Vector2;
+
+  rot = 0;
+
+  constructor(engine: EntityEngine, options: PropOptions) {
+    Object.assign(this, options);
     engine.getSystem(PropsSystem).add(this);
   }
 }

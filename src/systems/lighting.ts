@@ -38,7 +38,7 @@ export class LightComponent extends Entity {
         parent: this,
       });
 
-      this.prop = new PropComponent(this.engine, pos, 'light');
+      this.prop = new PropComponent(this.engine, {pos, sprite: 'light'});
     }
 
     engine.getSystem(LightsSystem).add(this);

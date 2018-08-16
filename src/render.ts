@@ -26,6 +26,7 @@ const SPRITES_MAP: SpriteMap = {
   'floor': {x: 0, y: 0, width: 20, height: 20},
   'wall': {x: 0, y: 20, width: 20, height: 20},
   'agent': {x: 20, y: 0, width: 20, height: 30},
+  'corpse': {x: 40, y: 0, width: 40, height: 20},
 }
 
 const VERTEX_SHADER = `
@@ -207,13 +208,21 @@ export class Renderer {
     const propsSystem = this.engine.getSystem<PropsSystem>(PropsSystem);
     for (const prop of propsSystem.entities) {
       const sprite = SPRITES_MAP[prop.sprite];
+      if (prop.rot) {
+        this.context.save();
+        this.context.translate(prop.pos.x, prop.pos.y);
+        this.context.rotate(prop.rot);
+      }
       this.context.drawImage(
         this.texture,
         sprite.x, sprite.y,
         sprite.width, sprite.height,
-        prop.pos.x, prop.pos.y,
+        prop.rot ? 0 : prop.pos.x, prop.rot ? 0: prop.pos.y,
         sprite.width, sprite.height,
       );
+      if (prop.rot) {
+        this.context.restore();
+      }
     }
   }
 
@@ -276,7 +285,7 @@ export class Renderer {
   }
 
   renderLights() {
-    this.context.globalCompositeOperation = 'mul';
+    this.context.globalCompositeOperation = 'lighten';
     const lightsSystem = this.engine.getSystem<LightsSystem>(LightsSystem);
 
     for (const light of lightsSystem.entities) {
