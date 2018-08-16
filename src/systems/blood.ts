@@ -29,9 +29,9 @@ export class BloodSystem extends EntitySystem<void> {
       size: 1,
       onDeath: pos => this.toRender.push(pos),
     }, {
-      count: Math.ceil(Math.random() * 30),
+      count: Math.ceil(Math.random() * 50),
       direction: vel.copy().mul(0.2),
-      spread: 0.8,
+      spread: 0.9,
       speedSpread: 0.5,
       lifetimeSpread: 0.5,
     });

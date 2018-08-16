@@ -93,7 +93,7 @@ export class ParticlesSystem extends EntitySystem<ParticleComponent> {
     for (let i = 0; i < emitOptions.count; i++) {
       const particle = new ParticleComponent(this.engine, particleOptions);
       particle.posAndVel.vel = emitOptions.direction.copy().rotate(
-        Math.random() * emitOptions.spread,
+        (Math.random() - 0.5) * emitOptions.spread,
       ).mul((Math.random() + 0.5) * emitOptions.speedSpread);
       particle.lifetime *= (Math.random() + 0.5) * emitOptions.lifetimeSpread;
     }
