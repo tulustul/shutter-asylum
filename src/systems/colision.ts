@@ -12,7 +12,8 @@ export interface Collidable {
   pos: Vector2;
   shape: Shape;
   radius: number;
-  canHit: boolean;
+  canHitBarrier: boolean;
+  canHitDynamic: boolean;
   canReceive: boolean;
   shouldDecouple: boolean;
   parent: any;
@@ -26,6 +27,9 @@ export interface Colision<H, R> {
   penetration: number;
   vec: Vector2;
 }
+
+export const BARRIER_MASK = 1 << 0;
+export const AGENTS_MASK = 1 << 1;
 
 type ColisionGrid = Map<number, Collidable[]>;
 
@@ -42,15 +46,15 @@ export class ColisionSystem extends EntitySystem<Collidable> {
   listeners = new Map<Function, ColisionCallback<any, any>[]>();
 
   makeCollidable(collidable: Collidable) {
-    if (collidable.canReceive && collidable.canHit) {
+    if (collidable.canReceive && collidable.canHitBarrier) {
       this.dynamicReceivers.push(collidable);
-    } else if (collidable.canReceive && collidable.canHit) {
+    } else if (collidable.canReceive && collidable.canHitBarrier) {
       this.putToGrid(this.dynamicGrid, collidable);
     } else if (collidable.canReceive) {
       this.putToGrid(this.staticGrid, collidable);
     }
 
-    if (collidable.canHit) {
+    if (collidable.canHitBarrier) {
       this.entities.push(collidable);
     }
 
@@ -59,7 +63,7 @@ export class ColisionSystem extends EntitySystem<Collidable> {
 
   remove(entity: Collidable) {
     super.remove(entity);
-    if (entity.canReceive && entity.canHit) {
+    if (entity.canReceive && entity.canHitBarrier) {
       const index = this.dynamicReceivers.indexOf(entity);
       if (index !== -1) {
         this.dynamicReceivers.splice(index, 1);
@@ -96,11 +100,12 @@ export class ColisionSystem extends EntitySystem<Collidable> {
             this.onColision(hitter, receiver);
           }
         }
-
-        if (this.dynamicGrid.has(cell)) {
-          for (const receiver of this.dynamicGrid.get(cell)) {
-            if (receiver !== hitter) {
-              pairsToCheck.push([hitter, receiver]);
+        if (hitter.canHitDynamic) {
+          if (this.dynamicGrid.has(cell)) {
+            for (const receiver of this.dynamicGrid.get(cell)) {
+              if (receiver !== hitter) {
+                pairsToCheck.push([hitter, receiver]);
+              }
             }
           }
         }
@@ -245,7 +250,7 @@ export class ColisionSystem extends EntitySystem<Collidable> {
         const colision: Colision<any, any> = {
           hitterCol: hitter,
           receiverCol: receiver,
-          hitter: hitter.parent,
+          hitter: parent,
           receiver: receiver.parent,
           penetration,
           vec,

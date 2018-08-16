@@ -1,12 +1,13 @@
 import { Camera } from './camera';
 import { EntityEngine } from './systems/ecs';
 import { AgentSystem } from './systems/agent';
-import { PropsSystem } from "./systems/props";
+import { PropsSystem, PropComponent } from "./systems/props";
 import { TILE_SIZE } from './constants';
-import { ProjectileSystem } from './systems/projectile';
 import { PlayerSystem } from './systems/player';
 import { LightsSystem } from './systems/lighting';
 import { ParticlesSystem } from './systems/particles';
+import { BloodSystem } from './systems/blood';
+import { Vector2 } from './vector';
 
 interface SpriteMetadata {
   x: number;
@@ -202,14 +203,29 @@ export class Renderer {
     clear: false,
   });
 
+  higherPropsLayer = new Layer(this, {
+    renderWholeWorld: true,
+    followPlayer: false,
+    fillBlack: false,
+    clear: false,
+  });
+
   movingPropsLayer = new Layer(this, {fillBlack: false});
 
   particlesLayer = new Layer(this, {fillBlack: false});
 
+  bloodLayer = new Layer(this, {
+    renderWholeWorld: true,
+    followPlayer: false,
+    fillBlack: false,
+    clear: false,
+  });
+
   interfaceLayer = new Layer(this, {followPlayer: false, fillBlack: false});
 
+  checkColorsLayer: Layer;
   // DEBUG
-  checkColorsLayer: Layer; // = new Layer(this);
+  // checkColorsLayer = new Layer(this);
 
   postprocessing: Postprocessing;
 
@@ -233,14 +249,27 @@ export class Renderer {
     this.texture.onload = () => this.ready = true;
   }
 
-  renderProps() {
+  renderLowerProps() {
     const propsSystem = this.engine.getSystem<PropsSystem>(PropsSystem);
+    this.renderProps(propsSystem.toRender);
+    propsSystem.toRender = [];
+  }
 
-    for (const prop of propsSystem.toRender) {
+  renderHigherProps() {
+    const propsSystem = this.engine.getSystem<PropsSystem>(PropsSystem);
+    this.renderProps(propsSystem.higherToRender);
+    propsSystem.higherToRender = [];
+  }
+
+  renderProps(props: PropComponent[]) {
+    for (const prop of props) {
       const sprite = SPRITES_MAP[prop.sprite];
       if (prop.rot) {
         this.context.save();
-        this.context.translate(prop.pos.x, prop.pos.y);
+        const offset = new Vector2(
+          sprite.width / 2, sprite.height / 2,
+        ).rotate(prop.rot);
+        this.context.translate(prop.pos.x - offset.x, prop.pos.y - offset.y);
         this.context.rotate(prop.rot);
       }
       this.context.drawImage(
@@ -254,7 +283,6 @@ export class Renderer {
         this.context.restore();
       }
     }
-    propsSystem.markAsRendered();
   }
 
   renderAgents() {
@@ -289,7 +317,7 @@ export class Renderer {
     this.context.fillStyle = 'red';
     for (const particle of this.engine.getSystem<ParticlesSystem>(ParticlesSystem).entities) {
       const pos = particle.posAndVel.pos;
-      this.context.fillRect(pos.x, pos.y, 2, 2);
+      this.context.fillRect(pos.x, pos.y, particle.size, particle.size);
     }
   }
 
@@ -360,6 +388,22 @@ export class Renderer {
     this.context.globalCompositeOperation = 'source-over';
   }
 
+  renderBlood() {
+    const bloodSystem = this.engine.getSystem<BloodSystem>(BloodSystem);
+
+    this.context.fillStyle = 'red';
+    for (const blood of bloodSystem.toRender) {
+      this.context.fillRect(blood.x, blood.y, 2, 2);
+    }
+    for (const leak of bloodSystem.leaksToRender) {
+      this.context.beginPath();
+      this.context.arc(leak.pos.x, leak.pos.y, leak.progress, 0, 2 * Math.PI);
+      this.context.fill();
+    }
+    bloodSystem.toRender = [];
+    bloodSystem.leaksToRender = [];
+  }
+
   render() {
     if (!this.ready) {
       return;
@@ -368,10 +412,16 @@ export class Renderer {
     this.renderLights();
 
     this.propsLayer.activate();
-    this.renderProps();
+    this.renderLowerProps();
 
     this.movingPropsLayer.activate();
     this.renderAgents();
+
+    this.bloodLayer.activate();
+    this.renderBlood();
+
+    this.higherPropsLayer.activate();
+    this.renderHigherProps();
 
     this.particlesLayer.activate();
     this.renderParticles();
@@ -394,13 +444,18 @@ export class Renderer {
     this.context.globalCompositeOperation = 'source-over'
     this.drawLayer(this.propsLayer);
 
+    this.context.globalCompositeOperation = 'multiply'
+    this.drawLayer(this.bloodLayer);
+
+    this.context.globalCompositeOperation = 'source-over'
+    this.drawLayer(this.higherPropsLayer);
     this.context.drawImage(this.movingPropsLayer.canvas, 0, 0);
+    this.context.drawImage(this.particlesLayer.canvas, 0, 0);
 
     this.context.globalCompositeOperation = 'overlay';
     this.drawLayer(this.lightsLayer);
 
     this.context.globalCompositeOperation = 'source-over'
-    this.context.drawImage(this.particlesLayer.canvas, 0, 0);
     this.context.drawImage(this.interfaceLayer.canvas, 0, 0);
   }
 

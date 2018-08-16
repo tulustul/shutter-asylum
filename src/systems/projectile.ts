@@ -1,8 +1,9 @@
 import { EntitySystem, EntityEngine, Entity } from "./ecs";
 import { Vector2 } from "../vector";
-import { ColisionSystem } from "./colision";
+import { ColisionSystem, BARRIER_MASK, AGENTS_MASK } from "./colision";
 import { AgentComponent } from "./agent";
-import {  ParticleComponent } from "./particles";
+import { ParticleComponent, ParticlesSystem } from "./particles";
+import { BloodSystem } from "./blood";
 
 export class ProjectileComponent extends Entity {
 
@@ -17,7 +18,11 @@ export class ProjectileComponent extends Entity {
     super();
 
     this.particle = new ParticleComponent(this.engine, {
-      pos, vel, color: 'red', lifetime: maxLifetime,
+      pos, vel,
+      color: 'red',
+      lifetime: maxLifetime,
+      canHitDynamic: true,
+      size: 2,
     });
     this.particle.parent = this;
   }
@@ -32,10 +37,15 @@ export class ProjectileSystem extends EntitySystem<ProjectileComponent> {
 
   init() {
     const colisionSystem = this.engine.getSystem<ColisionSystem>(ColisionSystem);
+    const bloodSystem = this.engine.getSystem<BloodSystem>(BloodSystem);
 
     colisionSystem.listenColisions<ProjectileComponent, any>(ProjectileComponent, colision => {
       if (colision.receiver instanceof AgentComponent) {
         colision.receiver.hit();
+        bloodSystem.emitBlood(
+          colision.receiver.posAndVel.pos,
+          colision.hitter.particle.posAndVel.vel,
+        );
       }
     });
   }

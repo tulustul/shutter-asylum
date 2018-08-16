@@ -5,6 +5,7 @@ import { PropComponent } from "./props";
 import { Vector2 } from "../vector";
 import { TILE_SIZE } from "../constants";
 import { Gun } from "../weapons";
+import { BloodSystem } from "./blood";
 
 interface AgentOptions {
   maxHealth?: number;
@@ -42,7 +43,8 @@ export class AgentComponent extends Entity {
       pos: this.posAndVel.pos,
       shape: Shape.circle,
       radius: TILE_SIZE / 2,
-      canHit: true,
+      canHitBarrier: true,
+      canHitDynamic: false,
       canReceive: true,
       shouldDecouple: true,
       parent: this,
@@ -50,10 +52,13 @@ export class AgentComponent extends Entity {
   }
 
   destroy() {
+    const bloodSystem = this.engine.getSystem<BloodSystem>(BloodSystem);
+    bloodSystem.leakFromCorpse(this.posAndVel.pos);
     new PropComponent(this.engine, {
       sprite: 'corpse',
       pos: this.posAndVel.pos,
       rot: Math.random() * Math.PI * 2,
+      aboveLevel: true,
     });
     this.engine.getSystem<ColisionSystem>(ColisionSystem).remove(this.collidable);
     this.posAndVel.destroy();

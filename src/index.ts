@@ -14,6 +14,7 @@ import { ProjectileSystem } from "./systems/projectile";
 import { AISystem } from "./systems/ai";
 import { LightsSystem } from "./systems/lighting";
 import { ParticlesSystem } from "./systems/particles";
+import { BloodSystem } from "./systems/blood";
 
 let engine: EntityEngine;
 let control: Control;
@@ -41,6 +42,7 @@ async function init() {
   engine.register(new AISystem());
   engine.register(new LightsSystem());
   engine.register(new ParticlesSystem());
+  engine.register(new BloodSystem());
 
   engine.init();
 

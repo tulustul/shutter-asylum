@@ -8,12 +8,17 @@ interface ParticleOptions {
   vel?: Vector2;
   color: string;
   lifetime: number;
+  canHitDynamic: boolean;
+  size: number;
+  onDeath?: (pos: Vector2) => void;
 }
 
 interface EmitOptions {
   direction: Vector2;
   count: number;
   spread: number;
+  speedSpread: number;
+  lifetimeSpread: number;
 }
 
 export class ParticleComponent extends Entity {
@@ -25,6 +30,10 @@ export class ParticleComponent extends Entity {
   lifetime: number;
 
   bornAt: number;
+
+  size: number;
+
+  onDeath: (pos: Vector2) => void;
 
   constructor(private engine: EntityEngine, options: ParticleOptions) {
     super();
@@ -39,10 +48,11 @@ export class ParticleComponent extends Entity {
       pos: pos,
       shape: Shape.point,
       radius: 0,
-      canHit: true,
+      canHitBarrier: true,
       canReceive: false,
       shouldDecouple: false,
       parent: this,
+      canHitDynamic: options.canHitDynamic,
     });
 
     engine.getSystem(ParticlesSystem).add(this);
@@ -52,6 +62,10 @@ export class ParticleComponent extends Entity {
     this.posAndVel.destroy();
     this.engine.getSystem<ColisionSystem>(ColisionSystem).remove(this.collidable);
     super.destroy();
+
+    if (this.onDeath) {
+      this.onDeath(this.collidable.pos);
+    }
   }
 }
 
@@ -70,7 +84,7 @@ export class ParticlesSystem extends EntitySystem<ParticleComponent> {
   update() {
     for (const particle of this.entities) {
       if (this.engine.time > particle.bornAt + particle.lifetime) {
-        this.remove(particle);
+        particle.destroy();
       }
     }
   }
@@ -80,7 +94,8 @@ export class ParticlesSystem extends EntitySystem<ParticleComponent> {
       const particle = new ParticleComponent(this.engine, particleOptions);
       particle.posAndVel.vel = emitOptions.direction.copy().rotate(
         Math.random() * emitOptions.spread,
-      );
+      ).mul((Math.random() + 0.5) * emitOptions.speedSpread);
+      particle.lifetime *= (Math.random() + 0.5) * emitOptions.lifetimeSpread;
     }
   }
 }

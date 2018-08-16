@@ -17,11 +17,7 @@ export class PosAndVel extends Entity {
 
 export class VelocitySystem extends EntitySystem<PosAndVel> {
   update() {
-    // const colisionSystem = this.engine.getSystem<ColisionSystem>(ColisionSystem);
-
     for (const posAndVel of this.entities) {
-      // colisionSystem.
-      // colisionSystem.staticGrid
       posAndVel.floatPos.add(posAndVel.vel);
 
       posAndVel.pos.x = Math.round(posAndVel.floatPos.x);
