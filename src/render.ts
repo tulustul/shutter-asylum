@@ -6,6 +6,7 @@ import { TILE_SIZE } from './constants';
 import { ProjectileSystem } from './systems/projectile';
 import { PlayerSystem } from './systems/player';
 import { LightsSystem } from './systems/lighting';
+import { ParticlesSystem } from './systems/particles';
 
 interface SpriteMetadata {
   x: number;
@@ -284,10 +285,10 @@ export class Renderer {
     }
   }
 
-  renderProjectiles() {
-    this.context.fillStyle = 'orange';
-    for (const projectile of this.engine.getSystem<ProjectileSystem>(ProjectileSystem).entities) {
-      const pos = projectile.posAndVel.pos;
+  renderParticles() {
+    this.context.fillStyle = 'red';
+    for (const particle of this.engine.getSystem<ParticlesSystem>(ParticlesSystem).entities) {
+      const pos = particle.posAndVel.pos;
       this.context.fillRect(pos.x, pos.y, 2, 2);
     }
   }
@@ -373,7 +374,7 @@ export class Renderer {
     this.renderAgents();
 
     this.particlesLayer.activate();
-    this.renderProjectiles();
+    this.renderParticles();
 
     this.interfaceLayer.activate();
     this.renderInterface();

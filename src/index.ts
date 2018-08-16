@@ -13,6 +13,7 @@ import { BarrierSystem } from "./systems/barrier";
 import { ProjectileSystem } from "./systems/projectile";
 import { AISystem } from "./systems/ai";
 import { LightsSystem } from "./systems/lighting";
+import { ParticlesSystem } from "./systems/particles";
 
 let engine: EntityEngine;
 let control: Control;
@@ -39,6 +40,7 @@ async function init() {
   engine.register(new ColisionSystem());
   engine.register(new AISystem());
   engine.register(new LightsSystem());
+  engine.register(new ParticlesSystem());
 
   engine.init();
 

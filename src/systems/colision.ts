@@ -239,18 +239,20 @@ export class ColisionSystem extends EntitySystem<Collidable> {
   }
 
   private emitColision(hitter: Collidable, receiver: Collidable, vec: Vector2, penetration: number) {
-    const key = hitter.parent.constructor;
-    if (this.listeners.has(key)) {
-      const colision: Colision<any, any> = {
-        hitterCol: hitter,
-        receiverCol: receiver,
-        hitter: hitter.parent,
-        receiver: receiver.parent,
-        penetration,
-        vec,
-      }
-      for (const callback of this.listeners.get(key)) {
-        callback(colision);
+    for (const parent of hitter.parent.getAncestors()) {
+      const key = parent.constructor;
+      if (this.listeners.has(key)) {
+        const colision: Colision<any, any> = {
+          hitterCol: hitter,
+          receiverCol: receiver,
+          hitter: hitter.parent,
+          receiver: receiver.parent,
+          penetration,
+          vec,
+        }
+        for (const callback of this.listeners.get(key)) {
+          callback(colision);
+        }
       }
     }
   }

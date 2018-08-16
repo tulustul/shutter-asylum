@@ -92,6 +92,15 @@ export class Entity {
     return topParent;
   }
 
+  *getAncestors() {
+    let parent: Entity = this;
+    yield parent;
+    while (parent.parent) {
+      parent = this.parent;
+      yield parent;
+    }
+  }
+
   destroy() {
     this.system.remove(this);
   }

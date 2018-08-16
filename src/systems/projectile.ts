@@ -1,16 +1,12 @@
 import { EntitySystem, EntityEngine, Entity } from "./ecs";
 import { Vector2 } from "../vector";
-import { ColisionSystem, Collidable, Shape } from "./colision";
-import { PosAndVel } from "./velocity";
+import { ColisionSystem } from "./colision";
 import { AgentComponent } from "./agent";
+import {  ParticleComponent } from "./particles";
 
 export class ProjectileComponent extends Entity {
 
-  posAndVel: PosAndVel;
-
-  collidable: Collidable;
-
-  bornAt: number;
+  particle: ParticleComponent;
 
   constructor(
     private engine: EntityEngine,
@@ -20,30 +16,15 @@ export class ProjectileComponent extends Entity {
   ) {
     super();
 
-    const posCopy = pos.copy();
-
-    this.posAndVel = new PosAndVel(this.engine, posCopy);
-    this.posAndVel.vel = vel;
-
-    this.collidable = {
-      pos: posCopy,
-      shape: Shape.point,
-      radius: 0,
-      canHit: true,
-      canReceive: false,
-      shouldDecouple: false,
-      parent: this,
-    }
-
-    this.bornAt = this.engine.time;
-
-    this.engine.getSystem<ColisionSystem>(ColisionSystem).makeCollidable(this.collidable);
+    this.particle = new ParticleComponent(this.engine, {
+      pos, vel, color: 'red', lifetime: maxLifetime,
+    });
+    this.particle.parent = this;
   }
 
   destroy() {
     super.destroy();
-    this.posAndVel.destroy();
-    this.engine.getSystem<ColisionSystem>(ColisionSystem).remove(this.collidable);
+    this.particle.destroy();
   }
 }
 
@@ -53,7 +34,6 @@ export class ProjectileSystem extends EntitySystem<ProjectileComponent> {
     const colisionSystem = this.engine.getSystem<ColisionSystem>(ColisionSystem);
 
     colisionSystem.listenColisions<ProjectileComponent, any>(ProjectileComponent, colision => {
-      colision.hitter.destroy();
       if (colision.receiver instanceof AgentComponent) {
         colision.receiver.hit();
       }
@@ -65,13 +45,5 @@ export class ProjectileSystem extends EntitySystem<ProjectileComponent> {
   }
 
   update() {
-    for (const projectile of this.entities) {
-      if (this.engine.time > projectile.bornAt + projectile.maxLifetime) {
-        this.remove(projectile);
-      }
-    }
-    // if (this.entities.length) {
-    //   console.log(this.entities)
-    // }
   }
 }
