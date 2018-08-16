@@ -5,6 +5,10 @@ import { Vector2 } from "../vector";
 import { TILE_SIZE } from "../constants";
 import { Gun } from "../weapons";
 
+interface AgentOptions {
+  maxHealth?: number;
+}
+
 export class AgentComponent extends Entity {
 
   MAX_SPEED = 3;
@@ -19,10 +23,17 @@ export class AgentComponent extends Entity {
 
   weapon: Gun;
 
-  health = 5;
+  maxHealth = 5;
 
-  constructor(private engine: EntityEngine, pos: Vector2) {
+  health: number;
+
+  constructor(private engine: EntityEngine, pos: Vector2, options?: AgentOptions) {
     super();
+    if (options) {
+      Object.assign(this, options);
+    }
+    this.health = this.maxHealth;
+
     this.engine.getSystem(AgentSystem).add(this);
     this.posAndVel = new PosAndVel(this.engine, pos);
     this.collidable = this.engine.getSystem<ColisionSystem>(ColisionSystem)

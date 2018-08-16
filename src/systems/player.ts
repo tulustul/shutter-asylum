@@ -11,7 +11,9 @@ export class PlayerComponent extends Entity {
 
   constructor(public engine: EntityEngine, pos: Vector2) {
     super();
-    this.agent = new AgentComponent(this.engine, pos);
+    this.agent = new AgentComponent(this.engine, pos, {
+      maxHealth: 30,
+    });
     this.agent.posAndVel.friction = 1.1;
     this.agent.parent = this;
     engine.getSystem(PlayerSystem).add(this);

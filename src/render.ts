@@ -238,7 +238,7 @@ export class Renderer {
       this.context.restore();
 
       this.context.fillStyle = 'red';
-      const healthBar = agent.health * 4;
+      const healthBar = (TILE_SIZE / agent.maxHealth) * agent.health;
       this.context.fillRect(-TILE_SIZE / 2, TILE_SIZE / 2 + 5, healthBar, 1);
 
       this.context.restore();
@@ -268,7 +268,6 @@ export class Renderer {
   ${weapon.options.name}
   ${weapon.bulletsInMagazine} / ${weapon.options.magazineCapacity}
   (${weapon.totalBullets})
-  health: ${player.agent.health / 5 * 100}%
   `;
       this.context.fillText(text, 0, 380);
     } else {
@@ -277,6 +276,7 @@ export class Renderer {
   }
 
   renderLights() {
+    this.context.globalCompositeOperation = 'mul';
     const lightsSystem = this.engine.getSystem<LightsSystem>(LightsSystem);
 
     for (const light of lightsSystem.entities) {
@@ -304,6 +304,7 @@ export class Renderer {
         this.context.restore();
       }
     }
+    this.context.globalCompositeOperation = 'source-over';
   }
 
   render() {
