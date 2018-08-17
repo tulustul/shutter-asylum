@@ -5,8 +5,8 @@ X.........XXXXX..LX
 X.........X   X...X
 XXXXX...XXX   X...XXXXXXXXXXXXXXXXXX
     X...X     X..........B.........X
-    X..LX     X.......E......E.....X
-    X...X     X..........E.........X
+    X..LX     X.......E.E.E.EE.....X
+    X...X     X........E.E..E......X
     X...X     X...X................X
 XXXXX...XXXXXXX...X................X
 X................XXXXXXXXXXXX.....LX

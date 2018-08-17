@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --mode=development",
-    "build": "webpack --mode=production"
+    "build": "webpack --mode=production --env=prod"
   },
   "author": "Mateusz Tomczyk",
   "license": "ISC",
@@ -15,6 +15,12 @@
     "typescript": "^3.0.1",
     "webpack": "^4.16.5",
     "webpack-cli": "^3.1.0",
-    "webpack-dev-server": "^3.1.5"
+    "webpack-dev-server": "^3.1.5",
+    "webpack-shell-plugin": "^0.5.0",
+    "lzma": "^2.3.2"
+  },
+  "dependencies": {
+    "lzma": "^2.3.2",
+    "lzma-purejs": "^0.9.3"
   }
 }
