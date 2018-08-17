@@ -34,6 +34,8 @@ export class ParticleComponent extends Entity {
 
   size: number;
 
+  color: string;
+
   onDeath: (pos: Vector2) => void;
 
   constructor(private engine: EntityEngine, options: ParticleOptions) {
@@ -70,7 +72,11 @@ export class ParticleComponent extends Entity {
 
 export class ParticlesSystem extends EntitySystem<ParticleComponent> {
 
-  byColors = new Map<string, ParticleComponent>();
+  byColors: {[key: string]: ParticleComponent[]} = {
+    red: [],
+    orange: [],
+  }
+
 
   init() {
     const colisionSystem = this.engine.getSystem<ColisionSystem>(ColisionSystem);
@@ -86,6 +92,18 @@ export class ParticlesSystem extends EntitySystem<ParticleComponent> {
         particle.destroy();
       }
     }
+  }
+
+  add(entity: ParticleComponent) {
+    super.add(entity);
+    this.byColors[entity.color].push(entity);
+  }
+
+  remove(entity: ParticleComponent) {
+    super.remove(entity);
+    const colorList = this.byColors[entity.color];
+    const index = colorList.indexOf(entity);
+    colorList.splice(index, 1);
   }
 
   emit(particleOptions: ParticleOptions, emitOptions: EmitOptions) {

@@ -53,13 +53,17 @@ float limit(float x) {
 }
 
 void main(void) {
-  vec4 color = texture2D(u_texture, uv);
-  float r = limit(color.r);
-  float g = limit(color.g);
-  if (r != g) {
-    g = 0.0;
+  vec4 c = texture2D(u_texture, uv);
+  if (c.r > 0.8 && c.g > 0.5 && c.g < 0.7 && c.b < 0.2) {
+    gl_FragColor = vec4(1.0, 0.5, 0.0, 1.0);
+  } else {
+    float r = limit(c.r);
+    float g = limit(c.g);
+    if (r != g) {
+      g = 0.0;
+    }
+    gl_FragColor = vec4(r, g, g, 1.0);
   }
-  gl_FragColor = vec4(r, g, g, 1.0);
 }`;
 
 const VERTS = new Float32Array([
@@ -314,10 +318,13 @@ export class Renderer {
   }
 
   renderParticles() {
-    this.context.fillStyle = 'red';
-    for (const particle of this.engine.getSystem<ParticlesSystem>(ParticlesSystem).entities) {
-      const pos = particle.posAndVel.pos;
-      this.context.fillRect(pos.x, pos.y, particle.size, particle.size);
+    const particleSystem = this.engine.getSystem<ParticlesSystem>(ParticlesSystem);
+    for (const color of Object.keys(particleSystem.byColors)) {
+      this.context.fillStyle = color;
+      for (const particle of particleSystem.byColors[color]) {
+        const pos = particle.posAndVel.pos;
+        this.context.fillRect(pos.x, pos.y, particle.size, particle.size);
+      }
     }
   }
 
@@ -341,7 +348,7 @@ export class Renderer {
       this.context.fillText(text, 0, 380);
     } else {
       this.context.font = '20px sans-serif';
-      const gameoverText = 'GAME OVER';
+      const gameoverText = 'YOU DIED';
       const textWidth = this.context.measureText(gameoverText).width;
       this.context.fillText(
         gameoverText, this.canvas.width / 2 - textWidth / 2, 150,
@@ -450,12 +457,12 @@ export class Renderer {
     this.context.globalCompositeOperation = 'source-over'
     this.drawLayer(this.higherPropsLayer);
     this.context.drawImage(this.movingPropsLayer.canvas, 0, 0);
-    this.context.drawImage(this.particlesLayer.canvas, 0, 0);
 
     this.context.globalCompositeOperation = 'overlay';
     this.drawLayer(this.lightsLayer);
 
     this.context.globalCompositeOperation = 'source-over'
+    this.context.drawImage(this.particlesLayer.canvas, 0, 0);
     this.context.drawImage(this.interfaceLayer.canvas, 0, 0);
   }
 
