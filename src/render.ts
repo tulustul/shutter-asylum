@@ -344,7 +344,7 @@ export class Renderer {
       const gameoverText = 'GAME OVER';
       const textWidth = this.context.measureText(gameoverText).width;
       this.context.fillText(
-        gameoverText, this.canvas.width / 2 - textWidth / 2, 200,
+        gameoverText, this.canvas.width / 2 - textWidth / 2, 150,
       );
     }
   }
@@ -397,7 +397,7 @@ export class Renderer {
     }
     for (const leak of bloodSystem.leaksToRender) {
       this.context.beginPath();
-      this.context.arc(leak.pos.x, leak.pos.y, leak.progress, 0, 2 * Math.PI);
+      this.context.arc(leak.pos.x, leak.pos.y, leak.size, 0, 2 * Math.PI);
       this.context.fill();
     }
     bloodSystem.toRender = [];

@@ -49,12 +49,9 @@ export class ParticleComponent extends Entity {
       pos: pos,
       shape: Shape.point,
       radius: 0,
-      // canHitBarrier: true,
-      // canReceive: false,
       shouldDecouple: false,
       parent: this,
       canHit: options.canHit,
-      // canHitDynamic: options.canHitDynamic,
     });
 
     engine.getSystem(ParticlesSystem).add(this);

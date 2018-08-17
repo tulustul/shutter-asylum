@@ -6,7 +6,8 @@ import { Vector2 } from "../vector";
 interface BloodLeak {
   pos: Vector2;
   lastLeak: number;
-  progress: number;
+  size: number;
+  maxSize: number;
 }
 
 const LEAK_SPEED = 300;
@@ -40,18 +41,25 @@ export class BloodSystem extends EntitySystem<void> {
   }
 
   leakFromCorpse(pos: Vector2) {
-    this.leaks.push({
-      pos, lastLeak: 0, progress: 0,
-    });
+    for (let i = 0; i < 3; i++) {
+      const offset = new Vector2(6 - Math.random() * 12, 6 - Math.random() * 12);
+      const leak = {
+        pos: pos.copy().add(offset),
+        lastLeak: 0,
+        size: 0,
+        maxSize: Math.random() * 5 + 3,
+      };
+      this.leaks.push(leak);
+    }
   }
 
   update() {
     for (const leak of this.leaks) {
       if (this.engine.time - leak.lastLeak > LEAK_SPEED) {
         leak.lastLeak = this.engine.time;
-        leak.progress += 1;
+        leak.size += 1;
         this.leaksToRender.push(leak);
-        if (leak.progress === 9) {
+        if (leak.size > leak.maxSize) {
           const index = this.leaks.indexOf(leak);
           this.leaks.splice(index, 1);
         }

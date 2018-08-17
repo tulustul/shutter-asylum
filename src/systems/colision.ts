@@ -13,9 +13,6 @@ export interface Collidable {
   pos: Vector2;
   shape: Shape;
   radius: number;
-  // canHitBarrier: boolean;
-  // canHitDynamic: boolean;
-  // canReceive: boolean;
   shouldDecouple: boolean;
   parent: any;
   mask?: number;
