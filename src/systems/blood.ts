@@ -1,6 +1,7 @@
 import { EntitySystem } from "./ecs";
-import { Vector2 } from "../vector";
 import { ParticlesSystem } from "./particles";
+import { BARRIER_MASK } from "../colisions-masks";
+import { Vector2 } from "../vector";
 
 interface BloodLeak {
   pos: Vector2;
@@ -27,6 +28,7 @@ export class BloodSystem extends EntitySystem<void> {
       lifetime: 800,
       canHitDynamic: false,
       size: 1,
+      canHit: BARRIER_MASK,
       onDeath: pos => this.toRender.push(pos),
     }, {
       count: Math.ceil(Math.random() * 50),

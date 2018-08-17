@@ -1,6 +1,7 @@
 import { EntitySystem } from './ecs';
 import { Vector2 } from '../vector';
 import { TILE_SIZE } from '../constants';
+import { BARRIER_MASK, AGENTS_MASK } from '../colisions-masks';
 
 export enum Shape {
   gridCell,
@@ -12,11 +13,13 @@ export interface Collidable {
   pos: Vector2;
   shape: Shape;
   radius: number;
-  canHitBarrier: boolean;
-  canHitDynamic: boolean;
-  canReceive: boolean;
+  // canHitBarrier: boolean;
+  // canHitDynamic: boolean;
+  // canReceive: boolean;
   shouldDecouple: boolean;
   parent: any;
+  mask?: number;
+  canHit?: number;
 }
 
 export interface Colision<H, R> {
@@ -27,9 +30,6 @@ export interface Colision<H, R> {
   penetration: number;
   vec: Vector2;
 }
-
-export const BARRIER_MASK = 1 << 0;
-export const AGENTS_MASK = 1 << 1;
 
 type ColisionGrid = Map<number, Collidable[]>;
 
@@ -46,15 +46,14 @@ export class ColisionSystem extends EntitySystem<Collidable> {
   listeners = new Map<Function, ColisionCallback<any, any>[]>();
 
   makeCollidable(collidable: Collidable) {
-    if (collidable.canReceive && collidable.canHitBarrier) {
+    if (collidable.mask & AGENTS_MASK) {
       this.dynamicReceivers.push(collidable);
-    } else if (collidable.canReceive && collidable.canHitBarrier) {
       this.putToGrid(this.dynamicGrid, collidable);
-    } else if (collidable.canReceive) {
+    } else if (collidable.mask & BARRIER_MASK) {
       this.putToGrid(this.staticGrid, collidable);
     }
 
-    if (collidable.canHitBarrier) {
+    if (collidable.canHit) {
       this.entities.push(collidable);
     }
 
@@ -63,7 +62,7 @@ export class ColisionSystem extends EntitySystem<Collidable> {
 
   remove(entity: Collidable) {
     super.remove(entity);
-    if (entity.canReceive && entity.canHitBarrier) {
+    if (entity.mask & AGENTS_MASK) {
       const index = this.dynamicReceivers.indexOf(entity);
       if (index !== -1) {
         this.dynamicReceivers.splice(index, 1);
@@ -100,11 +99,13 @@ export class ColisionSystem extends EntitySystem<Collidable> {
             this.onColision(hitter, receiver);
           }
         }
-        if (hitter.canHitDynamic) {
+        if (hitter.canHit & AGENTS_MASK) {
           if (this.dynamicGrid.has(cell)) {
             for (const receiver of this.dynamicGrid.get(cell)) {
               if (receiver !== hitter) {
-                pairsToCheck.push([hitter, receiver]);
+                if (receiver.mask & hitter.canHit) {
+                  pairsToCheck.push([hitter, receiver]);
+                }
               }
             }
           }

@@ -1,7 +1,8 @@
 import { EntitySystem, EntityEngine, Entity } from "./ecs";
 import { PropComponent } from "./props";
-import { Vector2 } from "../vector";
 import { ColisionSystem, Shape } from "./colision";
+import { Vector2 } from "../vector";
+import { BARRIER_MASK } from "../colisions-masks";
 
 export class BarrierComponent extends Entity {
 
@@ -9,11 +10,12 @@ export class BarrierComponent extends Entity {
     pos: this.pos,
     shape: Shape.gridCell,
     radius: 0,
-    canHitBarrier: false,
-    canHitDynamic: false,
-    canReceive: true,
+    // canHitBarrier: false,
+    // canHitDynamic: false,
+    // canReceive: true,
     shouldDecouple: false,
     parent: this,
+    mask: BARRIER_MASK,
   });
 
   prop = new PropComponent(this.engine, {pos: this.pos, sprite: 'wall'});

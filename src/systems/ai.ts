@@ -4,6 +4,7 @@ import { PlayerSystem } from "./player";
 import { ColisionSystem } from "./colision";
 import { Vector2 } from "../vector";
 import { Gun, mgOptions } from "../weapons";
+import { ENEMY_MASK } from "../colisions-masks";
 
 const THINKING_FREQ = 300;
 
@@ -17,7 +18,7 @@ export class AIComponent extends Entity {
 
   constructor(private engine: EntityEngine, pos: Vector2) {
     super();
-    this.agent = new AgentComponent(engine, pos);
+    this.agent = new AgentComponent(engine, pos, {colisionMask: ENEMY_MASK});
     this.agent.parent = this;
     this.weapon = new Gun(this.engine, mgOptions);
     this.weapon.setOwner(this.agent);

@@ -3,6 +3,11 @@ import { AgentComponent } from './systems/agent';
 import { EntityEngine } from './systems/ecs';
 import { Vector2 } from './vector';
 import { LightComponent } from './systems/lighting';
+import { PlayerComponent } from './systems/player';
+import {
+  BARRIER_OR_PLAYER_MASK,
+  BARRIER_OR_ENEMY_MASK,
+} from './colisions-masks';
 
 interface GunOptions {
   name: string;
@@ -68,6 +73,8 @@ export class Gun {
 
   reloading = false;
 
+  canHit: number;
+
   constructor(private engine: EntityEngine, public options: GunOptions) {
     this.bulletsInMagazine = this.options.magazineCapacity;
     this.projectileSystem = engine.getSystem<ProjectileSystem>(ProjectileSystem);
@@ -85,7 +92,10 @@ export class Gun {
     const offset = new Vector2(0, 11).rotate(this.owner.rot);
     const vel = new Vector2(0, this.options.bulletSpeed).rotate(rotation);
     this.projectileSystem.makeProjectile(
-      this.owner.posAndVel.pos.copy().add(offset), vel, this.options.bulletLifetime
+      this.owner.posAndVel.pos.copy().add(offset),
+      vel,
+      this.options.bulletLifetime,
+      this.canHit,
     );
 
     this.bulletsInMagazine--;
@@ -110,6 +120,8 @@ export class Gun {
   }
 
   setOwner(agent: AgentComponent) {
+    const isPlayer = agent.parent instanceof PlayerComponent;
+    this.canHit = isPlayer ? BARRIER_OR_ENEMY_MASK : BARRIER_OR_PLAYER_MASK;
     this.owner = agent;
     agent.weapon = this;
   }

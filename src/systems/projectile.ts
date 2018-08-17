@@ -1,9 +1,9 @@
 import { EntitySystem, EntityEngine, Entity } from "./ecs";
-import { Vector2 } from "../vector";
-import { ColisionSystem, BARRIER_MASK, AGENTS_MASK } from "./colision";
+import { ColisionSystem } from "./colision";
 import { AgentComponent } from "./agent";
 import { ParticleComponent, ParticlesSystem } from "./particles";
 import { BloodSystem } from "./blood";
+import { Vector2 } from "../vector";
 
 export class ProjectileComponent extends Entity {
 
@@ -14,6 +14,7 @@ export class ProjectileComponent extends Entity {
     pos: Vector2,
     vel: Vector2,
     public maxLifetime: number,
+    canHit: number,
   ) {
     super();
 
@@ -23,6 +24,7 @@ export class ProjectileComponent extends Entity {
       lifetime: maxLifetime,
       canHitDynamic: true,
       size: 2,
+      canHit: canHit,
     });
     this.particle.parent = this;
   }
@@ -50,8 +52,8 @@ export class ProjectileSystem extends EntitySystem<ProjectileComponent> {
     });
   }
 
-  makeProjectile(pos: Vector2, vel: Vector2, maxLifetime: number) {
-    this.add(new ProjectileComponent(this.engine, pos, vel, maxLifetime));
+  makeProjectile(pos: Vector2, vel: Vector2, maxLifetime: number, canHit: number) {
+    this.add(new ProjectileComponent(this.engine, pos, vel, maxLifetime, canHit));
   }
 
   update() {

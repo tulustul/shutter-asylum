@@ -4,6 +4,7 @@ import { Control } from '../control';
 import { Camera } from '../camera';
 import { Vector2 } from '../vector';
 import { Gun, pistolOptions, mgOptions, minigunOptions, flamethrowerOptions } from '../weapons';
+import { PLAYER_MASK } from '../colisions-masks';
 
 export class PlayerComponent extends Entity {
 
@@ -13,6 +14,7 @@ export class PlayerComponent extends Entity {
     super();
     this.agent = new AgentComponent(this.engine, pos, {
       maxHealth: 30,
+      colisionMask: PLAYER_MASK,
     });
     this.agent.posAndVel.friction = 1.1;
     this.agent.parent = this;

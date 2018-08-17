@@ -2,13 +2,15 @@ import { EntitySystem, EntityEngine, Entity } from "./ecs";
 import { PosAndVel } from './velocity';
 import { ColisionSystem, Shape, Collidable } from "./colision";
 import { PropComponent } from "./props";
+import { BloodSystem } from "./blood";
 import { Vector2 } from "../vector";
 import { TILE_SIZE } from "../constants";
 import { Gun } from "../weapons";
-import { BloodSystem } from "./blood";
+import { BARRIER_MASK } from "../colisions-masks";
 
 interface AgentOptions {
   maxHealth?: number;
+  colisionMask: number;
 }
 
 export class AgentComponent extends Entity {
@@ -29,7 +31,7 @@ export class AgentComponent extends Entity {
 
   health: number;
 
-  constructor(private engine: EntityEngine, pos: Vector2, options?: AgentOptions) {
+  constructor(private engine: EntityEngine, pos: Vector2, options: AgentOptions) {
     super();
     if (options) {
       Object.assign(this, options);
@@ -43,11 +45,13 @@ export class AgentComponent extends Entity {
       pos: this.posAndVel.pos,
       shape: Shape.circle,
       radius: TILE_SIZE / 2,
-      canHitBarrier: true,
-      canHitDynamic: false,
-      canReceive: true,
+      // canHitBarrier: true,
+      // canHitDynamic: false,
+      // canReceive: true,
       shouldDecouple: true,
       parent: this,
+      mask: options.colisionMask,
+      canHit: BARRIER_MASK,
     });
   }
 

@@ -10,6 +10,7 @@ interface ParticleOptions {
   lifetime: number;
   canHitDynamic: boolean;
   size: number;
+  canHit: number;
   onDeath?: (pos: Vector2) => void;
 }
 
@@ -48,11 +49,12 @@ export class ParticleComponent extends Entity {
       pos: pos,
       shape: Shape.point,
       radius: 0,
-      canHitBarrier: true,
-      canReceive: false,
+      // canHitBarrier: true,
+      // canReceive: false,
       shouldDecouple: false,
       parent: this,
-      canHitDynamic: options.canHitDynamic,
+      canHit: options.canHit,
+      // canHitDynamic: options.canHitDynamic,
     });
 
     engine.getSystem(ParticlesSystem).add(this);

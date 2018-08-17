@@ -1,7 +1,8 @@
 import { EntitySystem, EntityEngine, Entity } from "./ecs";
 import { PropComponent } from "./props";
-import { Vector2 } from "../vector";
 import { ColisionSystem, Collidable, Shape } from "./colision";
+import { Vector2 } from "../vector";
+import { BARRIER_MASK } from "../colisions-masks";
 
 interface LightOptions {
   physical?: boolean;
@@ -32,11 +33,12 @@ export class LightComponent extends Entity {
         pos,
         shape: Shape.circle,
         radius: 0,
-        canHitBarrier: false,
-        canHitDynamic: false,
-        canReceive: true,
+        // canHitBarrier: false,
+        // canHitDynamic: false,
+        // canReceive: true,
         shouldDecouple: false,
         parent: this,
+        mask: BARRIER_MASK,
       });
 
       this.prop = new PropComponent(this.engine, {pos, sprite: 'light'});
