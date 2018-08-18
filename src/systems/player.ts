@@ -3,7 +3,7 @@ import { EntitySystem, EntityEngine, Entity } from './ecs';
 import { Control } from '../control';
 import { Camera } from '../camera';
 import { Vector2 } from '../vector';
-import { Gun, pistolOptions, mgOptions, minigunOptions, flamethrowerOptions } from '../weapons';
+import { Gun, pistolOptions, mgOptions, minigunOptions } from '../weapons';
 import { PLAYER_MASK } from '../colisions-masks';
 
 export class PlayerComponent extends Entity {
@@ -31,11 +31,17 @@ const WEAPONS = [
   pistolOptions,
   mgOptions,
   minigunOptions,
-  flamethrowerOptions,
 ];
 
-
 export class PlayerSystem extends EntitySystem<PlayerComponent> {
+
+  STEPS_RATE = 270;
+
+  STEPS_SAMPLES = ['step1', 'step2'];
+
+  currentStep = 0;
+
+  lastStepTime = 0;
 
   weaponIndex = 0;
 
@@ -94,6 +100,14 @@ export class PlayerSystem extends EntitySystem<PlayerComponent> {
       }
 
       this.camera.setOnPlayer(player);
+
+      if (this.engine.time - this.lastStepTime > this.STEPS_RATE) {
+        if (player.agent.posAndVel.vel.getLength() > 1) {
+          this.lastStepTime = this.engine.time;
+          this.currentStep = (this.currentStep + 1) % 2;
+          this.engine.sound.play(this.STEPS_SAMPLES[this.currentStep]);
+        }
+      }
     }
   }
 }

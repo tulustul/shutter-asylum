@@ -20,7 +20,7 @@ interface GunOptions {
 }
 
 export const pistolOptions: GunOptions = {
-  name: 'pistol',
+  name: 'Pistol',
   magazineCapacity: 6,
   reloadTime: 2000,
   shootSpeed: 250,
@@ -40,23 +40,13 @@ export const mgOptions: GunOptions = {
 }
 
 export const minigunOptions: GunOptions = {
-  name: 'minigun',
+  name: 'Minigun',
   magazineCapacity: 500,
   reloadTime: 5000,
-  shootSpeed: 0,
+  shootSpeed: 20,
   bulletSpeed: 10,
   bulletLifetime: 15000,
   spread: Math.PI / 15,
-}
-
-export const flamethrowerOptions: GunOptions = {
-  name: 'flamethrower',
-  magazineCapacity: 30000,
-  reloadTime: 1,
-  shootSpeed: 0,
-  bulletSpeed: 3.5,
-  bulletLifetime: 600,
-  spread: Math.PI / 6,
 }
 
 export class Gun {
@@ -103,6 +93,7 @@ export class Gun {
     this.lastShootTime = this.engine.time;
 
     this.makeLight();
+    this.engine.sound.play('shoot' + this.options.name);
 
     if (this.bulletsInMagazine === 0) {
       this.reload();

@@ -12,6 +12,7 @@ module.exports = env => {
   const filesToCopy = [
     'src/index.html',
     'assets/tex.png',
+    'assets/sounds.ogg',
     'levels/*.*',
   ];
 

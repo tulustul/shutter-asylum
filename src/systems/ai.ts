@@ -218,7 +218,6 @@ export class AISystem extends EntitySystem<AIComponent> {
     entity.playerInSight = entity.playerInRange && angleDiff < 1.2;
 
     entity.think(this.playerPosAndVel);
-    console.log(entity.state);
   }
 
   isPlayerInRange(entity: AIComponent) {

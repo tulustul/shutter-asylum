@@ -377,7 +377,7 @@ export class Renderer {
             lightSize / 2, lightSize / 2, lightSize / 10,
             lightSize / 2, lightSize / 2, lightSize / 2,
           );
-          gradient.addColorStop(0, 'rgba(255, 255, 255, 100');
+          gradient.addColorStop(0, 'white');
           gradient.addColorStop(1, 'transparent');
           this.gradientCache.set(lightSize, gradient);
         }
