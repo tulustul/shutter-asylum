@@ -1,3 +1,5 @@
+import { Sound } from '../sound';
+
 export class EntityEngine {
 
   systemsMap = new Map<Function, EntitySystem<any>>();
@@ -9,6 +11,8 @@ export class EntityEngine {
   worldWidth: number;
 
   worldHeight: number;
+
+  sound = new Sound();
 
   getSystem<T extends EntitySystem<any>>(systemClass: Function) {
     return this.systemsMap.get(systemClass) as T;

@@ -6,9 +6,7 @@ export class PosAndVel extends Entity {
 
   floatPos: Vector2;
 
-  friction = 1;
-
-  constructor(engine: EntityEngine, public pos: Vector2) {
+  constructor(engine: EntityEngine, public pos: Vector2, public friction = 1) {
     super();
     engine.getSystem(VelocitySystem).add(this);
     this.floatPos = pos.copy();

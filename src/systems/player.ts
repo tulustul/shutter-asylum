@@ -16,7 +16,6 @@ export class PlayerComponent extends Entity {
       maxHealth: 30,
       colisionMask: PLAYER_MASK,
     });
-    this.agent.posAndVel.friction = 1.1;
     this.agent.parent = this;
     engine.getSystem(PlayerSystem).add(this);
   }
@@ -79,16 +78,16 @@ export class PlayerSystem extends EntitySystem<PlayerComponent> {
       player.agent.rot = this.control.rot
 
       if (this.control.keys.get('w')) {
-        player.agent.moveTop();
+        player.agent.moveToDirection(Math.PI);
       }
       if (this.control.keys.get("a")) {
-        player.agent.moveLeft();
+        player.agent.moveToDirection(Math.PI * 0.5);
       }
       if (this.control.keys.get("s")) {
-        player.agent.moveDown();
+        player.agent.moveToDirection(0);
       }
       if (this.control.keys.get("d")) {
-        player.agent.moveRight();
+        player.agent.moveToDirection(Math.PI * 1.5);
       }
       if (this.control.mouseButtons.get(0) || this.control.keys.get(" ")) {
         player.agent.shoot();

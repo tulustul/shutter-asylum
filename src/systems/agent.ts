@@ -23,13 +23,15 @@ export class AgentComponent extends Entity {
 
   collidable: Collidable;
 
-  rot: number;
+  rot = 0;
 
   weapon: Gun;
 
   maxHealth = 5;
 
   health: number;
+
+  onHit: () => void;
 
   constructor(private engine: EntityEngine, pos: Vector2, options: AgentOptions) {
     super();
@@ -39,7 +41,7 @@ export class AgentComponent extends Entity {
     this.health = this.maxHealth;
 
     this.engine.getSystem(AgentSystem).add(this);
-    this.posAndVel = new PosAndVel(this.engine, pos);
+    this.posAndVel = new PosAndVel(this.engine, pos, 1.1);
     this.collidable = this.engine.getSystem<ColisionSystem>(ColisionSystem)
     .makeCollidable({
       pos: this.posAndVel.pos,
@@ -66,23 +68,8 @@ export class AgentComponent extends Entity {
     super.destroy();
   }
 
-  moveTop() {
-    const acc = new Vector2(0, -this.ACCELERATION);
-    this.updateVelocity(acc);
-  }
-
-  moveDown() {
-    const acc = new Vector2(0, this.ACCELERATION);
-    this.updateVelocity(acc);
-  }
-
-  moveRight() {
-    const acc = new Vector2(this.ACCELERATION, 0);
-    this.updateVelocity(acc);
-  }
-
-  moveLeft() {
-    const acc = new Vector2(-this.ACCELERATION, 0);
+  moveToDirection(direction: number) {
+    const acc = new Vector2(0, this.ACCELERATION).rotate(direction);
     this.updateVelocity(acc);
   }
 
@@ -92,21 +79,13 @@ export class AgentComponent extends Entity {
     }
   }
 
-  shootAt(pos: Vector2) {
-    const thisPos = this.posAndVel.pos;
-
-    this.rot = Math.PI - Math.atan2(
-      thisPos.x - pos.x,
-      thisPos.y - pos.y,
-    )
-
-    this.shoot();
-  }
-
   hit() {
     this.health--;
     if (!this.health) {
       this.getTopParent().destroy();
+    }
+    if (this.onHit) {
+      this.onHit();
     }
   }
 
@@ -120,14 +99,6 @@ export class AgentComponent extends Entity {
 }
 
 export class AgentSystem extends EntitySystem<AgentComponent> {
-
-  init() {
-    const colisionSystem = this.engine.getSystem<ColisionSystem>(ColisionSystem);
-
-    // colisionSystem.listenColisions<AgentComponent, any>(AgentComponent, colision => {
-
-    // });
-  }
 
   update() {
 

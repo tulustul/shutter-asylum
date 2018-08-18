@@ -52,4 +52,8 @@ export class Vector2 {
   distanceTo(v: Vector2) {
     return Math.sqrt(Math.pow(this.x - v.x, 2) + Math.pow(this.y - v.y, 2));
   }
+
+  directionTo(v: Vector2)  {
+    return Math.PI - Math.atan2(this.x - v.x, this.y - v.y);
+  }
 }
