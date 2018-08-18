@@ -7,7 +7,7 @@ import { Gun, mgOptions } from "../weapons";
 import { ENEMY_MASK } from "../colisions-masks";
 import { PosAndVel } from "./velocity";
 
-const AVERAGE_REACTION_TIME = 150;
+const AVERAGE_REACTION_TIME = 300;
 
 const ALERT_TIME = 10000;
 
@@ -24,9 +24,11 @@ enum AIState {
 
 export class AIComponent extends Entity {
 
+  system: AISystem;
+
   agent: AgentComponent;
 
-  lastThinking = 0;
+  lastThinking = AVERAGE_REACTION_TIME * Math.random();
 
   weapon: Gun;
 
@@ -112,8 +114,8 @@ export class AIComponent extends Entity {
   whenIdle() {
     if (this.playerInSight) {
       this.state = AIState.fighting;
+      this.notifyNeighbours(this.playerPos);
     }
-
   }
 
   whenPatroling() {
@@ -154,7 +156,7 @@ export class AIComponent extends Entity {
         (0.5 - Math.random()) * 200,
         (0.5 - Math.random()) * 200,
       );
-      this.moveTarget = newTarget.add(this.agent.posAndVel.pos);
+      this.moveTarget = newTarget.add(this.pos);
       this.changedTargetAt = this.engine.time;
     }
   }
@@ -163,6 +165,22 @@ export class AIComponent extends Entity {
     this.state = AIState.alerted;
     this.alertedAt = this.engine.time;
     this.changedTargetAt = this.engine.time;
+  }
+
+  notifyNeighbours(playerPos: Vector2) {
+    for (const ai of this.system.entities) {
+      if (ai.state === AIState.idle || ai.state === AIState.patroling) {
+        const distance = this.pos.distanceTo(ai.pos);
+        if (distance < 100) {
+          ai.goAlerted();
+          ai.moveTarget = playerPos;
+        }
+      }
+    }
+  }
+
+  get pos() {
+    return this.agent.posAndVel.pos;
   }
 
 }
