@@ -7,6 +7,7 @@ import { PlayerSystem } from './systems/player';
 import { LightsSystem } from './systems/lighting';
 import { ParticlesSystem } from './systems/particles';
 import { BloodSystem } from './systems/blood';
+import { ColisionSystem } from './systems/colision';
 import { Vector2 } from './vector';
 
 interface SpriteMetadata {
@@ -20,7 +21,7 @@ interface LayerOptions {
   canvas?: HTMLCanvasElement;
   renderWholeWorld?: boolean;
   followPlayer?: boolean;
-  fillBlack?: boolean;
+  fill?: string;
   clear?: boolean;
 }
 
@@ -85,7 +86,7 @@ class Layer {
 
   followPlayer = true;
 
-  fillBlack = true;
+  fill: string = null;
 
   renderWholeWorld = false;
 
@@ -122,8 +123,8 @@ class Layer {
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
-    if (this.fillBlack) {
-      this.context.fillStyle = 'black';
+    if (this.fill) {
+      this.context.fillStyle = this.fill;
       this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
@@ -193,39 +194,50 @@ export class Renderer {
 
   gl: WebGLRenderingContext;
 
-  baseLayer = new Layer(this, {followPlayer: false});
+  baseLayer = new Layer(this, {
+    followPlayer: false,
+    fill: 'black',
+  });
 
   lightsLayer = new Layer(this, {
     renderWholeWorld: true,
     followPlayer: false,
+    fill: 'black',
   });
 
   propsLayer = new Layer(this, {
     renderWholeWorld: true,
     followPlayer: false,
-    fillBlack: false,
     clear: false,
   });
 
   higherPropsLayer = new Layer(this, {
     renderWholeWorld: true,
     followPlayer: false,
-    fillBlack: false,
     clear: false,
   });
 
-  movingPropsLayer = new Layer(this, {fillBlack: false});
+  movingPropsLayer = new Layer(this);
 
-  particlesLayer = new Layer(this, {fillBlack: false});
+  particlesLayer = new Layer(this);
 
   bloodLayer = new Layer(this, {
     renderWholeWorld: true,
     followPlayer: false,
-    fillBlack: false,
     clear: false,
   });
 
-  interfaceLayer = new Layer(this, {followPlayer: false, fillBlack: false});
+  revealedMaskLayer = new Layer(this, {
+    renderWholeWorld: true,
+    followPlayer: false,
+    clear: false,
+  });
+
+  visibilityMaskLayer = new Layer(this);
+
+  fogOfWarLayer = new Layer(this, {fill: 'grey', followPlayer: false});
+
+  interfaceLayer = new Layer(this, {followPlayer: false});
 
   checkColorsLayer: Layer;
   // DEBUG
@@ -411,6 +423,76 @@ export class Renderer {
     bloodSystem.leaksToRender = [];
   }
 
+  renderFogOfWar() {
+    this.visibilityMaskLayer.activate();
+
+    const colisionSystem = this.engine.getSystem<ColisionSystem>(ColisionSystem);
+    const playerSystem = this.engine.getSystem<PlayerSystem>(PlayerSystem);
+
+    if (!playerSystem.player) {
+      return;
+    }
+
+    const playerPos = playerSystem.player.agent.posAndVel.pos;
+    const widthTiles = Math.ceil(this.canvas.width / TILE_SIZE);
+    const heightTiles = Math.ceil(this.canvas.height / TILE_SIZE);
+
+    const currentPos = new Vector2(
+      playerPos.x - this.canvas.width / 2,
+      playerPos.y - this.canvas.height / 2
+    );
+
+    const points: Vector2[] = [];
+    const toCheck: Vector2[] = [];
+
+    for (let x = 0; x < widthTiles; x++) {
+      currentPos.x += TILE_SIZE;
+      toCheck.push(currentPos.copy());
+    }
+    for (let y = 0; y < heightTiles; y++) {
+      currentPos.y += TILE_SIZE;
+      toCheck.push(currentPos.copy());
+    }
+    for (let x = 0; x < widthTiles; x++) {
+      currentPos.x -= TILE_SIZE;
+      toCheck.push(currentPos.copy());
+    }
+    for (let y = 0; y < heightTiles; y++) {
+      currentPos.y -= TILE_SIZE;
+      toCheck.push(currentPos.copy());
+    }
+
+    for (const p of toCheck) {
+      points.push(colisionSystem.castRay(playerPos, p) || p);
+    }
+
+    this.context.fillStyle = 'white';
+    this.context.beginPath();
+    this.context.moveTo(points[0].x, points[0].y);
+    for (let i = 1; i < points.length; i++) {
+      const p = points[i];
+      this.context.lineTo(p.x, p.y);
+    }
+    this.context.closePath();
+    this.context.fill();
+
+    this.revealedMaskLayer.context.drawImage(this.visibilityMaskLayer.canvas,
+      0, 0,
+      this.canvas.width, this.canvas.height,
+      -this.camera.pos.x, -this.camera.pos.y,
+      this.canvas.width, this.canvas.height,
+    );
+
+    this.fogOfWarLayer.activate();
+    this.context.drawImage(this.visibilityMaskLayer.canvas, 0, 0);
+    // this.context.drawImage(this.visibilityMaskLayer.canvas,
+    //   -this.camera.pos.x, -this.camera.pos.y,
+    //   this.canvas.width, this.canvas.height,
+    //   0, 0,
+    //   this.canvas.width, this.canvas.height,
+    // );
+  }
+
   render() {
     if (!this.ready) {
       return;
@@ -436,7 +518,8 @@ export class Renderer {
     this.interfaceLayer.activate();
     this.renderInterface();
 
-    this.baseLayer.activate();
+    this.renderFogOfWar();
+
     this.composite();
 
     this.postprocessing.postprocess(this.baseLayer);
@@ -448,6 +531,16 @@ export class Renderer {
   }
 
   composite() {
+    this.movingPropsLayer.context.globalCompositeOperation = 'destination-in';
+    this.movingPropsLayer.context.drawImage(this.visibilityMaskLayer.canvas, 0, 0);
+    this.movingPropsLayer.context.globalCompositeOperation = 'source-over';
+
+    this.particlesLayer.context.globalCompositeOperation = 'destination-in';
+    this.particlesLayer.context.drawImage(this.visibilityMaskLayer.canvas, 0, 0);
+    this.particlesLayer.context.globalCompositeOperation = 'source-over';
+
+    this.baseLayer.activate();
+
     this.context.globalCompositeOperation = 'source-over'
     this.drawLayer(this.propsLayer);
 
@@ -456,6 +549,7 @@ export class Renderer {
 
     this.context.globalCompositeOperation = 'source-over'
     this.drawLayer(this.higherPropsLayer);
+
     this.context.drawImage(this.movingPropsLayer.canvas, 0, 0);
 
     this.context.globalCompositeOperation = 'overlay';
@@ -463,6 +557,14 @@ export class Renderer {
 
     this.context.globalCompositeOperation = 'source-over'
     this.context.drawImage(this.particlesLayer.canvas, 0, 0);
+
+    this.context.globalCompositeOperation = 'multiply';
+    this.context.drawImage(this.fogOfWarLayer.canvas, 0, 0);
+
+    this.context.globalCompositeOperation = 'destination-in';
+    this.drawLayer(this.revealedMaskLayer);
+
+    this.context.globalCompositeOperation = 'source-over'
     this.context.drawImage(this.interfaceLayer.canvas, 0, 0);
   }
 

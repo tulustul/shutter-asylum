@@ -260,12 +260,7 @@ export class ColisionSystem extends EntitySystem<Collidable> {
     }
   }
 
-  castRay(
-    from: Vector2,
-    to: Vector2,
-    ignore: Collidable = null,
-    checkDynamicGrid = true,
-  ) {
+  castRay(from: Vector2, to: Vector2) {
     const length = from.distanceTo(to);
     const pos = from.copy();
     const steps = length / TILE_SIZE * 2;
@@ -275,9 +270,9 @@ export class ColisionSystem extends EntitySystem<Collidable> {
       pos.add(offset);
       const index = this.getIndexOfPos(pos);
       if (this.staticGrid.has(index)) {
-        return true;
+        return pos;
       }
     }
-    return false;
+    return null;
   }
 }

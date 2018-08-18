@@ -242,7 +242,6 @@ export class AISystem extends EntitySystem<AIComponent> {
     return !this.colisionSystem.castRay(
       entity.agent.posAndVel.pos,
       this.playerPosAndVel.pos,
-      entity.agent.collidable,
     );
   }
 
