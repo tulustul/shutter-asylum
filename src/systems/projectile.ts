@@ -20,7 +20,7 @@ export class ProjectileComponent extends Entity {
 
     this.particle = new ParticleComponent(this.engine, {
       pos, vel,
-      color: 'orange',
+      color: 'red',
       lifetime: maxLifetime,
       canHitDynamic: true,
       size: 2,

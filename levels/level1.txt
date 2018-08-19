@@ -1,25 +1,28 @@
 XXXXXXXXXXX
-X....L....XXXXXXXXX
-X.................X
-X.........XXXXX..LX
-X.........X   X...X
-XXXXX...XXX   X...XXXXXXXXXXXXXXXXXX
+X----L----XXXXXXXXX
+X---------.....---X
+X---------XXXXX--LX
+X---------X   X---X
+XXXXXX.XXXX   XX.XXXXXXXXXXXXXXXXXXX
     X...X     X.......B............X
     X..LX     X....E.E.E.EE........X
     X...X     X.....E.E..E.........X
-    X...X     X...X................X
+    X...X     XX.XX................X
 XXXXX...XXXXXXX...X................X
-X................XXXXXXXXXXXX.....LX
-X..........E................X......X
+X................XXXXXXXXXXXXXXX.XXX
+X..........E................X.....LX
 XB....X............................X
 X..................LXXXXX..........X
 X...................X   X....XXXXXXX
 X.......LXXXXXXXX..XX   X....X
-XX........X........X    XXXXXX
- X........XL.......X
- XL.......X........X
+XX........X--------X    XXXXXX
+ X........XL-------X
+ XL.......XXXXX.XXXX
  X.................X
- X........S........X
- XXXXXX......XXXXXXX
-      X......X
-      XXXXXXXXX
+ X.................X
+ XXXXXXXXX.XXXXXXXXX
+       X-----X
+      LX-----X
+       X-----X
+       X--S--X
+       XXXXXXX

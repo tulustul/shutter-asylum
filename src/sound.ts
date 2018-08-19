@@ -28,19 +28,33 @@ const SAMPLES_PARAMS: {[key: string]: ProduceduralSampleParams} = {
     gainParams: [0, 0, 1, 0.001, 0.3, 0.101, 0, 0.4],
     volume: 0.2,
   },
-  step1: {
+  stoneStep1: {
     biquadType: 'lowpass',
     biquadQ: 1,
     frequency: 300,
     gainParams: [0, 0, 1, 0.001, 0.3, 0.101, 0, 0.2],
     volume: 0.5,
   },
-  step2: {
+  stoneStep2: {
     biquadType: 'lowpass',
     biquadQ: 1,
     frequency: 200,
     gainParams: [0, 0, 1, 0.001, 0.3, 0.101, 0, 0.2],
     volume: 0.5,
+  },
+  woodStep1: {
+    biquadType: 'lowpass',
+    biquadQ: 1,
+    frequency: 550,
+    gainParams: [0, 0, 1, 0.001, 0.3, 0.151, 0, 0.2],
+    volume: 0.3,
+  },
+  woodStep2: {
+    biquadType: 'lowpass',
+    biquadQ: 1,
+    frequency: 650,
+    gainParams: [0, 0, 1, 0.001, 0.3, 0.151, 0, 0.2],
+    volume: 0.3,
   },
 };
 

@@ -22,6 +22,7 @@ type SpriteMap = {[key: string]: SpriteMetadata};
 
 const SPRITES_MAP: SpriteMap = {
   'floor': {x: 0, y: 0, width: 20, height: 20},
+  'wood': {x: 0, y: 40, width: 20, height: 20},
   'wall': {x: 0, y: 20, width: 20, height: 20},
   'agent': {x: 21, y: 0, width: 20, height: 30},
   'corpse': {x: 40, y: 0, width: 40, height: 20},

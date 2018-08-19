@@ -5,6 +5,8 @@ import { Camera } from '../camera';
 import { Vector2 } from '../vector';
 import { Gun, pistolOptions, mgOptions, minigunOptions } from '../weapons';
 import { PLAYER_MASK } from '../colisions-masks';
+import { ColisionSystem } from './colision';
+import { TILE_SIZE } from '../constants';
 
 export class PlayerComponent extends Entity {
 
@@ -33,11 +35,16 @@ const WEAPONS = [
   minigunOptions,
 ];
 
+const FLOOR_MAP: {[key: string]: string} = {
+  '.': 'stone',
+  '-': 'wood',
+};
+
 export class PlayerSystem extends EntitySystem<PlayerComponent> {
 
   STEPS_RATE = 270;
 
-  STEPS_SAMPLES = ['step1', 'step2'];
+  STEPS_SAMPLES = ['Step1', 'Step2'];
 
   currentStep = 0;
 
@@ -105,7 +112,12 @@ export class PlayerSystem extends EntitySystem<PlayerComponent> {
         if (player.agent.posAndVel.vel.getLength() > 1) {
           this.lastStepTime = this.engine.time;
           this.currentStep = (this.currentStep + 1) % 2;
-          this.engine.sound.play(this.STEPS_SAMPLES[this.currentStep]);
+          const pos = player.agent.posAndVel.pos;
+          const x = Math.floor(pos.x / TILE_SIZE);
+          const y = Math.floor(pos.y / TILE_SIZE);
+          const cell = this.engine.level[y][x];
+          const floor = FLOOR_MAP[cell] || 'stone'
+          this.engine.sound.play(floor + this.STEPS_SAMPLES[this.currentStep]);
         }
       }
     }

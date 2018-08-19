@@ -1,4 +1,5 @@
 import { Sound } from '../sound';
+import { Cell } from '../level.interface';
 
 export class EntityEngine {
 
@@ -11,6 +12,8 @@ export class EntityEngine {
   worldWidth: number;
 
   worldHeight: number;
+
+  level: Cell[][];
 
   sound = new Sound();
 

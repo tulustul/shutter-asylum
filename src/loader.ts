@@ -27,6 +27,8 @@ export async function loadLevel(engine: EntityEngine, levelName: string): Promis
         new PropComponent(engine, {pos, sprite: "floor"});
       } else if (line[x] === ".") {
         new PropComponent(engine, {pos, sprite: "floor"});
+      } else if (line[x] === "-") {
+        new PropComponent(engine, {pos, sprite: "wood"});
       } else if (line[x] === "X") {
         new BarrierComponent(engine, pos);
       } else if (line[x] === "B") {
@@ -40,4 +42,5 @@ export async function loadLevel(engine: EntityEngine, levelName: string): Promis
   }
   engine.worldHeight = cells.length * TILE_SIZE;
   engine.worldWidth = maxWidth * TILE_SIZE;
+  engine.level = cells;
 }
