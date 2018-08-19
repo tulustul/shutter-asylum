@@ -1,5 +1,5 @@
 import { loadLevel } from "./loader";
-import { Renderer } from "./render";
+import { Renderer } from "./renderer/renderer";
 import { Control } from "./control";
 import { Camera } from "./camera";
 
