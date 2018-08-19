@@ -11,36 +11,51 @@ import { LightComponent } from './systems/lighting';
 export async function loadLevel(engine: EntityEngine, levelName: string): Promise<void> {
   const response = await fetch(`../levels/${levelName}.txt`, {});
   const data = await response.text();
-  const cells = data.split('\n').map(line => Array.from(line)) as Cell[][];
+  const [header, cellsData] = data.split('#');
+  const cells = cellsData.split('\n').map(line => Array.from(line)) as Cell[][];
+
+  const multiCellsMap = new Map<string, Cell[]>();
+  for (const line of header.split('\n')) {
+    multiCellsMap.set(line[0], Array.from(line.slice(1)) as Cell[]);
+  }
 
   let maxWidth = 0;
   for (let y = 0; y < cells.length; y++) {
     const line = cells[y];
     for (let x = 0; x < line.length; x++) {
       maxWidth = Math.max(maxWidth, line.length);
-      const pos = new Vector2(x * TILE_SIZE, y * TILE_SIZE);
-      if (line[x] === "S") {
-        new PlayerComponent(engine, Object.create(pos));
-        new PropComponent(engine, {pos, sprite: "floor"});
-      } else if (line[x] === "E") {
-        new AIComponent(engine, Object.create(pos));
-        new PropComponent(engine, {pos, sprite: "floor"});
-      } else if (line[x] === ".") {
-        new PropComponent(engine, {pos, sprite: "floor"});
-      } else if (line[x] === "-") {
-        new PropComponent(engine, {pos, sprite: "wood"});
-      } else if (line[x] === "X") {
-        new BarrierComponent(engine, pos);
-      } else if (line[x] === "B") {
-        new LightComponent(engine, pos, {broken: true, enabled: true, size: 300});
-        new PropComponent(engine, {pos, sprite: "floor"});
-      } else if (line[x] === "L") {
-        new LightComponent(engine, pos, {broken: false, enabled: true, size: 300});
-        new PropComponent(engine, {pos, sprite: "floor"});
+      const cell = line[x];
+      if (multiCellsMap.has(cell)) {
+        const multiCells = multiCellsMap.get(cell);
+        for (const multiCell of multiCells) {
+          putCell(engine, x, y, multiCell);
+        }
+        line[x] = multiCells[multiCells.length - 1];
+      } else {
+        putCell(engine, x, y, cell);
       }
     }
   }
   engine.worldHeight = cells.length * TILE_SIZE;
   engine.worldWidth = maxWidth * TILE_SIZE;
   engine.level = cells;
+}
+
+function putCell(engine: EntityEngine, x: number, y: number, cell: Cell) {
+  const pos = new Vector2(x * TILE_SIZE, y * TILE_SIZE);
+  if (cell === "S") {
+    new PlayerComponent(engine, Object.create(pos));
+  } else if (cell === "E") {
+    new AIComponent(engine, Object.create(pos));
+  } else if (cell === ".") {
+    new PropComponent(engine, {pos, sprite: "floor"});
+  } else if (cell === "-") {
+    new PropComponent(engine, {pos, sprite: "wood"});
+  } else if (cell === "X") {
+    new BarrierComponent(engine, pos);
+  } else if (cell === "B") {
+    new LightComponent(engine, pos, {broken: true, enabled: true, size: 300});
+  } else if (cell === "L") {
+    new LightComponent(engine, pos, {broken: false, enabled: true, size: 300});
+  }
 }
