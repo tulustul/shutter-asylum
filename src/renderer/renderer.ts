@@ -2,6 +2,7 @@ import { Layer } from './layer';
 import { SystemsRenderer } from './systems-renderer';
 import { Postprocessing } from './postprocessing';
 import { FogOfWar } from './fog-of-war';
+import { Compositor } from './compositor';
 
 import { Camera } from '../camera';
 import { EntityEngine } from '../systems/ecs';
@@ -10,10 +11,7 @@ export class Renderer {
 
   context: CanvasRenderingContext2D;
 
-  baseLayer = new Layer(this, {
-    followPlayer: false,
-    fill: 'black',
-  });
+  baseLayer: Layer;
 
   checkColorsLayer: Layer;
   // DEBUG
@@ -25,11 +23,11 @@ export class Renderer {
 
   fogOfWar: FogOfWar;
 
+  compositor: Compositor;
+
   activeLayer: Layer;
 
   texture: HTMLImageElement;
-
-  gradientCache = new Map<number, CanvasGradient>();
 
   ready = false;
 
@@ -38,18 +36,25 @@ export class Renderer {
     public camera: Camera,
     public canvas: HTMLCanvasElement,
   ) {
+    this.compositor = new Compositor(this);
+
     this.postprocessing = new Postprocessing(this.canvas);
 
     this.systemsRenderer = new SystemsRenderer(this);
 
     this.fogOfWar = new FogOfWar(this);
 
+    this.baseLayer = new Layer('base', this, {
+      followPlayer: false,
+      fill: 'black',
+    });
+
     this.texture = new Image();
     this.texture.src = 'tex.png';
     this.texture.onload = () => this.ready = true;
   }
 
-  render() {SystemsRenderer
+  render() {
     if (!this.ready) {
       return;
     }
@@ -58,7 +63,7 @@ export class Renderer {
 
     this.fogOfWar.render();
 
-    this.composite();
+    this.compositor.compose();
 
     this.postprocessing.postprocess(this.baseLayer);
 
@@ -66,53 +71,6 @@ export class Renderer {
     // if (Math.round(this.engine.time) % 300 === 0) {
     //   this.checkDistinctColors();
     // }
-  }
-
-  composite() {
-    this.systemsRenderer.movingPropsLayer.context.globalCompositeOperation = 'destination-in';
-    this.systemsRenderer.movingPropsLayer.context.drawImage(this.fogOfWar.visibilityMaskLayer.canvas, 0, 0);
-    this.systemsRenderer.movingPropsLayer.context.globalCompositeOperation = 'source-over';
-
-    this.systemsRenderer.particlesLayer.context.globalCompositeOperation = 'destination-in';
-    this.systemsRenderer.particlesLayer.context.drawImage(this.fogOfWar.visibilityMaskLayer.canvas, 0, 0);
-    this.systemsRenderer.particlesLayer.context.globalCompositeOperation = 'source-over';
-
-    this.baseLayer.activate();
-
-    this.context.globalCompositeOperation = 'source-over'
-    this.drawLayer(this.systemsRenderer.propsLayer);
-
-    this.context.globalCompositeOperation = 'multiply'
-    this.drawLayer(this.systemsRenderer.bloodLayer);
-
-    this.context.globalCompositeOperation = 'source-over'
-    this.drawLayer(this.systemsRenderer.higherPropsLayer);
-
-    this.context.drawImage(this.systemsRenderer.movingPropsLayer.canvas, 0, 0);
-
-    this.context.globalCompositeOperation = 'overlay';
-    this.drawLayer(this.systemsRenderer.lightsLayer);
-
-    this.context.globalCompositeOperation = 'source-over'
-    this.context.drawImage(this.systemsRenderer.particlesLayer.canvas, 0, 0);
-
-    this.context.globalCompositeOperation = 'multiply';
-    this.context.drawImage(this.fogOfWar.fogOfWarLayer.canvas, 0, 0);
-
-    this.context.globalCompositeOperation = 'destination-in';
-    this.drawLayer(this.fogOfWar.revealedMaskLayer);
-
-    this.context.globalCompositeOperation = 'source-over'
-    this.context.drawImage(this.systemsRenderer.interfaceLayer.canvas, 0, 0);
-  }
-
-  drawLayer(layer: Layer) {
-    this.context.drawImage(layer.canvas,
-      -this.camera.pos.x, -this.camera.pos.y,
-      this.canvas.width, this.canvas.height,
-      0, 0,
-      this.canvas.width, this.canvas.height,
-    );
   }
 
   checkDistinctColors() {

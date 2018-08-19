@@ -10,15 +10,18 @@ export class FogOfWar {
 
   constructor(private renderer: Renderer) {}
 
-  revealedMaskLayer = new Layer(this.renderer, {
+  revealedMaskLayer = new Layer('revealedMask', this.renderer, {
     renderWholeWorld: true,
     followPlayer: false,
     clear: false,
   });
 
-  visibilityMaskLayer = new Layer(this.renderer);
+  visibilityMaskLayer = new Layer('visibilityMask', this.renderer);
 
-  fogOfWarLayer = new Layer(this.renderer, {fill: 'grey', followPlayer: false});
+  fogOfWarLayer = new Layer('fogOfWar', this.renderer, {
+    fill: 'grey',
+    followPlayer: false,
+  });
 
   get context() {
     return this.renderer.context;

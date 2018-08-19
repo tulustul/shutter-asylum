@@ -24,8 +24,10 @@ export class Layer {
 
   context: CanvasRenderingContext2D;
 
-  constructor(private renderer: Renderer, options: LayerOptions = {}) {
+  constructor(name: string, private renderer: Renderer, options: LayerOptions = {}) {
     Object.assign(this, options);
+
+    renderer.compositor.layers[name] = this;
 
     if (!this.canvas) {
       this.canvas = document.createElement('canvas');

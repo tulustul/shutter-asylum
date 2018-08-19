@@ -29,35 +29,35 @@ const SPRITES_MAP: SpriteMap = {
 
 export class SystemsRenderer {
 
-  lightsLayer = new Layer(this.renderer, {
+  lightsLayer = new Layer('lights', this.renderer, {
     renderWholeWorld: true,
     followPlayer: false,
     fill: 'black',
   });
 
-  propsLayer = new Layer(this.renderer, {
+  propsLayer = new Layer('props', this.renderer, {
     renderWholeWorld: true,
     followPlayer: false,
     clear: false,
   });
 
-  higherPropsLayer = new Layer(this.renderer, {
+  higherPropsLayer = new Layer('higherProps', this.renderer, {
     renderWholeWorld: true,
     followPlayer: false,
     clear: false,
   });
 
-  movingPropsLayer = new Layer(this.renderer);
+  movingPropsLayer = new Layer('movingProps', this.renderer);
 
-  particlesLayer = new Layer(this.renderer);
+  particlesLayer = new Layer('particles', this.renderer);
 
-  bloodLayer = new Layer(this.renderer, {
+  bloodLayer = new Layer('blood', this.renderer, {
     renderWholeWorld: true,
     followPlayer: false,
     clear: false,
   });
 
-  interfaceLayer = new Layer(this.renderer, {followPlayer: false});
+  interfaceLayer = new Layer('interface', this.renderer, {followPlayer: false});
 
   activeLayer: Layer;
 
@@ -111,6 +111,9 @@ export class SystemsRenderer {
 
   renderAgents() {
     const sprite = SPRITES_MAP.agent;
+
+    this.context.globalCompositeOperation = 'source-over';
+
     for (const agent of this.engine.getSystem<AgentSystem>(AgentSystem).entities) {
       this.context.save();
       this.context.translate(
@@ -138,6 +141,8 @@ export class SystemsRenderer {
   }
 
   renderParticles() {
+    this.context.globalCompositeOperation = 'source-over';
+
     const particleSystem = this.engine.getSystem<ParticlesSystem>(ParticlesSystem);
     for (const color of Object.keys(particleSystem.byColors)) {
       this.context.fillStyle = color;
