@@ -62,6 +62,7 @@ export class AgentComponent extends Entity {
       pos: this.posAndVel.pos,
       rot: Math.random() * Math.PI * 2,
       aboveLevel: true,
+      pivot: new Vector2(20, 10),
     });
     this.engine.getSystem<ColisionSystem>(ColisionSystem).remove(this.collidable);
     this.posAndVel.destroy();

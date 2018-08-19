@@ -5,30 +5,32 @@
 5E-
 6B.
 7B-
+__.
+||.
 #
 XXXXXXXXXXX
 X----1----XXXXXXXXX
-X---------.....---X
+X---------|...|---X
 X---------XXXXX--1X
 X---------X   X---X
-XXXXXX.XXXX   XX.XXXXXXXXXXXXXXXXXXX
+XXXXXX_XXXX   XX_XXXXXXXXXXXXXXXXXXX
     X...X     X-------7------------X
     X..2X     X----5-5-5-55--------X
     X...X     X-----5-5--5---------X
-    X...X     XX.XX----------------X
+    X...X     XX_XX----------------X
 XXXXX...XXXXXXX...X----------------X
-X.................XXXXXXXXXXXXXX.XXX
+X.................XXXXXXXXXXXXXX_XXX
 X..........4................X.....2X
 X6....X............................X
 X..................2XXXXX..........X
 X...................X   X....XXXXXXX
-X.......2XXXXXXXX..XX   X....X
+X.......2XXXXXXXXX_XX   X....X
 XX........X--------X    XXXXXX
  X........X1-------X
- XL.......XXXXX.XXXX
- X.................X
- X.................X
- XXXXXXXXX.XXXXXXXXX
+ X2......XXXXXX_XXXX
+ X.......|.........X
+ X.......X.........X
+ XXXXXXXXX_XXXXXXXXX
        X-----X
       LX-----X
        X-----X

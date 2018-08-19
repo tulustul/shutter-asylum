@@ -7,6 +7,7 @@ import { Gun, pistolOptions, mgOptions, minigunOptions } from '../weapons';
 import { PLAYER_MASK } from '../colisions-masks';
 import { ColisionSystem } from './colision';
 import { TILE_SIZE } from '../constants';
+import { ActionsSystem } from './actions';
 
 export class PlayerComponent extends Entity {
 
@@ -59,6 +60,8 @@ export class PlayerSystem extends EntitySystem<PlayerComponent> {
   }
 
   add(entity: PlayerComponent) {
+    const actionsSystem = this.engine.getSystem<ActionsSystem>(ActionsSystem);
+
     super.add(entity)
     this.player = entity;
     this.nextWeapon();
@@ -67,6 +70,10 @@ export class PlayerSystem extends EntitySystem<PlayerComponent> {
         this.nextWeapon();
       } else if (event.key === 'r') {
         this.player.agent.weapon.reload();
+      } else if (event.key === 'e') {
+        if (actionsSystem.action) {
+          actionsSystem.action.trigger();
+        }
       }
     });
   }

@@ -64,6 +64,18 @@ export class ColisionSystem extends EntitySystem<Collidable> {
       if (index !== -1) {
         this.dynamicReceivers.splice(index, 1);
       }
+    } else if (entity.mask & BARRIER_MASK) {
+      const gridIndex = this.getIndexOfPos(entity.pos);
+      const cell = this.staticGrid.get(gridIndex);
+      if (cell) {
+        const index = cell.indexOf(entity);
+        if (index !== -1) {
+          cell.splice(index, 1);
+          if (cell.length === 0) {
+            this.staticGrid.delete(gridIndex);
+          }
+        }
+      }
     }
   }
 

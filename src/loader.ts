@@ -7,6 +7,7 @@ import { PropComponent } from "./systems/props";
 import { BarrierComponent } from './systems/barrier';
 import { AIComponent } from './systems/ai';
 import { LightComponent } from './systems/lighting';
+import { DoorComponent, DoorOrientation } from './systems/doors';
 
 export async function loadLevel(engine: EntityEngine, levelName: string): Promise<void> {
   const response = await fetch(`../levels/${levelName}.txt`, {});
@@ -57,5 +58,9 @@ function putCell(engine: EntityEngine, x: number, y: number, cell: Cell) {
     new LightComponent(engine, pos, {broken: true, enabled: true, size: 300});
   } else if (cell === "L") {
     new LightComponent(engine, pos, {broken: false, enabled: true, size: 300});
+  } else if (cell === "_") {
+    new DoorComponent(engine, {pos, orientation: DoorOrientation.horizontal});
+  } else if (cell === "|") {
+    new DoorComponent(engine, {pos, orientation: DoorOrientation.vertical});
   }
 }

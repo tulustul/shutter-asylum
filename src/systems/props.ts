@@ -5,7 +5,9 @@ interface PropOptions {
   sprite: string;
   pos: Vector2;
   rot?: number;
-  aboveLevel?: boolean
+  aboveLevel?: boolean;
+  changing?: boolean;
+  pivot?: Vector2;
 }
 
 export class PropComponent {
@@ -14,11 +16,15 @@ export class PropComponent {
 
   pos: Vector2;
 
-  rot = 0;
+  rot: number = null;
 
   needRerender = false;
 
   aboveLevel = false;
+
+  changing = false;
+
+  pivot = new Vector2();
 
   constructor(engine: EntityEngine, options: PropOptions) {
     Object.assign(this, options);
@@ -33,16 +39,14 @@ export class PropsSystem extends EntitySystem<PropComponent> {
   higherToRender: PropComponent[] = [];
 
   add(entity: PropComponent) {
-    super.add(entity);
-    if (entity.aboveLevel) {
+    if (entity.changing) {
+      super.add(entity);
+    } else if (entity.aboveLevel) {
       this.higherToRender.push(entity);
     } else {
       this.toRender.push(entity);
     }
   }
 
-
-  update() {
-
-  }
+  update() { }
 }

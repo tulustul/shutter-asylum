@@ -10,22 +10,24 @@ import { PlayerSystem } from '../systems/player';
 import { LightsSystem } from '../systems/lighting';
 import { ParticlesSystem } from '../systems/particles';
 import { BloodSystem } from '../systems/blood';
+import { ActionsSystem } from '../systems/actions';
 
 interface SpriteMetadata {
   x: number;
   y: number;
-  width: number;
-  height: number;
+  w: number;
+  h: number;
 }
 
 type SpriteMap = {[key: string]: SpriteMetadata};
 
 const SPRITES_MAP: SpriteMap = {
-  'floor': {x: 0, y: 0, width: 20, height: 20},
-  'wood': {x: 0, y: 40, width: 20, height: 20},
-  'wall': {x: 0, y: 20, width: 20, height: 20},
-  'agent': {x: 21, y: 0, width: 20, height: 30},
-  'corpse': {x: 40, y: 0, width: 40, height: 20},
+  'floor': {x: 0, y: 0, w: 20, h: 20},
+  'wood': {x: 0, y: 40, w: 20, h: 20},
+  'wall': {x: 0, y: 20, w: 20, h: 20},
+  'agent': {x: 21, y: 0, w: 20, h: 25},
+  'corpse': {x: 40, y: 0, w: 40, h: 20},
+  'door': {x: 20, y: 40, w: 20, h: 20},
 }
 
 export class SystemsRenderer {
@@ -86,25 +88,29 @@ export class SystemsRenderer {
     propsSystem.higherToRender = [];
   }
 
+  renderChangingProps() {
+    const propsSystem = this.engine.getSystem<PropsSystem>(PropsSystem);
+    this.renderProps(propsSystem.entities);
+  }
+
   renderProps(props: PropComponent[]) {
     for (const prop of props) {
+      const isRot = prop.rot !== null;
       const sprite = SPRITES_MAP[prop.sprite];
-      if (prop.rot) {
+      if (isRot) {
         this.context.save();
-        const offset = new Vector2(
-          sprite.width / 2, sprite.height / 2,
-        ).rotate(prop.rot);
+        const offset = prop.pivot.copy().rotate(prop.rot);
         this.context.translate(prop.pos.x - offset.x, prop.pos.y - offset.y);
         this.context.rotate(prop.rot);
       }
       this.context.drawImage(
         this.renderer.texture,
         sprite.x, sprite.y,
-        sprite.width, sprite.height,
-        prop.rot ? 0 : prop.pos.x, prop.rot ? 0: prop.pos.y,
-        sprite.width, sprite.height,
+        sprite.w, sprite.h,
+        isRot ? 0 : prop.pos.x, isRot ? 0: prop.pos.y,
+        sprite.w, sprite.h,
       );
-      if (prop.rot) {
+      if (isRot) {
         this.context.restore();
       }
     }
@@ -127,9 +133,9 @@ export class SystemsRenderer {
       this.context.drawImage(
         this.renderer.texture,
         sprite.x, sprite.y,
-        sprite.width, sprite.height,
+        sprite.w, sprite.h,
         -TILE_SIZE / 2, -TILE_SIZE / 2,
-        sprite.width, sprite.height,
+        sprite.w, sprite.h,
       )
       this.context.restore();
 
@@ -156,15 +162,24 @@ export class SystemsRenderer {
 
   renderInterface() {
     const player = this.engine.getSystem<PlayerSystem>(PlayerSystem).entities[0];
+    const action = this.engine.getSystem<ActionsSystem>(ActionsSystem).action;
 
     this.context.fillStyle = 'red';
     this.context.font = '12px sans-serif';
     if (player) {
       const weapon = player.agent.weapon;
+      let contextText = '';
 
       if (weapon.reloading) {
-        this.context.fillText('REL', 170, 230);
+        contextText = 'REL ';
       }
+
+      if (action) {
+        contextText += `${action.text} (E)`;
+      }
+
+
+      this.context.fillText(contextText, 170, 230);
 
       const text = `
   ${weapon.options.name}
@@ -245,6 +260,7 @@ export class SystemsRenderer {
 
     this.movingPropsLayer.activate();
     this.renderAgents();
+    this.renderChangingProps();
 
     this.bloodLayer.activate();
     this.renderBlood();
