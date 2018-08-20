@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-var fs = require('fs');
+const fs = require('fs');
 
-var my_lzma = require("lzma");
+const my_lzma = require("lzma");
 
 fs.readFile('dist/bundle.js', function (err, data) {
   if (err) {
@@ -12,8 +12,8 @@ fs.readFile('dist/bundle.js', function (err, data) {
     if (err) {
       throw err;
     }
-    var b = Buffer.alloc(result.length);
-    for (var i = 0;i < result.length;i++) {
+    const b = Buffer.alloc(result.length);
+    for (let i = 0;i < result.length;i++) {
       b[i] = result[i];
     }
 

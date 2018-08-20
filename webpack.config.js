@@ -3,6 +3,8 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const WebpackShellPlugin = require('webpack-shell-plugin');
 
+
+
 module.exports = env => {
 
   const isProd = env === 'prod';
@@ -27,7 +29,7 @@ module.exports = env => {
     filesToCopy.push('src/sa.js');
 
     plugins.push(new WebpackShellPlugin({
-      onBuildEnd:['./compress-bundle.js'],
+      onBuildEnd: ['./compress-bundle.js', './compress-tex.js'],
     }));
   }
 
