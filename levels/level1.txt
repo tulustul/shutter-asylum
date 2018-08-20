@@ -27,9 +27,9 @@ X...................X   X....XXXXXXX
 X.......2XXXXXXXXX_XX   X....X
 XX........X--------X    XXXXXX
  X........X1-------X
- X2......XXXXXX_XXXX
- X.......|.........X
- X.......X.........X
+ X2.....XXXXXXX_XXXX
+ X......|..........X
+ X......X..........X
  XXXXXXXXX_XXXXXXXXX
        X-----X
       LX-----X

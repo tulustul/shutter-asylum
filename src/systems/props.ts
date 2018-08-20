@@ -8,6 +8,7 @@ interface PropOptions {
   aboveLevel?: boolean;
   changing?: boolean;
   pivot?: Vector2;
+  offset?: Vector2;
 }
 
 export class PropComponent {
@@ -25,6 +26,8 @@ export class PropComponent {
   changing = false;
 
   pivot = new Vector2();
+
+  offset = new Vector2();
 
   constructor(engine: EntityEngine, options: PropOptions) {
     Object.assign(this, options);

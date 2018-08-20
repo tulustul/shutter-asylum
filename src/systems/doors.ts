@@ -4,6 +4,7 @@ import { ColisionSystem, Shape, Collidable } from "./colision";
 import { Vector2 } from "../vector";
 import { BARRIER_MASK } from "../colisions-masks";
 import { ActionComponent } from "./actions";
+import { TILE_SIZE } from "../constants";
 
 export enum DoorOrientation {
   vertical,
@@ -50,7 +51,9 @@ export class DoorComponent extends Entity {
       sprite: 'door',
       aboveLevel: true,
       changing: true,
-      // pivot: hotizontal ? new Vector2(0, 0) : new Vector2(0, 0),
+      pivot: new Vector2(0, TILE_SIZE / 2),
+      offset: this.orientation === DoorOrientation.horizontal ?
+        new Vector2(0, TILE_SIZE / 2) : new Vector2(TILE_SIZE / 2, 0),
     });
 
     this.action = new ActionComponent(this.engine, {
@@ -74,5 +77,6 @@ export class DoorComponent extends Entity {
 }
 
 export class DoorsSystem extends EntitySystem<DoorComponent> {
-  update() {}
+  update() {
+  }
 }

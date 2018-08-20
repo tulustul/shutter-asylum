@@ -100,7 +100,10 @@ export class SystemsRenderer {
       if (isRot) {
         this.context.save();
         const offset = prop.pivot.copy().rotate(prop.rot);
-        this.context.translate(prop.pos.x - offset.x, prop.pos.y - offset.y);
+        this.context.translate(
+          prop.pos.x - offset.x + prop.offset.x,
+          prop.pos.y - offset.y + prop.offset.y,
+        );
         this.context.rotate(prop.rot);
       }
       this.context.drawImage(
