@@ -10,8 +10,7 @@ import { LightComponent } from './systems/lighting';
 import { DoorComponent, DoorOrientation } from './systems/doors';
 
 export async function loadLevel(engine: EntityEngine, levelName: string): Promise<void> {
-  const response = await fetch(`../levels/${levelName}.txt`, {});
-  const data = await response.text();
+  const data = await fetchLevel(levelName);
   const [header, cellsData] = data.split('#');
   const cells = cellsData.split('\n').map(line => Array.from(line)) as Cell[][];
 
@@ -40,6 +39,22 @@ export async function loadLevel(engine: EntityEngine, levelName: string): Promis
   engine.worldHeight = cells.length * TILE_SIZE;
   engine.worldWidth = maxWidth * TILE_SIZE;
   engine.level = cells;
+}
+
+async function fetchLevel(levelName: string) {
+  const response = await fetch(`../levels/${levelName}.txt`, {});
+  if ((window as any).LZMA) {
+    const data = await response.arrayBuffer()
+    const binaryData = new Uint8Array(data);
+
+    return new Promise<string>((resolve, reject) => {
+      (window as any).LZMA.decompress(
+        binaryData, (result: any) => resolve(result),
+      );
+    });
+  } else {
+    return await response.text();
+  }
 }
 
 function putCell(engine: EntityEngine, x: number, y: number, cell: Cell) {

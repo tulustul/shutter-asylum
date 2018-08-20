@@ -1,0 +1,9 @@
+1S-
+2L-
+#
+XXXXXXXXXXX
+X----1----X
+X---------X
+X---------X
+X2--------X
+XXXXXXXXXXX

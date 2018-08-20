@@ -4,25 +4,36 @@ const fs = require('fs');
 
 const my_lzma = require("lzma");
 
-fs.readFile('dist/bundle.js', function (err, data) {
-  if (err) {
-    throw err;
-  }
-  my_lzma.compress(data, 9, (result, err) => {
+function compressFile(filepath) {
+  fs.readFile(filepath, (err, data) => {
     if (err) {
       throw err;
     }
-    const b = Buffer.alloc(result.length);
-    for (let i = 0;i < result.length;i++) {
-      b[i] = result[i];
-    }
-
-    fs.writeFile("dist/bundle.js", b, 'binary', function(err) {
-      if(err) {
-          return console.log(err);
+    my_lzma.compress(data, 9, (result, err) => {
+      if (err) {
+        throw err;
+      }
+      const b = Buffer.alloc(result.length);
+      for (let i = 0;i < result.length;i++) {
+        b[i] = result[i];
       }
 
-      console.log("Bundle compressed");
+      fs.writeFile(filepath, b, 'binary', err => {
+        if(err) {
+          return console.log(err);
+        } else {
+          console.log(`file ${filepath} compressed`);
+        }
+
+      });
     });
+  })
+}
+
+compressFile('dist/bundle.js');
+
+fs.readdir('dist/levels', (err, files) => {
+  files.forEach(filename => {
+    compressFile(`dist/levels/${filename}`);
   });
-});
+})
