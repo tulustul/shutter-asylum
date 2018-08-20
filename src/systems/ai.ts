@@ -22,6 +22,11 @@ enum AIState {
   fighting,
 }
 
+interface AIOptions {
+  pos: Vector2;
+  canPatrol?: boolean;
+}
+
 export class AIComponent extends Entity {
 
   system: AISystem;
@@ -29,6 +34,10 @@ export class AIComponent extends Entity {
   agent: AgentComponent;
 
   lastThinking = AVERAGE_REACTION_TIME * Math.random();
+
+  pos: Vector2;
+
+  canPatrol = false;
 
   weapon: Gun;
 
@@ -50,9 +59,14 @@ export class AIComponent extends Entity {
 
   changedTargetAt: number;
 
-  constructor(private engine: EntityEngine, pos: Vector2) {
+  visitedPatrolPoints: Vector2[] = [];
+
+  constructor(private engine: EntityEngine, options: AIOptions) {
     super();
-    this.agent = new AgentComponent(engine, pos, {colisionMask: ENEMY_MASK});
+
+  Object.assign(this, options);
+
+    this.agent = new AgentComponent(engine, options.pos, {colisionMask: ENEMY_MASK});
     this.agent.parent = this;
     this.agent.onHit = () => this.state = AIState.alerted;
     this.weapon = new Gun(this.engine, mgOptions);
@@ -112,17 +126,49 @@ export class AIComponent extends Entity {
   }
 
   whenIdle() {
+    this.agent.rot = Math.random() * Math.PI * 2;
     if (this.playerInSight) {
       this.state = AIState.fighting;
+      this.moveTarget = null;
       this.notifyNeighbours(this.playerPos);
+    } else if (this.canPatrol) {
+      this.state = AIState.patroling;
+      this.visitedPatrolPoints = [];
+      this.agent.maxSpeed = 0.5;
     }
   }
 
   whenPatroling() {
+    this.whenIdle();
+    if (!this.moveTarget) {
+      const patrolPoints = this.system.getVisiblePatrolPoints(this.agentPos);
+      console.log(patrolPoints);
+      if (!patrolPoints.length) {
+        return;
+      }
 
+      const notVisitedPoints = patrolPoints.filter(
+        p => this.visitedPatrolPoints.indexOf(p) === -1,
+      )
+      let closestDistance = 1000;
+      for (const point of notVisitedPoints) {
+        const distance = point.distanceTo(this.agentPos);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          this.moveTarget = point;
+        }
+      }
+      if (!this.moveTarget) {
+        this.visitedPatrolPoints = [];
+        this.moveTarget = patrolPoints[0];
+      }
+      this.visitedPatrolPoints.push(this.moveTarget);
+    }
+    this.agent.rot = this.agentPos.directionTo(this.moveTarget);
   }
 
   whenFighting() {
+    this.agent.maxSpeed = 3;
     if (this.playerInRange) {
       this.isShooting = true;
     } else {
@@ -156,7 +202,7 @@ export class AIComponent extends Entity {
         (0.5 - Math.random()) * 200,
         (0.5 - Math.random()) * 200,
       );
-      this.moveTarget = newTarget.add(this.pos);
+      this.moveTarget = newTarget.add(this.agentPos);
       this.changedTargetAt = this.engine.time;
     }
   }
@@ -170,8 +216,8 @@ export class AIComponent extends Entity {
   notifyNeighbours(playerPos: Vector2) {
     for (const ai of this.system.entities) {
       if (ai.state === AIState.idle || ai.state === AIState.patroling) {
-        const distance = this.pos.distanceTo(ai.pos);
-        if (distance < 100) {
+        const distance = this.agentPos.distanceTo(ai.pos);
+        if (distance < 80) {
           ai.goAlerted();
           ai.moveTarget = playerPos;
         }
@@ -179,7 +225,7 @@ export class AIComponent extends Entity {
     }
   }
 
-  get pos() {
+  get agentPos() {
     return this.agent.posAndVel.pos;
   }
 
@@ -190,6 +236,8 @@ export class AISystem extends EntitySystem<AIComponent> {
   playerSystem: PlayerSystem;
 
   colisionSystem: ColisionSystem;
+
+  patrolPoints: Vector2[] = [];
 
   init() {
     this.playerSystem = this.engine.getSystem<PlayerSystem>(PlayerSystem);
@@ -212,7 +260,7 @@ export class AISystem extends EntitySystem<AIComponent> {
         const dir = entity.agent.posAndVel.pos.directionTo(entity.moveTarget);
         entity.agent.moveToDirection(dir);
         const distance = entity.agent.posAndVel.pos.distanceTo(entity.moveTarget);
-        if (distance < 10) {
+        if (distance < 20) {
           entity.moveTarget = null;
         }
       }
@@ -247,6 +295,14 @@ export class AISystem extends EntitySystem<AIComponent> {
 
   get playerPosAndVel() {
     return this.playerSystem.player.agent.posAndVel;
+  }
+
+  addPatrolPoint(pos: Vector2) {
+    this.patrolPoints.push(pos);
+  }
+
+  getVisiblePatrolPoints(pos: Vector2) {
+    return this.patrolPoints.filter(p => !this.colisionSystem.castRay(pos, p));
   }
 
 }

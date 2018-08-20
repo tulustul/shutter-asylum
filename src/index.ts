@@ -50,7 +50,7 @@ async function init() {
 
   engine.init();
 
-  await loadLevel(engine, "level1");
+  await loadLevel(engine, "level5");
 
   renderer = new Renderer(engine, camera, canvas);
 

@@ -1,0 +1,48 @@
+1L-
+2L.
+3S-
+4E.
+5E-
+6B.
+7B-
+8T.
+9e-
+__.
+||.
+PP.
+pP-
+ee.
+#
+            XXXXXXXXXXX
+            Xp---1----X
+            X---------|
+            X---------X
+            X5-------pX
+            XXXX_XXXXXX
+              X...X
+              X..2X
+        XXXXXXX...XXXXXXXXXX
+        X..................X
+  XXXXXX.P......P.......P..X
+  X---5X...XXXX...XXXX.....X
+  X----X...X.........X.....X
+  X15--|...X.........X..e..X
+  X----X...X.........X.....X
+  X---5X...X2.......2X..P..X
+  XXXXXX...X.........XXXXXXX
+  Xp---X...X.........X
+  X-5--X.P.X.........X
+  X1---|...X2.......6XXXXXXX
+  X----X...X.........X     X
+  X----X...X.........X     X
+  X---pX...X.........X     X
+XXXXXXXX...X2.......2X     X
+X-p--55X...X.........X     X
+X------X...X.........X     X
+X------X.P.X.........X     X
+X------X...XXXXX_XXXXX    X
+X1-----XX_X  X-----X
+X--5------X LX-----X
+X---------X  X-----X
+X----p----X  X--3--X
+XXXXXXXXXXX  XXXXXXX

@@ -275,7 +275,7 @@ export class ColisionSystem extends EntitySystem<Collidable> {
   castRay(from: Vector2, to: Vector2) {
     const length = from.distanceTo(to);
     const pos = from.copy();
-    const steps = length / TILE_SIZE * 2;
+    const steps = Math.floor(length / TILE_SIZE * 2);
     const offset = new Vector2(to.x - from.x, to.y - from.y).mul(1 / steps);
 
     for (let i = 0; i < steps; i++) {

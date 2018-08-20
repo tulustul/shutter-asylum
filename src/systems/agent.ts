@@ -15,7 +15,7 @@ interface AgentOptions {
 
 export class AgentComponent extends Entity {
 
-  MAX_SPEED = 3;
+  maxSpeed = 3;
 
   ACCELERATION = 0.2;
 
@@ -91,10 +91,14 @@ export class AgentComponent extends Entity {
   }
 
   private updateVelocity(acc: Vector2) {
-    this.posAndVel.vel.x =
-      Math.max(-this.MAX_SPEED, this.posAndVel.vel.x + acc.x);
-    this.posAndVel.vel.y =
-      Math.max(-this.MAX_SPEED, this.posAndVel.vel.y + acc.y);
+    this.posAndVel.vel.x = Math.min(
+      this.maxSpeed,
+      Math.max(-this.maxSpeed, this.posAndVel.vel.x + acc.x),
+    );
+    this.posAndVel.vel.y = Math.min(
+      this.maxSpeed,
+      Math.max(-this.maxSpeed, this.posAndVel.vel.y + acc.y),
+    );
   }
 
 }

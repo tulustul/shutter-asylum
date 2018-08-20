@@ -1,3 +1,6 @@
+// Inspired by
+// https://github.com/borismus/webaudioapi.com/tree/master/docs/samples/procedural
+
 interface ProduceduralSampleParams {
   biquadType: BiquadFilterType;
   biquadQ: number;

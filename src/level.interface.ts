@@ -7,6 +7,8 @@ export type Cell =
   "X" |
   "S" |
   'E' |
+  'e' |
+  'P' |
   'L' |
   'B' |
   '|' |

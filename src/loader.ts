@@ -5,7 +5,7 @@ import { EntityEngine } from "./systems/ecs";
 import { PlayerComponent } from "./systems/player";
 import { PropComponent } from "./systems/props";
 import { BarrierComponent } from './systems/barrier';
-import { AIComponent } from './systems/ai';
+import { AIComponent, AISystem } from './systems/ai';
 import { LightComponent } from './systems/lighting';
 import { DoorComponent, DoorOrientation } from './systems/doors';
 
@@ -58,11 +58,14 @@ async function fetchLevel(levelName: string) {
 }
 
 function putCell(engine: EntityEngine, x: number, y: number, cell: Cell) {
+  const aiSystem = engine.getSystem<AISystem>(AISystem);
   const pos = new Vector2(x * TILE_SIZE, y * TILE_SIZE);
   if (cell === "S") {
     new PlayerComponent(engine, Object.create(pos));
   } else if (cell === "E") {
-    new AIComponent(engine, Object.create(pos));
+    new AIComponent(engine, {pos: Object.create(pos)});
+  } else if (cell === "e") {
+    new AIComponent(engine, {pos: Object.create(pos), canPatrol: true});
   } else if (cell === ".") {
     new PropComponent(engine, {pos, sprite: "floor"});
   } else if (cell === "-") {
@@ -77,5 +80,7 @@ function putCell(engine: EntityEngine, x: number, y: number, cell: Cell) {
     new DoorComponent(engine, {pos, orientation: DoorOrientation.horizontal});
   } else if (cell === "|") {
     new DoorComponent(engine, {pos, orientation: DoorOrientation.vertical});
+  } else if (cell === "P") {
+    aiSystem.addPatrolPoint(pos);
   }
 }
