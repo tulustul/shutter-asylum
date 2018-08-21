@@ -2,6 +2,7 @@ import { Layer } from './layer';
 import { SystemsRenderer } from './systems-renderer';
 import { Postprocessing } from './postprocessing';
 import { FogOfWar } from './fog-of-war';
+import { GuiRenderer } from './gui';
 import { Compositor } from './compositor';
 
 import { Camera } from '../camera';
@@ -14,12 +15,12 @@ export class Renderer {
   baseLayer: Layer;
 
   checkColorsLayer: Layer;
-  // DEBUG
-  // checkColorsLayer = new Layer(this);
 
   postprocessing: Postprocessing;
 
   systemsRenderer: SystemsRenderer;
+
+  guiRenderer: GuiRenderer;
 
   fogOfWar: FogOfWar;
 
@@ -42,12 +43,17 @@ export class Renderer {
 
     this.systemsRenderer = new SystemsRenderer(this);
 
+    this.guiRenderer = new GuiRenderer(this);
+
     this.fogOfWar = new FogOfWar(this);
 
     this.baseLayer = new Layer('base', this, {
       followPlayer: false,
       fill: 'black',
     });
+
+    // DEBUG
+    this.checkColorsLayer = new Layer('', this);
 
     this.texture = new Image();
     this.texture.src = 'tex.png';
@@ -63,14 +69,16 @@ export class Renderer {
 
     this.fogOfWar.render();
 
+    this.guiRenderer.render();
+
     this.compositor.compose();
 
     this.postprocessing.postprocess(this.baseLayer);
 
     // DEBUG
-    // if (Math.round(this.engine.time) % 300 === 0) {
-    //   this.checkDistinctColors();
-    // }
+    if (Math.round(this.engine.time) % 300 === 0) {
+      this.checkDistinctColors();
+    }
   }
 
   checkDistinctColors() {

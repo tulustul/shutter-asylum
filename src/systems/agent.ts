@@ -71,7 +71,7 @@ export class AgentComponent extends Entity {
     this.engine.getSystem<ColisionSystem>(ColisionSystem).remove(this.collidable);
     this.posAndVel.destroy();
 
-    if (Math.random() > 0.5) {
+    if (this.flashlight && Math.random() > 0.5) {
       this.flashlight.destroy();
     }
 
