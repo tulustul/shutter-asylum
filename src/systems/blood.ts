@@ -28,7 +28,6 @@ export class BloodSystem extends EntitySystem<void> {
       color: 'red',
       lifetime: 800,
       canHitDynamic: false,
-      size: 1,
       canHit: BARRIER_MASK,
       onDeath: pos => this.toRender.push(pos),
     }, {

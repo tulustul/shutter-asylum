@@ -142,7 +142,6 @@ export class AIComponent extends Entity {
     this.whenIdle();
     if (!this.moveTarget) {
       const patrolPoints = this.system.getVisiblePatrolPoints(this.agentPos);
-      console.log(patrolPoints);
       if (!patrolPoints.length) {
         return;
       }

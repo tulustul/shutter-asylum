@@ -23,7 +23,6 @@ export class ProjectileComponent extends Entity {
       color: 'red',
       lifetime: maxLifetime,
       canHitDynamic: true,
-      size: 2,
       canHit: canHit,
     });
     this.particle.parent = this;

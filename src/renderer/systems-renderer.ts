@@ -155,10 +155,15 @@ export class SystemsRenderer {
 
     const particleSystem = this.engine.getSystem<ParticlesSystem>(ParticlesSystem);
     for (const color of Object.keys(particleSystem.byColors)) {
-      this.context.fillStyle = color;
+      this.context.strokeStyle = color;
       for (const particle of particleSystem.byColors[color]) {
         const pos = particle.posAndVel.pos;
-        this.context.fillRect(pos.x, pos.y, particle.size, particle.size);
+        const vel = particle.posAndVel.vel;
+
+        this.context.beginPath();
+        this.context.moveTo(pos.x, pos.y);
+        this.context.lineTo(pos.x + vel.x, pos.y + vel.y);
+        this.context.stroke();
       }
     }
   }

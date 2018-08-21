@@ -9,7 +9,6 @@ interface ParticleOptions {
   color: string;
   lifetime: number;
   canHitDynamic: boolean;
-  size: number;
   canHit: number;
   onDeath?: (pos: Vector2) => void;
 }
@@ -31,8 +30,6 @@ export class ParticleComponent extends Entity {
   lifetime: number;
 
   bornAt: number;
-
-  size: number;
 
   color: string;
 
