@@ -71,7 +71,7 @@ export class ParticlesSystem extends EntitySystem<ParticleComponent> {
 
   byColors: {[key: string]: ParticleComponent[]} = {
     red: [],
-    orange: [],
+    gray: [],
   }
 
 
