@@ -26,7 +26,7 @@ export const pistolOptions: GunOptions = {
   shootSpeed: 250,
   bulletSpeed: 6,
   bulletLifetime: 10000,
-  spread: Math.PI / 25,
+  spread: 0,
 }
 
 export const mgOptions: GunOptions = {
@@ -78,7 +78,7 @@ export class Gun {
       return;
     }
 
-    const rotation = this.owner.rot + Math.random() * this.options.spread;
+    const rotation = this.owner.rot + (Math.random() - 0.5) * this.options.spread;
     const offset = new Vector2(0, 11).rotate(this.owner.rot);
     const vel = new Vector2(0, this.options.bulletSpeed).rotate(rotation);
     this.projectileSystem.makeProjectile(
@@ -120,9 +120,10 @@ export class Gun {
   makeLight() {
     const offset = new Vector2(0, 13).rotate(this.owner.rot);
     const pos = this.owner.posAndVel.pos.copy().add(offset);
-    const light = new LightComponent(this.engine, pos, {
+    const light = new LightComponent(this.engine, {
+      pos,
       enabled: true,
-      size: 50,
+      radius: 50,
     });
 
     setTimeout(() => light.destroy());

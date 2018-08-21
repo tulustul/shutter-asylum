@@ -6,6 +6,7 @@ import { PosAndVel } from "./velocity";
 interface ParticleOptions {
   pos: Vector2;
   vel?: Vector2;
+  friction?: number;
   color: string;
   lifetime: number;
   canHitDynamic: boolean;
@@ -41,7 +42,7 @@ export class ParticleComponent extends Entity {
 
     this.bornAt = this.engine.time;
     const pos = options.pos.copy();
-    this.posAndVel = new PosAndVel(this.engine, pos);
+    this.posAndVel = new PosAndVel(this.engine, pos, options.friction);
     this.posAndVel.vel = options.vel;
 
     this.collidable = this.engine.getSystem<ColisionSystem>(ColisionSystem).makeCollidable({
@@ -72,6 +73,7 @@ export class ParticlesSystem extends EntitySystem<ParticleComponent> {
   byColors: {[key: string]: ParticleComponent[]} = {
     red: [],
     gray: [],
+    white: [],
   }
 
 

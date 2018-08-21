@@ -1,9 +1,8 @@
-1S-
-2L-
 #
 XXXXXXXXXXX
-X----1----X
-X---------X
-X---------X
-X2--------X
+X++++L++++X
+X+++++++++X
+XL+++S+++LX
+X+++++++++X
+X++++L++++X
 XXXXXXXXXXX

@@ -5,6 +5,7 @@ import { ParticleComponent } from "./particles";
 import { BarrierComponent, BarrierSystem } from "./barrier";
 import { BloodSystem, } from "./blood";
 import { Vector2 } from "../vector";
+import { LightComponent } from "./lighting";
 
 export class ProjectileComponent extends Entity {
 
@@ -54,6 +55,8 @@ export class ProjectileSystem extends EntitySystem<ProjectileComponent> {
           colision.hitter.particle.posAndVel.pos,
           colision.hitter.particle.posAndVel.vel,
         );
+      } else if (colision.receiver instanceof LightComponent) {
+        colision.receiver.broke();
       }
     });
   }
