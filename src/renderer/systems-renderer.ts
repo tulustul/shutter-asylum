@@ -26,6 +26,7 @@ const SPRITES_MAP: SpriteMap = {
   'stone': {x: 0, y: 0, w: 20, h: 20},
   'wood': {x: 0, y: 40, w: 20, h: 20},
   'tiles': {x: 40, y: 40, w: 20, h: 20},
+  'carpet': {x: 60, y: 40, w: 20, h: 20},
   'wall': {x: 0, y: 20, w: 20, h: 20},
   'agent': {x: 21, y: 0, w: 20, h: 25},
   'corpse': {x: 40, y: 0, w: 40, h: 20},

@@ -8,12 +8,13 @@ import { AIComponent, AISystem } from './systems/ai';
 import { LightComponent } from './systems/lighting';
 import { DoorComponent, DoorOrientation } from './systems/doors';
 
-const FLOOR_TYPES = '.+-';
+const FLOOR_TYPES = '.+-;';
 
 const FLOOR_MAP: {[key: string]: string} = {
   '.': 'stone',
   '-': 'wood',
   '+': 'tiles',
+  ';': 'carpet',
 };
 
 export async function loadLevel(engine: EntityEngine, levelName: string): Promise<void> {

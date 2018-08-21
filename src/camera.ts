@@ -8,8 +8,10 @@ export class Camera {
   constructor(private canvas: HTMLCanvasElement) {}
 
   setOnPlayer(player: PlayerComponent) {
-    this.pos.x = -player.agent.posAndVel.pos.x + this.canvas.width / 2;
-    this.pos.y = -player.agent.posAndVel.pos.y + this.canvas.height / 2;
-    this.pos.quantify();
+    // if (player) {
+      this.pos.x = -player.agent.posAndVel.pos.x + this.canvas.width / 2;
+      this.pos.y = -player.agent.posAndVel.pos.y + this.canvas.height / 2;
+      this.pos.quantify();
+    // }
   }
 }
