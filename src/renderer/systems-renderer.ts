@@ -11,6 +11,7 @@ import { LightsSystem } from '../systems/lighting';
 import { ParticlesSystem } from '../systems/particles';
 import { BloodSystem } from '../systems/blood';
 import { ActionsSystem } from '../systems/actions';
+import { FlashlightSystem } from '../systems/flashlight';
 
 interface SpriteMetadata {
   x: number;
@@ -35,9 +36,17 @@ const SPRITES_MAP: SpriteMap = {
 
 export class SystemsRenderer {
 
-  lightsLayer = new Layer('lights', this.renderer, {
+  flashlightPrerenderLayer = new Layer('', this.renderer);
+
+  staticLightsLayer = new Layer('staticLights', this.renderer, {
     renderWholeWorld: true,
     followPlayer: false,
+    fill: 'black',
+  });
+
+  flashlightLayer = new Layer('flashlight', this.renderer, {fill: 'black'});
+
+  combinedLightsLayer = new Layer('combinedLights', this.renderer, {
     fill: 'black',
   });
 
@@ -216,7 +225,7 @@ export class SystemsRenderer {
     }
     lightsSystem.needRerender = false;
 
-    this.lightsLayer.activate();
+    this.staticLightsLayer.activate();
     this.context.globalCompositeOperation = 'lighten';
 
     for (const light of lightsSystem.entities) {
@@ -226,7 +235,7 @@ export class SystemsRenderer {
 
         if (!gradient) {
           const gradient = this.context.createRadialGradient(
-            lightSize / 2, lightSize / 2, lightSize / 10,
+            lightSize / 2, lightSize / 2, 0,
             lightSize / 2, lightSize / 2, lightSize / 2,
           );
           gradient.addColorStop(0, light.power);
@@ -263,6 +272,30 @@ export class SystemsRenderer {
     bloodSystem.leaksToRender = [];
   }
 
+  renderFlashlights() {
+    this.context.globalCompositeOperation = 'lighten';
+    const flashlightSystem = this.engine.getSystem<FlashlightSystem>(FlashlightSystem);
+    const lightSize = 120;
+    const gradient = this.context.createRadialGradient(
+      0, 0, 20,
+      0, 0, lightSize,
+    );
+    gradient.addColorStop(0, '#ddd');
+    gradient.addColorStop(1, 'transparent');
+
+    this.context.fillStyle = gradient;
+    for (const flashlight of flashlightSystem.entities) {
+      const pos = flashlight.agent.posAndVel.pos;
+      const direction = flashlight.agent.rot;
+      this.context.save();
+      this.context.translate(pos.x, pos.y);
+      this.context.rotate(direction + Math.PI / 4);
+
+      this.context.fillRect(0, 0, lightSize, lightSize);
+      this.context.restore();
+    }
+  }
+
   render() {
     this.renderLights();
 
@@ -282,8 +315,14 @@ export class SystemsRenderer {
     this.particlesLayer.activate();
     this.renderParticles();
 
+    this.flashlightLayer.activate()
+    this.renderFlashlights();
+
     this.interfaceLayer.activate();
     this.renderInterface();
+
+    // to be filled by compositor
+    this.combinedLightsLayer.activate();
   }
 
 }

@@ -74,6 +74,14 @@ export class PlayerSystem extends EntitySystem<PlayerComponent> {
         if (actionsSystem.action) {
           actionsSystem.action.trigger();
         }
+      } else if (event.key === 'f') {
+        this.player.agent.toggleFlashlight();
+      }
+    });
+
+    window.addEventListener('mousedown', event => {
+      if (event.button === 1) {
+        this.player.agent.toggleFlashlight();
       }
     });
   }

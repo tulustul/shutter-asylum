@@ -94,12 +94,14 @@ export class LightComponent extends Entity {
   }
 
   broke() {
-    if (Math.random() > 0.8) {
-      this.broken = true;
-      this.radius /= 2;
-      this.power = '#aaa';
+    if (this.enabled && !this.broken) {
+      if (Math.random() > 0.7) {
+        this.broken = true;
+        this.radius /= 2;
+        this.power = '#aaa';
+      }
+      this.toggle();
     }
-    this.toggle();
   }
 
   toggle() {

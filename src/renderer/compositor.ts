@@ -1,12 +1,17 @@
 import { Renderer } from './renderer';
 import { Layer } from './layer';
 
-type BlendMode = 'source-over' | 'destination-in' | 'multiply' | 'overlay';
+type BlendMode =
+  'source-over' |
+  'destination-in' |
+  'multiply' |
+  'overlay' |
+  'lighten';
 
 interface CompositorEntry {
   source?: string;
   target?: string;
-  blendMode?: BlendMode;
+  blendMode?: string;
   offset?: boolean;
 }
 
@@ -18,6 +23,18 @@ const COMPOSITOR_ENTRIES: CompositorEntry[] = [
     blendMode: 'destination-in',
   }, {
     target: 'particles',
+  }, {
+    target: 'flashlight',
+  }, {
+    target: 'combinedLights',
+    source: 'flashlight',
+    blendMode: 'lighten',
+    offset: false,
+  }, {
+    target: 'combinedLights',
+    source: 'staticLights',
+    blendMode: 'lighten',
+    offset: true,
   }, {
     target: 'base',
     source: 'props',
@@ -33,9 +50,9 @@ const COMPOSITOR_ENTRIES: CompositorEntry[] = [
     source: 'movingProps',
     offset: false,
   }, {
-    source: 'lights',
+    source: 'combinedLights',
     blendMode: 'overlay',
-    offset: true,
+    offset: false,
   }, {
     source: 'particles',
     blendMode: 'source-over',
@@ -83,15 +100,15 @@ export class Compositor {
 
       target.context.globalCompositeOperation = entry.blendMode;
 
-      if (entry.offset) {
-        this.drawLayerWithOffset(target, source);
+      if (entry.offset === true) {
+        this.drawLayerWithCameraOffset(target, source);
       } else {
         target.context.drawImage(source.canvas, 0, 0);
       }
     }
   }
 
-  drawLayerWithOffset(target: Layer, source: Layer) {
+  drawLayerWithCameraOffset(target: Layer, source: Layer) {
     target.context.drawImage(source.canvas,
       -this.camera.pos.x, -this.camera.pos.y,
       this.canvas.width, this.canvas.height,

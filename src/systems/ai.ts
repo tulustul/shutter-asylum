@@ -64,13 +64,17 @@ export class AIComponent extends Entity {
   constructor(private engine: EntityEngine, options: AIOptions) {
     super();
 
-  Object.assign(this, options);
+    Object.assign(this, options);
 
     this.agent = new AgentComponent(engine, options.pos, {colisionMask: ENEMY_MASK});
     this.agent.parent = this;
     this.agent.onHit = () => this.state = AIState.alerted;
     this.weapon = new Gun(this.engine, mgOptions);
     this.weapon.setOwner(this.agent);
+
+    if (this.canPatrol) {
+      this.agent.toggleFlashlight();
+    }
 
     engine.getSystem(AISystem).add(this);
   }

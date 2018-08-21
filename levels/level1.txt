@@ -1,38 +1,31 @@
-1L-
-2L.
-3S-
-4E.
-5E-
-6B.
-7B-
 __.
 ||.
 #
 XXXXXXXXXXX
-X----1----XXXXXXXXX
+X----L----XXXXXXXXX
 X---------|...|---X
-X---------XXXXX--1X
+X---------XXXXX--LX
 X---------X   X---X
 XXXXXX_XXXX   XX_XXXXXXXXXXXXXXXXXXX
-    X...X     X-------7------------X
-    X..2X     X----5-5-5-55--------X
-    X...X     X-----5-5--5---------X
+    X...X     X-------B------------X
+    X..LX     X----E-E-E-EE--------X
+    X...X     X-----E-E--E---------X
     X...X     XX_XX----------------X
 XXXXX...XXXXXXX...X----------------X
 X.................XXXXXXXXXXXXXX_XXX
-X..........4................X.....2X
+X..........E................X.....LX
 X6....X............................X
-X..................2XXXXX..........X
+X..................LXXXXX..........X
 X...................X   X....XXXXXXX
-X.......2XXXXXXXXX_XX   X....X
+X.......LXXXXXXXXX_XX   X....X
 XX........X--------X    XXXXXX
- X........X1-------X
- X2.....XXXXXXX_XXXX
+ X........XL-------X
+ XL.....XXXXXXX_XXXX
  X......|..........X
  X......X..........X
  XXXXXXXXX_XXXXXXXXX
        X-----X
-      LX-----X
+       XL----X
        X-----X
-       X--3--X
+       X--S--X
        XXXXXXX

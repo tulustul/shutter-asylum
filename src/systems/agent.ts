@@ -7,6 +7,7 @@ import { Vector2 } from "../vector";
 import { TILE_SIZE } from "../constants";
 import { Gun } from "../weapons";
 import { BARRIER_MASK } from "../colisions-masks";
+import { FlashlightComponent } from "./flashlight";
 
 interface AgentOptions {
   maxHealth?: number;
@@ -31,9 +32,11 @@ export class AgentComponent extends Entity {
 
   health: number;
 
+  flashlight: FlashlightComponent;
+
   onHit: () => void;
 
-  constructor(private engine: EntityEngine, pos: Vector2, options: AgentOptions) {
+  constructor(public engine: EntityEngine, pos: Vector2, options: AgentOptions) {
     super();
     if (options) {
       Object.assign(this, options);
@@ -42,8 +45,9 @@ export class AgentComponent extends Entity {
 
     this.engine.getSystem(AgentSystem).add(this);
     this.posAndVel = new PosAndVel(this.engine, pos, 1.1);
-    this.collidable = this.engine.getSystem<ColisionSystem>(ColisionSystem)
-    .makeCollidable({
+    const colisionSystem = this.engine.getSystem<ColisionSystem>(ColisionSystem);
+
+    this.collidable = colisionSystem.makeCollidable({
       pos: this.posAndVel.pos,
       shape: Shape.circle,
       radius: TILE_SIZE / 2,
@@ -99,6 +103,15 @@ export class AgentComponent extends Entity {
       this.maxSpeed,
       Math.max(-this.maxSpeed, this.posAndVel.vel.y + acc.y),
     );
+  }
+
+  toggleFlashlight() {
+    if (this.flashlight) {
+      this.flashlight.destroy();
+      this.flashlight = null;
+    } else {
+      this.flashlight = new FlashlightComponent(this);
+    }
   }
 
 }
