@@ -40,14 +40,14 @@ export class FogOfWar {
   }
 
   render() {
-    this.visibilityMaskLayer.activate();
-
     const colisionSystem = this.engine.getSystem<ColisionSystem>(ColisionSystem);
     const playerSystem = this.engine.getSystem<PlayerSystem>(PlayerSystem);
 
     if (!playerSystem.player) {
       return;
     }
+
+    this.visibilityMaskLayer.activate();
 
     const playerPos = playerSystem.player.agent.posAndVel.pos;
     const widthTiles = Math.ceil(this.canvas.width / TILE_SIZE);
