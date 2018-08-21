@@ -17,7 +17,7 @@ ee.
             Xp---1----X
             X---------|
             X---------X
-            X5-------pX
+            X9-------pX
             XXXX_XXXXXX
               X...X
               X..2X
@@ -31,7 +31,7 @@ ee.
   X---5X...X2.......2X..P..X
   XXXXXX...X.........XXXXXXX
   Xp---X...X.........X
-  X-5--X.P.X.........X
+  X-9--X.P.X.........X
   X1---|...X2.......6XXXXXXX
   X----X...X.........X     X
   X----X...X.........X     X
@@ -42,7 +42,7 @@ X------X...X.........X     X
 X------X.P.X.........X     X
 X------X...XXXXX_XXXXX    X
 X1-----XX_X  X-----X
-X--5------X LX-----X
+X--9------X LX-----X
 X---------X  X-----X
 X----p----X  X--3--X
 XXXXXXXXXXX  XXXXXXX

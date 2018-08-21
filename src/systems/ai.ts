@@ -59,7 +59,7 @@ export class AIComponent extends Entity {
 
   changedTargetAt: number;
 
-  visitedPatrolPoints: Vector2[] = [];
+  pointsVisitCount = new Map<Vector2, number>();
 
   constructor(private engine: EntityEngine, options: AIOptions) {
     super();
@@ -133,7 +133,6 @@ export class AIComponent extends Entity {
       this.notifyNeighbours(this.playerPos);
     } else if (this.canPatrol) {
       this.state = AIState.patroling;
-      this.visitedPatrolPoints = [];
       this.agent.maxSpeed = 0.5;
     }
   }
@@ -141,29 +140,41 @@ export class AIComponent extends Entity {
   whenPatroling() {
     this.whenIdle();
     if (!this.moveTarget) {
+
       const patrolPoints = this.system.getVisiblePatrolPoints(this.agentPos);
       if (!patrolPoints.length) {
         return;
       }
 
-      const notVisitedPoints = patrolPoints.filter(
-        p => this.visitedPatrolPoints.indexOf(p) === -1,
-      )
+      let leastVisitedCount = Number.MAX_SAFE_INTEGER;
+      let leastVisited = [];
+      for (const point of patrolPoints) {
+        const visitCount = this.pointsVisitCount.get(point) || 0;
+        if (visitCount < leastVisitedCount) {
+          leastVisitedCount = visitCount;
+          leastVisited = [];
+        }
+        if (visitCount === leastVisitedCount) {
+          leastVisited.push(point);
+        }
+      }
+
       let closestDistance = 1000;
-      for (const point of notVisitedPoints) {
+      for (const point of leastVisited) {
         const distance = point.distanceTo(this.agentPos);
         if (distance < closestDistance) {
           closestDistance = distance;
           this.moveTarget = point;
         }
       }
-      if (!this.moveTarget) {
-        this.visitedPatrolPoints = [];
-        this.moveTarget = patrolPoints[0];
+      if (this.moveTarget) {
+        const currentVisits = this.pointsVisitCount.get(this.moveTarget) || 0;
+        this.pointsVisitCount.set(this.moveTarget, currentVisits + 1);
       }
-      this.visitedPatrolPoints.push(this.moveTarget);
     }
-    this.agent.rot = this.agentPos.directionTo(this.moveTarget);
+    if (this.moveTarget) {
+      this.agent.rot = this.agentPos.directionTo(this.moveTarget);
+    }
   }
 
   whenFighting() {
