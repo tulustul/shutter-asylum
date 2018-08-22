@@ -5,10 +5,11 @@ interface PropOptions {
   sprite: string;
   pos: Vector2;
   rot?: number;
-  aboveLevel?: boolean;
   changing?: boolean;
   pivot?: Vector2;
   offset?: Vector2;
+  aboveLevel?: boolean;
+  zIndex?: number;
 }
 
 export class PropComponent extends Entity {
@@ -21,13 +22,15 @@ export class PropComponent extends Entity {
 
   needRerender = false;
 
-  aboveLevel = false;
-
   changing = false;
 
   pivot = new Vector2();
 
   offset = new Vector2();
+
+  aboveLevel = false;
+
+  zIndex = 0;
 
   constructor(engine: EntityEngine, options: PropOptions) {
     super();
@@ -45,9 +48,11 @@ export class PropComponent extends Entity {
 
 export class PropsSystem extends EntitySystem<PropComponent> {
 
-  toRender: PropComponent[] = [];
+  toRender: {[zIndex: number]: PropComponent[]} = {};
 
   higherToRender: PropComponent[] = [];
+
+  zIndexes: number[] = [];
 
   add(entity: PropComponent) {
     entity.system = this;
@@ -56,7 +61,16 @@ export class PropsSystem extends EntitySystem<PropComponent> {
     } else if (entity.aboveLevel) {
       this.higherToRender.push(entity);
     } else {
-      this.toRender.push(entity);
+      this.updateZIndexes(entity.zIndex);
+      this.toRender[entity.zIndex].push(entity);
+    }
+  }
+
+  updateZIndexes(zIndex: number) {
+    if (!this.toRender[zIndex]) {
+      this.toRender[zIndex] = [];
+      this.zIndexes.push(zIndex);
+      this.zIndexes = this.zIndexes.sort();
     }
   }
 

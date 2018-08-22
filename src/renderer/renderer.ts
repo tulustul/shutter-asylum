@@ -53,7 +53,7 @@ export class Renderer {
     });
 
     // DEBUG
-    this.checkColorsLayer = new Layer('', this);
+    // this.checkColorsLayer = new Layer('', this);
 
     this.texture = new Image();
     this.texture.src = 'tex.png';
@@ -76,9 +76,9 @@ export class Renderer {
     this.postprocessing.postprocess(this.baseLayer);
 
     // DEBUG
-    if (Math.round(this.engine.time) % 300 === 0) {
-      this.checkDistinctColors();
-    }
+    // if (Math.round(this.engine.time) % 300 === 0) {
+    //   this.checkDistinctColors();
+    // }
   }
 
   checkDistinctColors() {

@@ -7,7 +7,7 @@ import { Vector2 } from '../vector';
 import { AgentSystem } from '../systems/agent';
 import { PropsSystem, PropComponent } from '../systems/props';
 import { PlayerSystem } from '../systems/player';
-import { LightsSystem } from '../systems/lighting';
+import { LightsSystem, LightComponent } from '../systems/lighting';
 import { ParticlesSystem } from '../systems/particles';
 import { BloodSystem } from '../systems/blood';
 import { ActionsSystem } from '../systems/actions';
@@ -27,6 +27,7 @@ const SPRITES_MAP: SpriteMap = {
   'wood': {x: 0, y: 40, w: 20, h: 20},
   'tiles': {x: 40, y: 40, w: 20, h: 20},
   'carpet': {x: 60, y: 40, w: 20, h: 20},
+  'carpetBorder': {x: 60, y: 37, w: 20, h: 3},
   'wall': {x: 0, y: 20, w: 20, h: 20},
   'agent': {x: 21, y: 0, w: 20, h: 25},
   'corpse': {x: 40, y: 0, w: 40, h: 20},
@@ -75,8 +76,6 @@ export class SystemsRenderer {
 
   activeLayer: Layer;
 
-  gradientCache = new Map<number, CanvasGradient>();
-
   constructor(private renderer: Renderer) { }
 
   get context() {
@@ -89,8 +88,10 @@ export class SystemsRenderer {
 
   renderLowerProps() {
     const propsSystem = this.engine.getSystem<PropsSystem>(PropsSystem);
-    this.renderProps(propsSystem.toRender);
-    propsSystem.toRender = [];
+    for (const zIndex of propsSystem.zIndexes) {
+      this.renderProps(propsSystem.toRender[zIndex]);
+      propsSystem.toRender[zIndex] = [];
+    }
   }
 
   renderHigherProps() {
@@ -192,26 +193,24 @@ export class SystemsRenderer {
 
     for (const light of lightsSystem.entities) {
       if (light.enabled) {
-        const lightSize = light.radius;
-        const gradient = this.gradientCache.get(light.radius)
+        const radius = light.radius;
 
-        if (!gradient) {
-          const gradient = this.context.createRadialGradient(
-            lightSize / 2, lightSize / 2, 0,
-            lightSize / 2, lightSize / 2, lightSize / 2,
-          );
-          gradient.addColorStop(0, light.power);
-          gradient.addColorStop(1, 'transparent');
-          this.gradientCache.set(lightSize, gradient);
-        }
+        const gradient = this.context.createRadialGradient(
+          radius / 2, radius / 2, 0,
+          radius / 2 + (radius / 2 * light.direction.x),
+          radius / 2 + (radius / 2 * light.direction.y),
+          radius / 2,
+        );
+        gradient.addColorStop(0, light.power);
+        gradient.addColorStop(1, 'transparent');
 
         this.context.fillStyle = gradient;
 
         this.context.save()
         this.context.translate(
-          light.pos.x - lightSize / 2, light.pos.y - lightSize / 2,
+          light.pos.x - radius / 2, light.pos.y - radius / 2,
         )
-        this.context.fillRect(0, 0, lightSize, lightSize);
+        this.context.fillRect(0, 0, radius * 2, radius * 2);
         this.context.restore();
       }
     }

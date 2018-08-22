@@ -43,7 +43,7 @@ export class LightComponent extends Entity {
 
   wallDirection: Direction;
 
-  sparksDirection: Vector2;
+  direction = new Vector2();
 
   constructor(
     private engine: EntityEngine,
@@ -58,18 +58,18 @@ export class LightComponent extends Entity {
       if (this.wallDirection === 'up') {
         rot = Math.PI / 2;
         this.pos.add(new Vector2(TILE_SIZE / 2, 0));
-        this.sparksDirection = new Vector2(0, 1);
+        this.direction = new Vector2(0, 1);
       } else if (this.wallDirection === 'right') {
         rot = Math.PI;
         this.pos.add(new Vector2(TILE_SIZE, TILE_SIZE / 2));
-        this.sparksDirection = new Vector2(-1, 0);
+        this.direction = new Vector2(-1, 0);
       } else if (this.wallDirection === 'down') {
         rot = -Math.PI / 2;
         this.pos.add(new Vector2(TILE_SIZE / 2, TILE_SIZE));
-        this.sparksDirection = new Vector2(0, 1);
+        this.direction = new Vector2(0, -1);
       } else if (this.wallDirection === 'left') {
         this.pos.add(new Vector2(0, TILE_SIZE / 2));
-        this.sparksDirection = new Vector2(1, 0);
+        this.direction = new Vector2(1, 0);
       }
 
       this.colision = this.engine.getSystem<ColisionSystem>(ColisionSystem).makeCollidable({
@@ -111,7 +111,7 @@ export class LightComponent extends Entity {
     this.prop.sprite = this.enabled ? 'light' : 'lightBroken';
     this.prop.queueRender();
 
-    if (this.sparksDirection) {
+    if (this.direction) {
       this.emitSparks();
     }
   }
@@ -128,7 +128,7 @@ export class LightComponent extends Entity {
       friction: 1.1,
     }, {
       count: Math.ceil(Math.random() * 10),
-      direction: this.sparksDirection.copy().mul(5),
+      direction: this.direction.copy().mul(5),
       spread: Math.PI,
       speedSpread: 0.5,
       lifetimeSpread: 0.5,

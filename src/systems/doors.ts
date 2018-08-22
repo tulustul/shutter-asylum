@@ -49,7 +49,6 @@ export class DoorComponent extends Entity {
       pos: this.pos,
       rot: this.orientation === DoorOrientation.horizontal ? 0 : Math.PI / 2,
       sprite: 'door',
-      aboveLevel: true,
       changing: true,
       pivot: new Vector2(0, TILE_SIZE / 2),
       offset: this.orientation === DoorOrientation.horizontal ?
