@@ -1,7 +1,7 @@
 import { EntitySystem } from './ecs';
 import { Vector2 } from '../vector';
 import { TILE_SIZE } from '../constants';
-import { BARRIER_MASK, AGENTS_MASK } from '../colisions-masks';
+import { BARRIER_MASK, AGENTS_MASK, OBSTACLE_MASK } from '../colisions-masks';
 
 export enum Shape {
   gridCell,
@@ -46,7 +46,7 @@ export class ColisionSystem extends EntitySystem<Collidable> {
     if (collidable.mask & AGENTS_MASK) {
       this.dynamicReceivers.push(collidable);
       this.putToGrid(this.dynamicGrid, collidable);
-    } else if (collidable.mask & BARRIER_MASK) {
+    } else if (collidable.mask & BARRIER_MASK || collidable.mask & OBSTACLE_MASK) {
       this.putToGrid(this.staticGrid, collidable);
     }
 
@@ -64,7 +64,7 @@ export class ColisionSystem extends EntitySystem<Collidable> {
       if (index !== -1) {
         this.dynamicReceivers.splice(index, 1);
       }
-    } else if (entity.mask & BARRIER_MASK) {
+    } else if (entity.mask & BARRIER_MASK || entity.mask & OBSTACLE_MASK) {
       const gridIndex = this.getIndexOfPos(entity.pos);
       const cell = this.staticGrid.get(gridIndex);
       if (cell) {
@@ -105,7 +105,9 @@ export class ColisionSystem extends EntitySystem<Collidable> {
         if (this.staticGrid.has(cell)) {
           for (const receiver of this.staticGrid.get(cell)) {
             // staticGrid is Shape.gridCell only. No need for narrow phase
-            this.onColision(hitter, receiver);
+            if (receiver.mask & hitter.canHit) {
+              this.onColision(hitter, receiver);
+            }
           }
         }
         if (hitter.canHit & AGENTS_MASK) {
@@ -282,7 +284,11 @@ export class ColisionSystem extends EntitySystem<Collidable> {
       pos.add(offset);
       const index = this.getIndexOfPos(pos);
       if (this.staticGrid.has(index)) {
-        return pos;
+        for (const receiver of this.staticGrid.get(index)) {
+          if (receiver.mask & BARRIER_MASK) {
+            return pos;
+          }
+        }
       }
     }
     return null;

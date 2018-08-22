@@ -6,7 +6,7 @@ import { BloodSystem } from "./blood";
 import { Vector2 } from "../vector";
 import { TILE_SIZE } from "../constants";
 import { Gun } from "../weapons";
-import { BARRIER_MASK } from "../colisions-masks";
+import { BARRIER_MASK, OBSTACLE_MASK } from "../colisions-masks";
 import { FlashlightComponent } from "./flashlight";
 
 interface AgentOptions {
@@ -54,7 +54,7 @@ export class AgentComponent extends Entity {
       shouldDecouple: true,
       parent: this,
       mask: options.colisionMask,
-      canHit: BARRIER_MASK,
+      canHit: BARRIER_MASK | OBSTACLE_MASK,
     });
   }
 

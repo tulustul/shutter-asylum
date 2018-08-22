@@ -2,39 +2,14 @@ import { Layer } from './layer';
 import { Renderer } from './renderer';
 
 import { TILE_SIZE } from '../constants';
-import { Vector2 } from '../vector';
+import { SPRITES_MAP } from '../sprites';
 
 import { AgentSystem } from '../systems/agent';
 import { PropsSystem, PropComponent } from '../systems/props';
-import { PlayerSystem } from '../systems/player';
-import { LightsSystem, LightComponent } from '../systems/lighting';
+import { LightsSystem } from '../systems/lighting';
 import { ParticlesSystem } from '../systems/particles';
 import { BloodSystem } from '../systems/blood';
-import { ActionsSystem } from '../systems/actions';
 import { FlashlightSystem } from '../systems/flashlight';
-
-interface SpriteMetadata {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-}
-
-type SpriteMap = {[key: string]: SpriteMetadata};
-
-const SPRITES_MAP: SpriteMap = {
-  'stone': {x: 0, y: 0, w: 20, h: 20},
-  'wood': {x: 0, y: 40, w: 20, h: 20},
-  'tiles': {x: 40, y: 40, w: 20, h: 20},
-  'carpet': {x: 60, y: 40, w: 20, h: 20},
-  'carpetBorder': {x: 60, y: 37, w: 20, h: 3},
-  'wall': {x: 0, y: 20, w: 20, h: 20},
-  'agent': {x: 21, y: 0, w: 20, h: 25},
-  'corpse': {x: 40, y: 0, w: 40, h: 20},
-  'door': {x: 20, y: 40, w: 20, h: 20},
-  'light': {x: 20, y: 30, w: 5, h: 10},
-  'lightBroken': {x: 25, y: 30, w: 7, h: 10},
-}
 
 export class SystemsRenderer {
 
@@ -43,10 +18,9 @@ export class SystemsRenderer {
   staticLightsLayer = new Layer('staticLights', this.renderer, {
     renderWholeWorld: true,
     followPlayer: false,
-    fill: 'black',
   });
 
-  flashlightLayer = new Layer('flashlight', this.renderer, {fill: 'black'});
+  flashlightLayer = new Layer('flashlight', this.renderer);
 
   combinedLightsLayer = new Layer('combinedLights', this.renderer, {
     fill: 'black',

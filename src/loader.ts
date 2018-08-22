@@ -1,5 +1,7 @@
 import { Vector2 } from './vector';
 import { TILE_SIZE } from './constants';
+import { SPRITES_MAP } from './sprites';
+
 import { EntityEngine } from "./systems/ecs";
 import { PlayerComponent } from "./systems/player";
 import { PropComponent } from "./systems/props";
@@ -7,15 +9,19 @@ import { BarrierComponent } from './systems/barrier';
 import { AIComponent, AISystem } from './systems/ai';
 import { LightComponent } from './systems/lighting';
 import { DoorComponent, DoorOrientation } from './systems/doors';
+import { OBSTACLE_MASK } from './colisions-masks';
 
-const FLOOR_TYPES = '.+-;';
+const FLOOR_TYPES = '.+-;[';
 
 const FLOOR_MAP: {[key: string]: string} = {
   '.': 'stone',
   '-': 'wood',
   '+': 'tiles',
   ';': 'carpet',
+  '[': 'table',
 };
+
+const PROP_WITH_BORDERS = ';[';
 
 export async function loadLevel(engine: EntityEngine, levelName: string): Promise<void> {
   const data = await fetchLevel(levelName);
@@ -44,6 +50,9 @@ export async function loadLevel(engine: EntityEngine, levelName: string): Promis
         line[x] = multiCells[multiCells.length - 1];
       } else {
         makeCell(engine, cells, x, y, cell);
+      }
+      if (PROP_WITH_BORDERS.includes(cell)) {
+        addCellBorders(engine, cells, x, y);
       }
     }
   }
@@ -80,7 +89,11 @@ function makeCell(
   const pos = new Vector2(x * TILE_SIZE, y * TILE_SIZE);
 
   if (cell === "X") {
-    new BarrierComponent(engine, pos);
+    new BarrierComponent(engine, {pos});
+  } else if (cell === '[') {
+    new BarrierComponent(engine, {
+      pos, colisionMask: OBSTACLE_MASK, sprite: 'table', zIndex: 1,
+    });
   } else if (FLOOR_TYPES.includes(cell)) {
     new PropComponent(engine, {pos, sprite: FLOOR_MAP[cell]});
   } else {
@@ -122,15 +135,39 @@ function makeCell(
   }
 }
 
+function *getNeighbours(
+  cells: string[][], x: number, y: number
+): Iterable<[number, number, string]> {
+  let [nx, ny] = [Math.max(x - 1, 0), y];
+  yield [nx, ny, cells[ny][nx]];
+
+  [nx, ny] = [x + 1, y];
+  yield [nx, ny, cells[ny][nx]];
+
+  [nx, ny] = [x, Math.max(y - 1, 0)];
+  yield [nx, ny, cells[ny][nx]];
+
+  [nx, ny] = [x, y + 1];
+  yield [nx, ny, cells[ny][nx]];
+}
+
 function guessCellFloor(cells: string[][], x: number, y: number) {
-  for (let xDiff = -1; xDiff <= 1; xDiff++) {
-    for (let yDiff = -1; yDiff <= 1; yDiff++) {
-      const cell = cells[y + yDiff][x + xDiff];
-      if (FLOOR_TYPES.includes(cell)) {
-        return cell;
-      }
+  const counts = new Map<string, number>();
+  for (const [nx, ny, cell] of getNeighbours(cells, x, y)) {
+    if (FLOOR_TYPES.includes(cell)) {
+      const newCount = (counts.get(cell) || 0) + 1;
+      counts.set(cell, newCount);
     }
   }
+  let biggest: string;
+  let biggestCount = 0;
+  for (const [cell, count] of counts.entries()) {
+    if (count > biggestCount) {
+      biggestCount = count;
+      biggest = cell;
+    }
+  }
+  return biggest;
 }
 
 function getWallDirection(cells: string[][], x: number, y: number) {
@@ -142,5 +179,39 @@ function getWallDirection(cells: string[][], x: number, y: number) {
     return 'right';
   } else {
     return 'down';
+  }
+}
+
+
+function addCellBorders(
+  engine: EntityEngine, cells: string[][], x: number, y: number,
+) {
+  const pos = new Vector2(x * TILE_SIZE, y * TILE_SIZE);
+  const thisCell = cells[y][x];
+  const spriteName = FLOOR_MAP[thisCell] + 'Border';
+  const sprite = SPRITES_MAP[spriteName];
+
+  for (const [nx, ny, cell] of getNeighbours(cells, x, y)) {
+    if (cell !== thisCell && cell !== 'X') {
+      const borderPos = new Vector2(nx * TILE_SIZE, ny * TILE_SIZE);
+      const rot = borderPos.directionTo(pos);
+
+      if (nx < x) {
+        borderPos.x += TILE_SIZE - sprite.h;
+        borderPos.y += TILE_SIZE - sprite.h;
+      } else if (nx > x) {
+        borderPos.x += sprite.h;
+      } else if (ny > y) {
+        borderPos.x += TILE_SIZE;
+      } else if (ny < y) {
+        borderPos.y += TILE_SIZE - sprite.h;
+      }
+      new PropComponent(engine, {
+        pos: borderPos,
+        rot,
+        zIndex: 1,
+        sprite: spriteName,
+      });
+    }
   }
 }

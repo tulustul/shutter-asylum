@@ -2,7 +2,13 @@
 XXXXXXXXXXX
 X++++L++++X
 X+++++++++X
-XL+++S+++LX
+X++++[[[[+X
+X++++[[[[+X
 X+++++++++X
+XL+++S+++LX
+X+;;;;;;;+X
+X+;;;;;;;+X
+X+;;;;;;;+X
+X+;;;;;;;+X
 X++++L++++X
 XXXXXXXXXXX

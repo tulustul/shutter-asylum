@@ -1,26 +1,51 @@
 import { EntitySystem, EntityEngine, Entity } from "./ecs";
 import { PropComponent } from "./props";
-import { ColisionSystem, Shape } from "./colision";
+import { ColisionSystem, Shape, Collidable } from "./colision";
 import { ParticlesSystem } from "./particles";
 
 import { Vector2 } from "../vector";
 import { BARRIER_MASK } from "../colisions-masks";
 
+interface BarrierOptions {
+  pos: Vector2;
+  sprite?: string;
+  colisionMask?: number;
+  zIndex?: number;
+}
+
 export class BarrierComponent extends Entity {
 
-  colision = this.engine.getSystem<ColisionSystem>(ColisionSystem).makeCollidable({
-    pos: this.pos,
-    shape: Shape.gridCell,
-    radius: 0,
-    shouldDecouple: false,
-    parent: this,
-    mask: BARRIER_MASK,
-  });
+  pos: Vector2;
 
-  prop = new PropComponent(this.engine, {pos: this.pos, sprite: 'wall'});
+  sprite = 'wall';
 
-  constructor(private engine: EntityEngine, public pos: Vector2) {
+  colisionMask = BARRIER_MASK;
+
+  collidable: Collidable;
+
+  prop: PropComponent;
+
+  constructor(private engine: EntityEngine, options: BarrierOptions) {
     super();
+
+    Object.assign(this, options);
+
+    this.collidable = this.engine.getSystem<ColisionSystem>(ColisionSystem).makeCollidable({
+      pos: this.pos,
+      shape: Shape.gridCell,
+      radius: 0,
+      shouldDecouple: false,
+      parent: this,
+      mask: this.colisionMask,
+    });
+
+    this.prop = new PropComponent(
+      this.engine, {
+        pos: this.pos,
+        sprite: this.sprite,
+        zIndex: options.zIndex || 0,
+      },
+    );
     engine.getSystem(BarrierSystem).add(this);
   }
 }

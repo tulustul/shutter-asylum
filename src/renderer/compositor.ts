@@ -28,12 +28,12 @@ const COMPOSITOR_ENTRIES: CompositorEntry[] = [
   }, {
     target: 'combinedLights',
     source: 'flashlight',
-    blendMode: 'lighten',
+    blendMode: 'screen',
     offset: false,
   }, {
     target: 'combinedLights',
     source: 'staticLights',
-    blendMode: 'lighten',
+    blendMode: 'screen',
     offset: true,
   }, {
     target: 'base',
