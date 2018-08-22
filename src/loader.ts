@@ -32,6 +32,7 @@ const OBSTACLES_MAP: {[key: string]: string} = {
 const PROPS_WITH_BORDERS = ';[';
 
 export async function loadLevel(engine: EntityEngine, levelName: string): Promise<void> {
+  engine.clear();
   const data = await fetchLevel(levelName);
   const [header, cellsData] = data.split('#');
   const cells = cellsData.split('\n').map(line => Array.from(line)) as string[][];

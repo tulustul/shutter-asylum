@@ -3,6 +3,7 @@ import { Vector2 } from "./vector";
 import { EntityEngine } from "./systems/ecs";
 import { PlayerSystem } from "./systems/player";
 import { ActionsSystem } from "./systems/actions";
+import { Menu } from "./menu";
 
 export class Control {
 
@@ -14,17 +15,33 @@ export class Control {
 
   rot = 0;
 
-  constructor(private engine: EntityEngine,  private canvas: HTMLCanvasElement) {}
+  constructor(
+    private engine: EntityEngine,
+    private canvas: HTMLCanvasElement,
+    private menu: Menu,
+  ) {}
 
   init() {
-    const playerSystem = this.engine.getSystem<PlayerSystem>(PlayerSystem);
-    const actionsSystem = this.engine.getSystem<ActionsSystem>(ActionsSystem);
 
-    window.addEventListener('keydown', event => this.keys.set(event.key, true));
+
+    window.addEventListener('keydown', event => {
+      this.keys.set(event.key, true);
+      if (event.key === 'Escape') {
+        this.engine.paused = !this.engine.paused;
+        this.menu.active = this.engine.paused;
+      }
+    });
 
     window.addEventListener('keyup', event => this.keys.set(event.key, false));
 
     window.addEventListener('keypress', event => {
+      if (this.engine.paused) {
+        return;
+      }
+
+      const playerSystem = this.engine.getSystem<PlayerSystem>(PlayerSystem);
+      const actionsSystem = this.engine.getSystem<ActionsSystem>(ActionsSystem);
+
       if (event.key === 'q') {
         playerSystem.nextWeapon();
       } else if (event.key === 'r') {
@@ -49,6 +66,12 @@ export class Control {
     });
 
     window.addEventListener('mousedown', event => {
+      if (this.engine.paused) {
+        return;
+      }
+
+      const playerSystem = this.engine.getSystem<PlayerSystem>(PlayerSystem);
+
       this.mouseButtons.set(event.button, true);
       if (event.button === 1) {
         playerSystem.player.agent.toggleFlashlight();

@@ -16,6 +16,8 @@ export class EntityEngine {
 
   sound = new Sound();
 
+  paused = true;
+
   getSystem<T extends EntitySystem<any>>(systemClass: Function) {
     return this.systemsMap.get(systemClass) as T;
   }
@@ -40,9 +42,10 @@ export class EntityEngine {
   }
 
   clear() {
-    for (const system of this.systems) {
-      system.clear();
-    }
+    this.systems = [];
+    // for (const system of this.systems) {
+    //   system.clear();
+    // }
   }
 }
 

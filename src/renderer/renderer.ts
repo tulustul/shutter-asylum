@@ -7,6 +7,7 @@ import { Compositor } from './compositor';
 
 import { Camera } from '../camera';
 import { EntityEngine } from '../systems/ecs';
+import { Menu } from '../menu';
 
 export class Renderer {
 
@@ -36,16 +37,13 @@ export class Renderer {
     public engine: EntityEngine,
     public camera: Camera,
     public canvas: HTMLCanvasElement,
+    public menu: Menu,
   ) {
     this.compositor = new Compositor(this);
 
     this.postprocessing = new Postprocessing(this.canvas);
 
-    this.systemsRenderer = new SystemsRenderer(this);
-
-    this.guiRenderer = new GuiRenderer(this);
-
-    this.fogOfWar = new FogOfWar(this);
+    this.guiRenderer = new GuiRenderer(this, menu);
 
     this.baseLayer = new Layer('base', this, {
       followPlayer: false,
@@ -79,6 +77,12 @@ export class Renderer {
     // if (Math.round(this.engine.time) % 300 === 0) {
     //   this.checkDistinctColors();
     // }
+  }
+
+  clear() {
+    this.compositor.clear();
+    this.systemsRenderer = new SystemsRenderer(this);
+    this.fogOfWar = new FogOfWar(this);
   }
 
   checkDistinctColors() {

@@ -43,6 +43,10 @@ export class Layer {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
+  clearCanvas() {
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
   activate() {
     if (this.renderer.activeLayer) {
       this.renderer.activeLayer.context.restore();
@@ -52,7 +56,7 @@ export class Layer {
     this.renderer.context = this.context;
 
     if (this.clear) {
-      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.clearCanvas();
     }
 
     if (this.fill) {

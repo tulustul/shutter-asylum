@@ -85,6 +85,12 @@ export class Compositor {
     return this.renderer.canvas;
   }
 
+  clear() {
+    for (const layer of Object.values(this.layers)) {
+      layer.clearCanvas();
+    }
+  }
+
   compose() {
     const entry: CompositorEntry = {};
 

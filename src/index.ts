@@ -18,12 +18,12 @@ import { BloodSystem } from "./systems/blood";
 import { ActionsSystem } from "./systems/actions";
 import { DoorsSystem } from "./systems/doors";
 import { FlashlightSystem } from "./systems/flashlight";
+import { Menu } from "./menu";
 
 let engine: EntityEngine;
+let renderer: Renderer;
 let control: Control;
 let camera: Camera;
-let renderer: Renderer;
-let paused = false;
 
 let cumulativeTime = 0;
 const timeStep = 1000 / 60;
@@ -31,10 +31,58 @@ const timeStep = 1000 / 60;
 async function init() {
   const canvas = document.getElementsByTagName("canvas")[0];
 
-  camera = new Camera(canvas);
   engine = new EntityEngine();
-  control = new Control(engine, canvas);
 
+  camera = new Camera(canvas);
+  const menu = makeMenu();
+  control = new Control(engine, canvas, menu);
+
+  start();
+  await loadLevel(engine, "intro");
+
+  control.init();
+
+  renderer = new Renderer(engine, camera, canvas, menu);
+
+  requestAnimationFrame(tick);
+
+  window.addEventListener('visibilitychange', () => engine.paused = true);
+}
+
+function makeMenu() {
+  const menu = new Menu();
+  for (let i = 1; i <= 5; i++) {
+    menu.addOption({
+      text: `level ${i}`,
+      callback: () => {
+        start();
+        loadLevel(engine, `level${i}`);
+        engine.paused = false;
+        menu.active = false;
+      },
+    });
+  }
+  return menu;
+}
+
+function tick(timestamp: number) {
+  const timeDiff = timestamp - cumulativeTime;
+  const steps = Math.floor(timeDiff / timeStep);
+  cumulativeTime += steps * timeStep;
+
+  if (!engine.paused) {
+    for (let i = 0; i < steps; i++) {
+      engine.update(cumulativeTime);
+    }
+  }
+
+  renderer.render();
+  requestAnimationFrame(tick);
+}
+
+function start() {
+  renderer.clear();
+  engine.clear();
   engine.register(new PropsSystem());
   engine.register(new BarrierSystem());
   engine.register(new AgentSystem());
@@ -51,26 +99,6 @@ async function init() {
   engine.register(new FlashlightSystem());
 
   engine.init();
-  control.init();
-
-  await loadLevel(engine, "level5");
-
-  renderer = new Renderer(engine, camera, canvas);
-
-  requestAnimationFrame(tick);
-}
-
-function tick(timestamp: number) {
-  const timeDiff = timestamp - cumulativeTime;
-  const steps = Math.floor(timeDiff / timeStep);
-  cumulativeTime += steps * timeStep;
-
-  for (let i = 0; i < steps; i++) {
-    engine.update(cumulativeTime);
-  }
-
-  renderer.render();
-  requestAnimationFrame(tick);
 }
 
 init();
