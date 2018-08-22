@@ -60,30 +60,9 @@ export class PlayerSystem extends EntitySystem<PlayerComponent> {
   }
 
   add(entity: PlayerComponent) {
-    const actionsSystem = this.engine.getSystem<ActionsSystem>(ActionsSystem);
-
     super.add(entity)
     this.player = entity;
     this.nextWeapon();
-    window.addEventListener('keypress', event => {
-      if (event.key === 'q') {
-        this.nextWeapon();
-      } else if (event.key === 'r') {
-        this.player.agent.weapon.reload();
-      } else if (event.key === 'e') {
-        if (actionsSystem.action) {
-          actionsSystem.action.trigger();
-        }
-      } else if (event.key === 'f') {
-        this.player.agent.toggleFlashlight();
-      }
-    });
-
-    window.addEventListener('mousedown', event => {
-      if (event.button === 1) {
-        this.player.agent.toggleFlashlight();
-      }
-    });
   }
 
   remove(entity: PlayerComponent) {

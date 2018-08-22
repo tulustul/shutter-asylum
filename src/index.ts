@@ -23,6 +23,7 @@ let engine: EntityEngine;
 let control: Control;
 let camera: Camera;
 let renderer: Renderer;
+let paused = false;
 
 let cumulativeTime = 0;
 const timeStep = 1000 / 60;
@@ -31,9 +32,8 @@ async function init() {
   const canvas = document.getElementsByTagName("canvas")[0];
 
   camera = new Camera(canvas);
-  control = new Control(canvas);
-
   engine = new EntityEngine();
+  control = new Control(engine, canvas);
 
   engine.register(new PropsSystem());
   engine.register(new BarrierSystem());
@@ -51,6 +51,7 @@ async function init() {
   engine.register(new FlashlightSystem());
 
   engine.init();
+  control.init();
 
   await loadLevel(engine, "level5");
 
