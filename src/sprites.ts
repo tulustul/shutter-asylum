@@ -21,4 +21,5 @@ export const SPRITES_MAP: SpriteMap = {
   door: {x: 20, y: 40, w: 20, h: 20},
   light: {x: 20, y: 30, w: 5, h: 10},
   lightBroken: {x: 25, y: 30, w: 7, h: 10},
+  chair: {x: 41, y: 22, w: 19, h: 16},
 }

@@ -14,6 +14,7 @@ import { OBSTACLE_MASK } from './colisions-masks';
 const FLOOR_TYPES = '.+-;[';
 
 const FLOOR_MAP: {[key: string]: string} = {
+  'X': 'wall',
   '.': 'stone',
   '-': 'wood',
   '+': 'tiles',
@@ -21,7 +22,14 @@ const FLOOR_MAP: {[key: string]: string} = {
   '[': 'table',
 };
 
-const PROP_WITH_BORDERS = ';[';
+const OBSTACLES_TYPES = '[c';
+
+const OBSTACLES_MAP: {[key: string]: string} = {
+  '[': 'table',
+  'c': 'chair',
+};
+
+const PROPS_WITH_BORDERS = ';[';
 
 export async function loadLevel(engine: EntityEngine, levelName: string): Promise<void> {
   const data = await fetchLevel(levelName);
@@ -51,7 +59,7 @@ export async function loadLevel(engine: EntityEngine, levelName: string): Promis
       } else {
         makeCell(engine, cells, x, y, cell);
       }
-      if (PROP_WITH_BORDERS.includes(cell)) {
+      if (PROPS_WITH_BORDERS.includes(cell)) {
         addCellBorders(engine, cells, x, y);
       }
     }
@@ -90,13 +98,22 @@ function makeCell(
 
   if (cell === "X") {
     new BarrierComponent(engine, {pos});
-  } else if (cell === '[') {
-    new BarrierComponent(engine, {
-      pos, colisionMask: OBSTACLE_MASK, sprite: 'table', zIndex: 1,
+  } else if (OBSTACLES_TYPES.includes(cell)) {
+    const barrier = new BarrierComponent(engine, {
+      pos,
+      colisionMask: OBSTACLE_MASK,
+      sprite: OBSTACLES_MAP[cell],
+      zIndex: 1,
     });
+    // if (cell === 'c') {
+    //   barrier.prop.rot = Math.PI * 2 * Math.random();
+    //   barrier.prop.pivot = new Vector2(9, 8);
+    // }
   } else if (FLOOR_TYPES.includes(cell)) {
     new PropComponent(engine, {pos, sprite: FLOOR_MAP[cell]});
-  } else {
+  }
+
+  if (cell !== 'X' && !FLOOR_TYPES.includes(cell)) {
     const floorType = guessCellFloor(cells, x, y);
     if (floorType) {
       new PropComponent(engine, {pos: pos.copy(), sprite: FLOOR_MAP[floorType]});
@@ -182,7 +199,6 @@ function getWallDirection(cells: string[][], x: number, y: number) {
   }
 }
 
-
 function addCellBorders(
   engine: EntityEngine, cells: string[][], x: number, y: number,
 ) {
@@ -198,11 +214,12 @@ function addCellBorders(
 
       if (nx < x) {
         borderPos.x += TILE_SIZE - sprite.h;
-        borderPos.y += TILE_SIZE - sprite.h;
+        borderPos.y += TILE_SIZE;
       } else if (nx > x) {
         borderPos.x += sprite.h;
       } else if (ny > y) {
         borderPos.x += TILE_SIZE;
+        borderPos.y += sprite.h;
       } else if (ny < y) {
         borderPos.y += TILE_SIZE - sprite.h;
       }

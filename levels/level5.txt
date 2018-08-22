@@ -1,4 +1,4 @@
-1_;
+1_-
 ||.
 #
             XXXXXXXXXXX
@@ -29,7 +29,7 @@ X--E-E-X...XX...;...X     X
 X------X...XX...;...X     X
 XE;;;;-X.p.XX...;...X     X
 X-;[[;-X...XXXXX1XXXXX    X
-XL;[[;-XX_X  X-----X
+XL;[[;-XX_X  X----cX
 X-;[[;----X  XL;;;[X
 X-;;;;----X  X-;;;[X
 Xp--------X  X--S--X
