@@ -94,6 +94,7 @@ export class PlayerSystem extends EntitySystem<PlayerComponent> {
       player.agent.rot = this.control.rot
 
       if (this.engine.time - player.lastVisibilityUpdateTime > VISIBILITY_UPDATE_TIME) {
+        // getImageData is extremely slow operation, use with caution
         player.visibility = lightsLayer.context.getImageData(
           lightsCanvas.width / 2,
           lightsCanvas.height / 2,
