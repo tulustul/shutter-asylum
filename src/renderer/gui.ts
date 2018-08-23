@@ -76,8 +76,12 @@ export class GuiRenderer {
       if (action) {
         contextText += `${action.text} (E)`;
       }
-
-      this.context.fillText(contextText, 170, 230);
+      const contextTextWidth = this.context.measureText(contextText).width;
+      this.context.fillText(
+        contextText,
+        this.canvas.width / 2 - contextTextWidth / 2,
+        this.canvas.height / 2 + 30,
+      );
 
       const text = `
   ${weapon.options.name}

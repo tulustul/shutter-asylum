@@ -6,6 +6,7 @@ import { ParticlesSystem } from "./particles";
 import { Vector2 } from "../vector";
 import { AGENTS_MASK } from "../colisions-masks";
 import { TILE_SIZE } from "../constants";
+import { ActionComponent } from "./actions";
 
 type Direction = 'up' | 'right' | 'down' | 'left';
 
@@ -23,7 +24,7 @@ const updateFrequency = 0;
 
 export class LightComponent extends Entity {
 
-  colision: Collidable;
+  collidable: Collidable;
 
   prop: PropComponent;
 
@@ -44,6 +45,8 @@ export class LightComponent extends Entity {
   wallDirection: Direction;
 
   direction = new Vector2();
+
+  action: ActionComponent;
 
   constructor(
     private engine: EntityEngine,
@@ -72,7 +75,7 @@ export class LightComponent extends Entity {
         this.direction = new Vector2(1, 0);
       }
 
-      this.colision = this.engine.getSystem<ColisionSystem>(ColisionSystem).makeCollidable({
+      this.collidable = this.engine.getSystem<ColisionSystem>(ColisionSystem).makeCollidable({
         pos: this.pos,
         shape: Shape.circle,
         radius: 5,
@@ -88,6 +91,12 @@ export class LightComponent extends Entity {
         pivot: new Vector2(0, 5),
         rot,
       });
+
+      this.action = new ActionComponent(this.engine, {
+        collidable: this.collidable,
+        text: 'toggle',
+        action: () => this.toggle(),
+      })
     }
 
     engine.getSystem(LightsSystem).add(this);
@@ -95,6 +104,8 @@ export class LightComponent extends Entity {
 
   broke() {
     if (this.enabled && !this.broken) {
+      this.action.destroy();
+      this.action = null;
       if (Math.random() > 0.7) {
         this.broken = true;
         this.radius /= 2;
@@ -111,7 +122,7 @@ export class LightComponent extends Entity {
     this.prop.sprite = this.enabled ? 'light' : 'lightBroken';
     this.prop.queueRender();
 
-    if (this.direction) {
+    if (this.broken && this.direction) {
       this.emitSparks();
     }
   }
