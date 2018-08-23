@@ -6,6 +6,7 @@ import { Vector2 } from "../vector";
 import { Gun, mgOptions } from "../weapons";
 import { ENEMY_MASK } from "../colisions-masks";
 import { PosAndVel } from "./velocity";
+import { ActionComponent } from "./actions";
 
 const AVERAGE_REACTION_TIME = 300;
 
@@ -45,7 +46,7 @@ export class AIComponent extends Entity {
 
   playerInSight = false;
 
-  state = AIState.idle;
+  state: AIState;
 
   playerPos: Vector2;
 
@@ -60,6 +61,8 @@ export class AIComponent extends Entity {
   changedTargetAt: number;
 
   pointsVisitCount = new Map<Vector2, number>();
+
+  action: ActionComponent;
 
   constructor(private engine: EntityEngine, options: AIOptions) {
     super();
@@ -76,12 +79,15 @@ export class AIComponent extends Entity {
       this.agent.toggleFlashlight();
     }
 
+    this.goIdle();
+
     engine.getSystem(AISystem).add(this);
   }
 
   destroy() {
     super.destroy();
     this.agent.destroy();
+    this.destroyAction();
   }
 
   shootAt(pos: Vector2) {
@@ -134,6 +140,7 @@ export class AIComponent extends Entity {
     if (this.playerInSight) {
       this.state = AIState.fighting;
       this.moveTarget = null;
+      this.destroyAction();
       this.notifyNeighbours(this.playerPos);
     } else if (this.canPatrol) {
       this.state = AIState.patroling;
@@ -225,6 +232,16 @@ export class AIComponent extends Entity {
     this.state = AIState.alerted;
     this.alertedAt = this.engine.time;
     this.changedTargetAt = this.engine.time;
+    this.destroyAction();
+  }
+
+  goIdle() {
+    this.state = AIState.idle;
+    this.action = new ActionComponent(this.engine, {
+      collidable: this.agent.collidable,
+      text: 'kill',
+      action: () => this.destroy(),
+    });
   }
 
   notifyNeighbours(playerPos: Vector2) {
@@ -236,6 +253,13 @@ export class AIComponent extends Entity {
           ai.moveTarget = playerPos;
         }
       }
+    }
+  }
+
+  destroyAction() {
+    if (this.action) {
+      this.action.destroy();
+      this.action = null;
     }
   }
 
