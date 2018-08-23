@@ -44,7 +44,10 @@ async function init() {
 
   requestAnimationFrame(tick);
 
-  window.addEventListener('visibilitychange', () => engine.paused = true);
+  window.addEventListener('visibilitychange', () => {
+    engine.paused = true;
+    menu.active = true;
+  });
 }
 
 function makeMenu() {
