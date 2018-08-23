@@ -56,4 +56,8 @@ export class Vector2 {
   directionTo(v: Vector2)  {
     return Math.PI - Math.atan2(this.x - v.x, this.y - v.y);
   }
+
+  angle()  {
+    return Math.PI - Math.atan2(-this.x, -this.y);
+  }
 }

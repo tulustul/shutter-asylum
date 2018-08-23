@@ -170,10 +170,8 @@ export class SystemsRenderer {
         const radius = light.radius;
 
         const gradient = this.context.createRadialGradient(
-          radius / 2, radius / 2, 0,
-          radius / 2 + (radius / 2 * light.direction.x),
-          radius / 2 + (radius / 2 * light.direction.y),
-          radius / 2,
+          0, 0, 0,
+          0, radius / 2, radius / 2,
         );
         gradient.addColorStop(0, light.power);
         gradient.addColorStop(1, 'transparent');
@@ -181,10 +179,11 @@ export class SystemsRenderer {
         this.context.fillStyle = gradient;
 
         this.context.save()
-        this.context.translate(
-          light.pos.x - radius / 2, light.pos.y - radius / 2,
-        )
-        this.context.fillRect(0, 0, radius * 2, radius * 2);
+        this.context.translate(light.pos.x, light.pos.y)
+        this.context.rotate(light.direction.angle());
+
+        this.context.fillRect(-radius / 2, 0, radius, radius);
+
         this.context.restore();
       }
     }
