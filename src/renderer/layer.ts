@@ -31,16 +31,19 @@ export class Layer {
 
     if (!this.canvas) {
       this.canvas = document.createElement('canvas');
-      if (this.renderWholeWorld) {
-        this.canvas.width = renderer.engine.worldWidth;
-        this.canvas.height = renderer.engine.worldHeight;
-      } else {
-        this.canvas.width = renderer.canvas.width;
-        this.canvas.height = renderer.canvas.height;
-      }
     }
     this.context = this.canvas.getContext('2d');
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  init() {
+    if (this.renderWholeWorld) {
+      this.canvas.width = this.renderer.engine.worldWidth;
+      this.canvas.height = this.renderer.engine.worldHeight;
+    } else {
+      this.canvas.width = this.renderer.canvas.width;
+      this.canvas.height = this.renderer.canvas.height;
+    }
+    this.clearCanvas();
   }
 
   clearCanvas() {

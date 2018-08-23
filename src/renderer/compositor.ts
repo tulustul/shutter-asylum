@@ -85,9 +85,9 @@ export class Compositor {
     return this.renderer.canvas;
   }
 
-  clear() {
+  init() {
     for (const layer of Object.values(this.layers)) {
-      layer.clearCanvas();
+      layer.init();
     }
   }
 

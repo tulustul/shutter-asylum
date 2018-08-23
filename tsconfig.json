@@ -2,7 +2,7 @@
     "compilerOptions": {
         "target": "es2017",
         "noImplicitAny": true,
-        "sourceMap": false,
+        "sourceMap": true,
         "outDir": "dist"
     },
     "exclude": [

@@ -45,6 +45,10 @@ export class Renderer {
 
     this.guiRenderer = new GuiRenderer(this, menu);
 
+    this.systemsRenderer = new SystemsRenderer(this);
+
+    this.fogOfWar = new FogOfWar(this);
+
     this.baseLayer = new Layer('base', this, {
       followPlayer: false,
       fill: 'black',
@@ -79,10 +83,10 @@ export class Renderer {
     // }
   }
 
-  clear() {
-    this.compositor.clear();
-    this.systemsRenderer = new SystemsRenderer(this);
-    this.fogOfWar = new FogOfWar(this);
+  init() {
+    this.compositor.init();
+    // this.systemsRenderer = ;
+    // this.fogOfWar = new FogOfWar(this);
   }
 
   checkDistinctColors() {

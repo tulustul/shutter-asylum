@@ -20,6 +20,8 @@ import { DoorsSystem } from "./systems/doors";
 import { FlashlightSystem } from "./systems/flashlight";
 import { Menu } from "./menu";
 
+const LEVELS_COUNT = 5;
+
 let engine: EntityEngine;
 let renderer: Renderer;
 let control: Control;
@@ -32,17 +34,13 @@ async function init() {
   const canvas = document.getElementsByTagName("canvas")[0];
 
   engine = new EntityEngine();
-
   camera = new Camera(canvas);
   const menu = makeMenu();
   control = new Control(engine, canvas, menu);
-
-  start();
-  await loadLevel(engine, "intro");
-
+  renderer = new Renderer(engine, camera, canvas, menu);
   control.init();
 
-  renderer = new Renderer(engine, camera, canvas, menu);
+  start('intro');
 
   requestAnimationFrame(tick);
 
@@ -51,12 +49,11 @@ async function init() {
 
 function makeMenu() {
   const menu = new Menu();
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= LEVELS_COUNT; i++) {
     menu.addOption({
       text: `level ${i}`,
       callback: () => {
-        start();
-        loadLevel(engine, `level${i}`);
+        start(`level${i}`);
         engine.paused = false;
         menu.active = false;
       },
@@ -80,8 +77,7 @@ function tick(timestamp: number) {
   requestAnimationFrame(tick);
 }
 
-function start() {
-  renderer.clear();
+async function start(level: string) {
   engine.clear();
   engine.register(new PropsSystem());
   engine.register(new BarrierSystem());
@@ -97,8 +93,10 @@ function start() {
   engine.register(new ActionsSystem());
   engine.register(new DoorsSystem());
   engine.register(new FlashlightSystem());
-
   engine.init();
+
+  await loadLevel(engine, level);
+  renderer.init();
 }
 
 init();

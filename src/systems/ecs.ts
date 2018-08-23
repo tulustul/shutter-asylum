@@ -43,6 +43,7 @@ export class EntityEngine {
 
   clear() {
     this.systems = [];
+    this.systemsMap.clear();
     // for (const system of this.systems) {
     //   system.clear();
     // }
