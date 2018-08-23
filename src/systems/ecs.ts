@@ -1,4 +1,5 @@
 import { Sound } from '../sound';
+import { Renderer } from '../renderer/renderer';
 
 export class EntityEngine {
 
@@ -15,6 +16,8 @@ export class EntityEngine {
   level: string[][];
 
   sound = new Sound();
+
+  renderer: Renderer;
 
   paused = true;
 

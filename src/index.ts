@@ -38,6 +38,7 @@ async function init() {
   const menu = makeMenu();
   control = new Control(engine, canvas, menu);
   renderer = new Renderer(engine, camera, canvas, menu);
+  engine.renderer = renderer;
   control.init();
 
   start('intro');

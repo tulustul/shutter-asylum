@@ -5,13 +5,29 @@ import { Camera } from '../camera';
 import { Vector2 } from '../vector';
 import { Gun, pistolOptions, mgOptions, minigunOptions } from '../weapons';
 import { PLAYER_MASK } from '../colisions-masks';
-import { ColisionSystem } from './colision';
 import { TILE_SIZE } from '../constants';
-import { ActionsSystem } from './actions';
+
+const WEAPONS = [
+  pistolOptions,
+  mgOptions,
+  minigunOptions,
+];
+
+const FLOOR_MAP: {[key: string]: string} = {
+  '.': 'stone',
+  '-': 'wood',
+};
+
+const VISIBILITY_UPDATE_TIME = 350;
 
 export class PlayerComponent extends Entity {
 
   agent: AgentComponent;
+
+  // visibility is affected by lighting, ranges 0-1
+  visibility: number;
+
+  lastVisibilityUpdateTime = 0;
 
   constructor(public engine: EntityEngine, pos: Vector2) {
     super();
@@ -29,17 +45,6 @@ export class PlayerComponent extends Entity {
   }
 
 }
-
-const WEAPONS = [
-  pistolOptions,
-  mgOptions,
-  minigunOptions,
-];
-
-const FLOOR_MAP: {[key: string]: string} = {
-  '.': 'stone',
-  '-': 'wood',
-};
 
 export class PlayerSystem extends EntitySystem<PlayerComponent> {
 
@@ -81,8 +86,21 @@ export class PlayerSystem extends EntitySystem<PlayerComponent> {
   }
 
   update() {
+    const lightsLayer =
+      this.engine.renderer.compositor.layers.combinedLights;
+    const lightsCanvas = lightsLayer.canvas;
+
     for (const player of this.entities) {
       player.agent.rot = this.control.rot
+
+      if (this.engine.time - player.lastVisibilityUpdateTime > VISIBILITY_UPDATE_TIME) {
+        player.visibility = lightsLayer.context.getImageData(
+          lightsCanvas.width / 2,
+          lightsCanvas.height / 2,
+          1, 1,
+        ).data[0];
+        player.lastVisibilityUpdateTime = this.engine.time;
+      }
 
       if (this.control.keys.get('w')) {
         player.agent.moveToDirection(Math.PI);

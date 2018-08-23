@@ -112,7 +112,11 @@ export class AIComponent extends Entity {
       this.playerPos = playerPosAndVel.pos.copy();
       this.playerVel = playerPosAndVel.vel.copy();
     }
-    this.isShooting = this.playerInSight;
+
+    const playerSystem = this.engine.getSystem<PlayerSystem>(PlayerSystem);
+    const visibility = playerSystem.player.visibility;
+    this.isShooting = this.playerInSight && visibility > 100;3
+
     switch (this.state) {
       case AIState.idle:
         this.whenIdle();
@@ -137,7 +141,10 @@ export class AIComponent extends Entity {
 
   whenIdle() {
     this.agent.rot = Math.random() * Math.PI * 2;
-    if (this.playerInSight) {
+    const playerSystem = this.engine.getSystem<PlayerSystem>(PlayerSystem);
+    const visibility = playerSystem.player.visibility;
+
+    if (this.playerInSight && visibility > 100) {
       this.state = AIState.fighting;
       this.moveTarget = null;
       this.destroyAction();
