@@ -6,6 +6,7 @@ import { Vector2 } from '../vector';
 import { Gun, pistolOptions, mgOptions, minigunOptions } from '../weapons';
 import { PLAYER_MASK } from '../colisions-masks';
 import { TILE_SIZE } from '../constants';
+import { difficulty } from '../difficulty';
 
 const WEAPONS = [
   pistolOptions,
@@ -40,7 +41,7 @@ export class PlayerComponent extends Entity {
   constructor(public engine: EntityEngine, pos: Vector2) {
     super();
     this.agent = new AgentComponent(this.engine, pos, {
-      maxHealth: 30,
+      maxHealth: 30 * difficulty.playerHealthMultiplier,
       colisionMask: PLAYER_MASK,
     });
     this.agent.parent = this;
@@ -59,7 +60,7 @@ export class PlayerComponent extends Entity {
   }
 
   get isVisible() {
-    return this.visibility > 50 || !!this.agent.flashlight;
+    return this.visibility > difficulty.visibilityLevel || !!this.agent.flashlight;
   }
 
 }

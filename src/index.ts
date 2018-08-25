@@ -19,6 +19,7 @@ import { ActionsSystem } from "./systems/actions";
 import { DoorsSystem } from "./systems/doors";
 import { FlashlightSystem } from "./systems/flashlight";
 import { Menu } from "./menu";
+import { difficulty, setNextDifficulty } from "./difficulty";
 
 const LEVELS_COUNT = 5;
 
@@ -53,6 +54,10 @@ async function init() {
 
 function makeMenu() {
   const menu = new Menu();
+  menu.addOption({
+    text: () => `Difficulty: ${difficulty.name}`,
+    callback: setNextDifficulty, 
+  })
   for (let i = 1; i <= LEVELS_COUNT; i++) {
     menu.addOption({
       text: `level ${i}`,

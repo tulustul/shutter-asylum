@@ -98,7 +98,7 @@ export class AgentComponent extends Entity {
 
   hit() {
     this.health--;
-    if (!this.health) {
+    if (this.health <= 0) {
       this.getTopParent().destroy();
     }
     if (this.onHit) {

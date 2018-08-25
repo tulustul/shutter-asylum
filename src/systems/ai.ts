@@ -4,11 +4,11 @@ import { PlayerSystem } from "./player";
 import { ColisionSystem } from "./colision";
 import { Vector2 } from "../vector";
 import { Gun, mgOptions } from "../weapons";
+import { difficulty } from "../difficulty";
+
 import { ENEMY_MASK } from "../colisions-masks";
 import { PosAndVel } from "./velocity";
 import { ActionComponent } from "./actions";
-
-const AVERAGE_REACTION_TIME = 300;
 
 const ALERT_TIME = 10000;
 
@@ -34,7 +34,7 @@ export class AIComponent extends Entity {
 
   agent: AgentComponent;
 
-  lastThinking = AVERAGE_REACTION_TIME * Math.random();
+  lastThinking = difficulty.aiReactionTime * Math.random();
 
   pos: Vector2;
 
@@ -71,7 +71,10 @@ export class AIComponent extends Entity {
 
     Object.assign(this, options);
 
-    this.agent = new AgentComponent(engine, options.pos, {colisionMask: ENEMY_MASK});
+    this.agent = new AgentComponent(engine, options.pos, {
+      colisionMask: ENEMY_MASK,
+      maxHealth: 5 * difficulty.enemyHealthMultiplier,
+    });
     this.agent.parent = this;
     this.agent.onHit = () => this.state = AIState.alerted;
     this.weapon = new Gun(this.engine, mgOptions);
@@ -87,7 +90,7 @@ export class AIComponent extends Entity {
   }
 
   destroy() {
-    super.destroy();
+  super.destroy();
     this.agent.destroy();
     this.destroyAction();
   }
@@ -294,7 +297,7 @@ export class AISystem extends EntitySystem<AIComponent> {
       return;
     }
     for (const entity of this.entities) {
-      if (this.engine.time - entity.lastThinking > AVERAGE_REACTION_TIME) {
+      if (this.engine.time - entity.lastThinking > difficulty.aiReactionTime) {
         this.process(entity);
         entity.lastThinking = this.engine.time;
       }

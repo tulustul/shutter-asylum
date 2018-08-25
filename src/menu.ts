@@ -1,5 +1,7 @@
+type StringCallable = () => string;
+
 interface MenuOption {
-  text: string;
+  text: string | StringCallable;
   callback: () => void;
 }
 

@@ -6,6 +6,7 @@ import { ActionsSystem } from '../systems/actions';
 
 import { Menu } from '../menu';
 import { SPRITES_MAP } from '../sprites';
+import { mgOptions } from '../weapons';
 
 export class GuiRenderer {
 
@@ -52,9 +53,15 @@ export class GuiRenderer {
 
     let y = 100;
     for (const option of this.menu.options) {
-      const optionWidth = this.context.measureText(option.text).width;
+      let text: string;
+      if (typeof option.text === 'string') {
+        text = option.text as string;
+      } else {
+        text = (option.text as Function)();
+      }
+      const optionWidth = this.context.measureText(text).width;
       const x = (this.canvas.width - optionWidth) / 2;
-      this.context.fillText(option.text, x, y);
+      this.context.fillText(text, x, y);
       if (this.menu.selectedOption === option) {
         this.context.beginPath();
         this.context.arc(x - 10, y - 5, 5, 0, Math.PI * 2);
