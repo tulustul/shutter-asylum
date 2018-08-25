@@ -75,7 +75,7 @@ export class Gun {
       this.engine.time - this.lastShootTime < this.options.shootSpeed;
 
     if (onCooldown || this.bulletsInMagazine === 0 || this.reloading) {
-      return;
+      return false;
     }
 
     const rotation = this.owner.rot + (Math.random() - 0.5) * this.options.spread;
@@ -98,6 +98,8 @@ export class Gun {
     if (this.bulletsInMagazine === 0) {
       this.reload();
     }
+
+    return true;
   }
 
   reload() {

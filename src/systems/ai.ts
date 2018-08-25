@@ -44,7 +44,9 @@ export class AIComponent extends Entity {
 
   playerInRange = false;
 
-  playerInSight = false;
+  seePlayer = false;
+
+  hearPlayer = false;
 
   state: AIState;
 
@@ -108,14 +110,14 @@ export class AIComponent extends Entity {
 
 
   think(playerPosAndVel: PosAndVel) {
-    if (this.playerInSight) {
+    if (this.playerInRange) {
       this.playerPos = playerPosAndVel.pos.copy();
       this.playerVel = playerPosAndVel.vel.copy();
     }
 
     const playerSystem = this.engine.getSystem<PlayerSystem>(PlayerSystem);
-    const visibility = playerSystem.player.visibility;
-    this.isShooting = this.playerInSight && visibility > 100;3
+    const isPlayerVisible = playerSystem.player.isVisible;
+    this.isShooting = this.seePlayer && isPlayerVisible;
 
     switch (this.state) {
       case AIState.idle:
@@ -141,17 +143,15 @@ export class AIComponent extends Entity {
 
   whenIdle() {
     this.agent.rot = Math.random() * Math.PI * 2;
-    const playerSystem = this.engine.getSystem<PlayerSystem>(PlayerSystem);
-    const visibility = playerSystem.player.visibility;
 
-    if (this.playerInSight && visibility > 100) {
+    if (this.seePlayer || this.hearPlayer) {
       this.state = AIState.fighting;
       this.moveTarget = null;
       this.destroyAction();
       this.notifyNeighbours(this.playerPos);
     } else if (this.canPatrol) {
       this.state = AIState.patroling;
-      this.agent.maxSpeed = 0.5;
+      this.agent.walk();
     }
   }
 
@@ -196,7 +196,7 @@ export class AIComponent extends Entity {
   }
 
   whenFighting() {
-    this.agent.maxSpeed = 3;
+    this.agent.run();
     if (this.playerInRange) {
       this.isShooting = true;
     } else {
@@ -219,7 +219,7 @@ export class AIComponent extends Entity {
 
   whenAlerted() {
     this.agent.rot = Math.random() * Math.PI * 2;
-    if (this.playerInSight) {
+    if (this.seePlayer) {
       this.state = AIState.fighting;
     }
     if (this.engine.time - this.alertedAt > ALERT_TIME) {
@@ -312,23 +312,25 @@ export class AISystem extends EntitySystem<AIComponent> {
     }
   }
 
-  process(entity: AIComponent) {
-    entity.playerInRange = this.isPlayerInRange(entity);
+  process(ai: AIComponent) {
+    ai.playerInRange = this.isPlayerInRange(ai);
+    ai.hearPlayer = ai.playerInRange && this.player.isNoisy;
 
     let angleDiff: number;
-    if (entity.playerInRange) {
-      const agentPos = entity.agent.posAndVel.pos;
+    if (ai.playerInRange) {
+      const agentPos = ai.agent.posAndVel.pos;
       const playerPos = this.playerPosAndVel.pos;
       const direction = agentPos.directionTo(playerPos);
       angleDiff = Math.min(
-        (2 * Math.PI) - Math.abs(direction - entity.agent.rot),
-        Math.abs(direction - entity.agent.rot),
+        (2 * Math.PI) - Math.abs(direction - ai.agent.rot),
+        Math.abs(direction - ai.agent.rot),
       );
     }
 
-    entity.playerInSight = entity.playerInRange && angleDiff < 1.2;
+    ai.seePlayer =
+      ai.playerInRange && angleDiff < 1.2 && this.player.isVisible;
 
-    entity.think(this.playerPosAndVel);
+    ai.think(this.playerPosAndVel);
   }
 
   isPlayerInRange(entity: AIComponent) {
@@ -338,8 +340,12 @@ export class AISystem extends EntitySystem<AIComponent> {
     );
   }
 
+  get player() {
+    return this.playerSystem.player;
+  }
+
   get playerPosAndVel() {
-    return this.playerSystem.player.agent.posAndVel;
+    return this.player.agent.posAndVel;
   }
 
   addPatrolPoint(pos: Vector2) {

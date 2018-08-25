@@ -2,11 +2,11 @@
 // https://github.com/borismus/webaudioapi.com/tree/master/docs/samples/procedural
 
 interface ProduceduralSampleParams {
-  biquadType: BiquadFilterType;
-  biquadQ: number;
-  frequency: number;
-  gainParams: number[];
-  volume: number;
+  biquadType?: BiquadFilterType;
+  biquadQ?: number;
+  frequency?: number;
+  gainParams?: number[];
+  volume?: number;
 }
 
 const SAMPLES_PARAMS: {[key: string]: ProduceduralSampleParams} = {
@@ -31,35 +31,52 @@ const SAMPLES_PARAMS: {[key: string]: ProduceduralSampleParams} = {
     gainParams: [0, 0, 1, 0.001, 0.3, 0.101, 0, 0.4],
     volume: 0.2,
   },
-  stoneStep1: {
+};
+
+function makeSteps(stepType: string, stepParams: ProduceduralSampleParams) {
+  const params: ProduceduralSampleParams = {
     biquadType: 'lowpass',
     biquadQ: 1,
     frequency: 300,
     gainParams: [0, 0, 1, 0.001, 0.3, 0.101, 0, 0.2],
     volume: 0.5,
-  },
-  stoneStep2: {
-    biquadType: 'lowpass',
-    biquadQ: 1,
-    frequency: 200,
-    gainParams: [0, 0, 1, 0.001, 0.3, 0.101, 0, 0.2],
-    volume: 0.5,
-  },
-  woodStep1: {
-    biquadType: 'lowpass',
-    biquadQ: 1,
-    frequency: 550,
-    gainParams: [0, 0, 1, 0.001, 0.3, 0.151, 0, 0.2],
-    volume: 0.3,
-  },
-  woodStep2: {
-    biquadType: 'lowpass',
-    biquadQ: 1,
-    frequency: 650,
-    gainParams: [0, 0, 1, 0.001, 0.3, 0.151, 0, 0.2],
-    volume: 0.3,
-  },
-};
+  };
+  Object.assign(params, stepParams);
+
+  // running
+  let paramsCopy = Object.assign({}, params);
+  paramsCopy.gainParams = paramsCopy.gainParams.map(v => v * 1.5);
+  SAMPLES_PARAMS[`${stepType}Run0`] = paramsCopy;
+  SAMPLES_PARAMS[`${stepType}Run1`] = Object.assign(paramsCopy, {
+    frequency: paramsCopy.frequency + 100,
+  });
+
+  // walking
+  paramsCopy = Object.assign({}, params);
+  paramsCopy.volume *= 0.6;
+  paramsCopy.gainParams = paramsCopy.gainParams.map(v => v * 0.8);
+  SAMPLES_PARAMS[`${stepType}Walk0`] = paramsCopy;
+  SAMPLES_PARAMS[`${stepType}Walk1`] = Object.assign(paramsCopy, {
+    frequency: paramsCopy.frequency + 100,
+  });
+}
+
+makeSteps('stone', {});
+makeSteps('wood', {
+  frequency: 550,
+  gainParams: [0, 0, 1, 0.001, 0.3, 0.151, 0, 0.2],
+  volume: 0.3,
+});
+makeSteps('carpet', {
+  frequency: 100,
+  gainParams: [0, 0, 1, 0.001, 0.3, 0.151, 0, 0.2],
+  volume: 0.3,
+});
+makeSteps('tiles', {
+  frequency: 450,
+  gainParams: [0, 0, 1, 0.001, 0.2, 0.151, 0, 0.2],
+  volume: 0.25,
+});
 
 const VOICE_COUNT = 5;
 
@@ -170,4 +187,3 @@ export class Sound {
   }
 
 }
-

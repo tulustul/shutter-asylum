@@ -3,11 +3,16 @@ import { Renderer } from './renderer';
 
 import { PlayerSystem } from '../systems/player';
 import { ActionsSystem } from '../systems/actions';
+
 import { Menu } from '../menu';
+import { SPRITES_MAP } from '../sprites';
 
 export class GuiRenderer {
 
-  interfaceLayer = new Layer('interface', this.renderer, {followPlayer: false});
+  interfaceLayer = new Layer('interface', this.renderer, {
+    followPlayer: false,
+    clear: true,
+  });
 
   constructor(private renderer: Renderer, private menu: Menu) { }
 
@@ -69,8 +74,18 @@ export class GuiRenderer {
       const weapon = player.agent.weapon;
       let contextText = '';
 
+      let iconOffset = -8;
       if (weapon.reloading) {
-        contextText = 'REL ';
+        this.drawContextIcon('reload', iconOffset);
+        iconOffset += 8;
+      }
+
+      if (!player.agent.isRunning) {
+        if (player.isVisible) {
+          this.drawContextIcon('visible', iconOffset);
+        } else {
+          this.drawContextIcon('hidden', iconOffset);
+        }
       }
 
       if (action) {
@@ -80,7 +95,7 @@ export class GuiRenderer {
       this.context.fillText(
         contextText,
         this.canvas.width / 2 - contextTextWidth / 2,
-        this.canvas.height / 2 + 30,
+        this.canvas.height / 2 + 33,
       );
 
       const text = `
@@ -97,6 +112,18 @@ export class GuiRenderer {
         gameoverText, this.renderer.canvas.width / 2 - textWidth / 2, 150,
       );
     }
+  }
+
+  drawContextIcon(iconName: string, offset: number) {
+    const sprite = SPRITES_MAP[iconName];
+    this.context.drawImage(
+      this.renderer.texture,
+      sprite.x, sprite.y,
+      sprite.w, sprite.h,
+      this.canvas.width / 2 + offset,
+      this.canvas.height / 2 + 18,
+      sprite.w, sprite.h,
+    );
   }
 
 }

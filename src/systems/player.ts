@@ -16,18 +16,26 @@ const WEAPONS = [
 const FLOOR_MAP: {[key: string]: string} = {
   '.': 'stone',
   '-': 'wood',
+  ';': 'carpet',
+  '+': 'tiles',
 };
 
 const VISIBILITY_UPDATE_TIME = 350;
+
+const NOISE_DURATION = 700;
 
 export class PlayerComponent extends Entity {
 
   agent: AgentComponent;
 
-  // visibility is affected by lighting, ranges 0-1
+  // visibility is affected by lighting, ranges 0-255
   visibility: number;
 
   lastVisibilityUpdateTime = 0;
+
+  lastNoiseTime = 0;
+
+  isNoisy = false;
 
   constructor(public engine: EntityEngine, pos: Vector2) {
     super();
@@ -36,6 +44,7 @@ export class PlayerComponent extends Entity {
       colisionMask: PLAYER_MASK,
     });
     this.agent.parent = this;
+    this.agent.maxWalkSpeed = 1;
     engine.getSystem(PlayerSystem).add(this);
   }
 
@@ -44,13 +53,20 @@ export class PlayerComponent extends Entity {
     this.agent.destroy();
   }
 
+  makeNoise() {
+    this.isNoisy = true;
+    this.lastNoiseTime = this.engine.time;
+  }
+
+  get isVisible() {
+    return this.visibility > 50 || !!this.agent.flashlight;
+  }
+
 }
 
 export class PlayerSystem extends EntitySystem<PlayerComponent> {
 
   STEPS_RATE = 270;
-
-  STEPS_SAMPLES = ['Step1', 'Step2'];
 
   currentStep = 0;
 
@@ -86,51 +102,73 @@ export class PlayerSystem extends EntitySystem<PlayerComponent> {
   }
 
   update() {
-    const lightsLayer =
-      this.engine.renderer.compositor.layers.combinedLights;
+    for (const player of this.entities) {
+      if (this.engine.time - player.lastNoiseTime > NOISE_DURATION) {
+        player.isNoisy = false;
+      }
+
+      player.agent.rot = this.control.rot;
+
+      this.updateControls(player);
+      this.updateVisibility(player);
+      this.makeStep(player);
+      this.camera.setOnPlayer(player);
+    }
+  }
+
+  updateVisibility(player: PlayerComponent) {
+    const lightsLayer = this.engine.renderer.compositor.layers.combinedLights;
     const lightsCanvas = lightsLayer.canvas;
 
-    for (const player of this.entities) {
-      player.agent.rot = this.control.rot
+    if (this.engine.time - player.lastVisibilityUpdateTime > VISIBILITY_UPDATE_TIME) {
+      // getImageData is extremely slow operation, use with caution
+      player.visibility = lightsLayer.context.getImageData(
+        lightsCanvas.width / 2,
+        lightsCanvas.height / 2,
+        1, 1,
+      ).data[0];
+      player.lastVisibilityUpdateTime = this.engine.time;
+    }
+  }
 
-      if (this.engine.time - player.lastVisibilityUpdateTime > VISIBILITY_UPDATE_TIME) {
-        // getImageData is extremely slow operation, use with caution
-        player.visibility = lightsLayer.context.getImageData(
-          lightsCanvas.width / 2,
-          lightsCanvas.height / 2,
-          1, 1,
-        ).data[0];
-        player.lastVisibilityUpdateTime = this.engine.time;
+  updateControls(player: PlayerComponent) {
+    if (this.control.keys.get('KeyW')) {
+      player.agent.moveToDirection(Math.PI);
+    }
+    if (this.control.keys.get("KeyA")) {
+      player.agent.moveToDirection(Math.PI * 0.5);
+    }
+    if (this.control.keys.get("KeyS")) {
+      player.agent.moveToDirection(0);
+    }
+    if (this.control.keys.get("KeyD")) {
+      player.agent.moveToDirection(Math.PI * 1.5);
+    }
+    if (this.control.mouseButtons.get(0) || this.control.keys.get(" ")) {
+      const shootSuccessed = player.agent.shoot();
+      if (shootSuccessed) {
+        player.makeNoise();
       }
+    }
+  }
 
-      if (this.control.keys.get('w')) {
-        player.agent.moveToDirection(Math.PI);
-      }
-      if (this.control.keys.get("a")) {
-        player.agent.moveToDirection(Math.PI * 0.5);
-      }
-      if (this.control.keys.get("s")) {
-        player.agent.moveToDirection(0);
-      }
-      if (this.control.keys.get("d")) {
-        player.agent.moveToDirection(Math.PI * 1.5);
-      }
-      if (this.control.mouseButtons.get(0) || this.control.keys.get(" ")) {
-        player.agent.shoot();
-      }
+  makeStep(player: PlayerComponent) {
+    const stepsRate = this.STEPS_RATE * (player.agent.isRunning ? 1 : 1.6);
+    if (this.engine.time - this.lastStepTime > stepsRate) {
+      if (player.agent.posAndVel.vel.getLength() > 0.5) {
+        this.lastStepTime = this.engine.time;
+        this.currentStep = (this.currentStep + 1) % 2;
+        const pos = player.agent.posAndVel.pos;
+        const x = Math.floor(pos.x / TILE_SIZE);
+        const y = Math.floor(pos.y / TILE_SIZE);
+        const cell = this.engine.level[y][x];
+        const floor = FLOOR_MAP[cell] || 'stone'
+        const walkOrRun = player.agent.isRunning ? 'Run' : 'Walk';
+        const sample = `${floor}${walkOrRun}${this.currentStep.toString()}`;
+        this.engine.sound.play(sample);
 
-      this.camera.setOnPlayer(player);
-
-      if (this.engine.time - this.lastStepTime > this.STEPS_RATE) {
-        if (player.agent.posAndVel.vel.getLength() > 1) {
-          this.lastStepTime = this.engine.time;
-          this.currentStep = (this.currentStep + 1) % 2;
-          const pos = player.agent.posAndVel.pos;
-          const x = Math.floor(pos.x / TILE_SIZE);
-          const y = Math.floor(pos.y / TILE_SIZE);
-          const cell = this.engine.level[y][x];
-          const floor = FLOOR_MAP[cell] || 'stone'
-          this.engine.sound.play(floor + this.STEPS_SAMPLES[this.currentStep]);
+        if (player.agent.isRunning) {
+          player.makeNoise();
         }
       }
     }

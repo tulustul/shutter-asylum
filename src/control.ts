@@ -22,17 +22,28 @@ export class Control {
   ) {}
 
   init() {
-
-
     window.addEventListener('keydown', event => {
-      this.keys.set(event.key, true);
+      const playerSystem = this.engine.getSystem<PlayerSystem>(PlayerSystem);
+
+      this.keys.set(event.code, true);
+
       if (event.key === 'Escape') {
         this.engine.paused = !this.engine.paused;
         this.menu.active = this.engine.paused;
+      } else if (event.code === 'KeyC' || event.key === 'Shift') {
+        playerSystem.player.agent.toggleWalkRun();
       }
+
     });
 
-    window.addEventListener('keyup', event => this.keys.set(event.key, false));
+    window.addEventListener('keyup', event => {
+      const playerSystem = this.engine.getSystem<PlayerSystem>(PlayerSystem);
+      this.keys.set(event.code, false);
+
+      if (event.key === 'Shift') {
+        playerSystem.player.agent.toggleWalkRun();
+      }
+    });
 
     window.addEventListener('keypress', event => {
       if (this.engine.paused) {
@@ -42,15 +53,15 @@ export class Control {
       const playerSystem = this.engine.getSystem<PlayerSystem>(PlayerSystem);
       const actionsSystem = this.engine.getSystem<ActionsSystem>(ActionsSystem);
 
-      if (event.key === 'q') {
+      if (event.code === 'KeyQ') {
         playerSystem.nextWeapon();
-      } else if (event.key === 'r') {
+      } else if (event.code === 'KeyR') {
         playerSystem.player.agent.weapon.reload();
-      } else if (event.key === 'e') {
+      } else if (event.code === 'KeyE') {
         if (actionsSystem.action) {
           actionsSystem.action.trigger();
         }
-      } else if (event.key === 'f') {
+      } else if (event.code === 'KeyF') {
         playerSystem.player.agent.toggleFlashlight();
       }
     });

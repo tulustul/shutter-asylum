@@ -11,11 +11,11 @@ export class Menu {
         return;
       }
 
-      if (event.key === 'w' || event.key === 'ArrowUp') {
+      if (event.code === 'KeyW' || event.key === 'ArrowUp') {
         this.movePointer(-1);
-      } else if (event.key === 's' || event.key === 'ArrowDown') {
+      } else if (event.code === 'KeyS' || event.key === 'ArrowDown') {
         this.movePointer(1);
-      } else if (event.key === 'Enter' || event.key === ' ') {
+      } else if (event.key === 'Enter' || event.key === ' ' || event.code === 'KeyE') {
         this.select();
       }
     });

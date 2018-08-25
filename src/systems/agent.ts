@@ -16,7 +16,11 @@ interface AgentOptions {
 
 export class AgentComponent extends Entity {
 
-  maxSpeed = 3;
+  maxRunSpeed = 3;
+
+  maxWalkSpeed = 0.5;
+
+  maxSpeed = this.maxRunSpeed;
 
   ACCELERATION = 0.2;
 
@@ -33,6 +37,8 @@ export class AgentComponent extends Entity {
   health: number;
 
   flashlight: FlashlightComponent;
+
+  isRunning = true;
 
   onHit: () => void;
 
@@ -85,8 +91,9 @@ export class AgentComponent extends Entity {
 
   shoot() {
     if (this.weapon) {
-      this.weapon.shoot();
+      return this.weapon.shoot();
     }
+    return false;
   }
 
   hit() {
@@ -117,6 +124,20 @@ export class AgentComponent extends Entity {
     } else {
       this.flashlight = new FlashlightComponent(this);
     }
+  }
+
+  toggleWalkRun() {
+    this.isRunning ? this.walk() : this.run();
+  }
+
+  run() {
+    this.maxSpeed = this.maxRunSpeed;
+    this.isRunning = true;
+  }
+
+  walk() {
+    this.maxSpeed = this.maxWalkSpeed;
+    this.isRunning = false;
   }
 
 }

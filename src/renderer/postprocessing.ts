@@ -24,16 +24,12 @@ float limit(float x) {
 
 void main(void) {
   vec4 c = texture2D(u_texture, uv);
-  if (c.r > 0.8 && c.g > 0.5 && c.g < 0.7 && c.b < 0.2) {
-    gl_FragColor = vec4(1.0, 0.5, 0.0, 1.0);
-  } else {
-    float r = limit(c.r);
-    float g = limit(c.g);
-    if (r != g) {
-      g = 0.0;
-    }
-    gl_FragColor = vec4(r, g, g, 1.0);
+  float r = limit(c.r);
+  float g = limit(c.g);
+  if (r != g) {
+    g = 0.0;
   }
+  gl_FragColor = vec4(r, g, g, 1.0);
 }`;
 
 const VERTS = new Float32Array([
