@@ -140,6 +140,12 @@ function makeCell(
     });
   } else if (cell === "P") {
     new AIComponent(engine, {pos: Object.create(pos), canPatrol: true});
+  } else if (cell === "D") {
+    new AIComponent(engine, {
+      pos: Object.create(pos),
+      canPatrol: true,
+      weapon: 'mg',
+    });
   } else if (cell === "B") {
     const wallDirection = getWallDirection(cells, x, y);
     new LightComponent(engine, {
@@ -147,7 +153,8 @@ function makeCell(
       broken: true,
       physical: true,
       wallDirection: wallDirection as any,
-      });
+      radius: 125,
+    });
   } else if (cell === "L") {
     const wallDirection = getWallDirection(cells, x, y);
     new LightComponent(engine, {
@@ -156,7 +163,6 @@ function makeCell(
       wallDirection: wallDirection as any,
     });
   } else if (cell === "H") {
-    const wallDirection = getWallDirection(cells, x, y);
     new LightComponent(engine, {
       pos,
       physical: false,

@@ -13,22 +13,22 @@ export const difficultyOptions: {[key: string]: DifficultyOptions} = {
     name: 'easy',
     playerHealthMultiplier: 2,
     enemyHealthMultiplier: 0.4,
-    visibilityLevel: 100,
+    visibilityLevel: 90,
     aiReactionTime: 900,
   },
   normal: {
     name: 'normal',
     playerHealthMultiplier: 1,
     enemyHealthMultiplier: 0.8,
-    visibilityLevel: 70,
-    aiReactionTime: 500,
+    visibilityLevel: 60,
+    aiReactionTime: 300,
   },
   hard: {
     name: 'hard',
     playerHealthMultiplier: 0.6,
     enemyHealthMultiplier: 1.2,
     visibilityLevel: 40,
-    aiReactionTime: 300,
+    aiReactionTime: 400,
   },
 };
 

@@ -1,36 +1,31 @@
-1_-
+__.
 ||.
 #
-            XXXXXXXXXXX     XXXXX
-            Xp---L----XXXXXXX+EBX
-            X---------|+++++X+++X
-            X---------XXXXX+X+++X
-            XP-------pX   XEXX_XX
-            XXXX1XXXXXX   X+++++X
-              X.;.X       XXXXX+X
-              X.;LX           X+X
-       XXXXXXXX.;.XXXXXXXXX   X+X
-       X........;.....L...X   X+X
-XXXXXXXX.p......;......p..XXXXX_X
-X-[[[-EX...XXXX.;.XXX.....X-ELE-X
-X-[[[--X...XX...;...X.....X--;;;X
-XL--E--|...XX...;...X..P...--;[;X
-X------X...XX...;...X......--;[cX
-X-----EXL..XXL..;..LX..p...X-;[;X
-XX_XXXXX...XX...;...X......X-;;;X
-Xp+++++X...XX...;...X..XXXXX-E-LX
-X+++++EX.p.XX...;...X...X.......X
-XL+++++|...XXL..;..LX...X.E.....X
-X++++++XL..XX...;..[X.........E.X
-X++++++X...XX...;..[X..L..E...L.X
-X[[+++pX...XX...;...XXXXXXXXXXXXX
-XXXXXXXXL..XXL..;..LX
-X--E-E-X...XX...;...X
-X------X...XX...;...X
-XE;;;;-X.p.XX...;...X
-X-;[[;-X...XXXXX1XXXX
-XL;[[;-XX_X  X----cX
-X-;[[;----X  XL;;;[X
-X-;;;;----X  X-;;;[X
-Xp--------X  X--S--X
-XXXXXXXXXXX  XXXXXXX
+XXXXXXXXXXX
+X-e--L---EXXXXXXXXX
+X---------|...|---X
+X---------XXXXX--LX
+X---------X   Xe--X
+XXXXXX_XXXX   XX_XXXXXXXXXXXXXXXXXXX
+    X...X     X-------B------------X
+    X..LX     X----e-e-e-e-e-------X
+    X...X     X-----e-e--e---------X
+    X...X     XX_XX----------------X
+XXXXX...XXXXXXX...X----------------X
+X.................XXXXXXXXXXXXXX_XXX
+X..........e................X.....LX
+XL....X............................X
+X..................LXXXXX..........X
+X.e.................X   X....XXXXXXX
+X.......LXXXXXXXXX_XX   X....X
+XX........X--------X    XXXXXX
+ X........X--------X
+ XL.....XXXXXXX_XXXX
+ X......|p....D...pX
+ X......X..........X
+ XXXXXXXXX_XXXXXXXXX
+       X-----X
+       X-----X
+       X-----X
+       XB-S--X
+       XXXXXXX

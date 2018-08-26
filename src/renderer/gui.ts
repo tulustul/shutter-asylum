@@ -103,7 +103,9 @@ export class GuiRenderer {
       this.renderBottomBar(player);
     } else if (!this.game.isLoading) {
       this.drawTextCentered('YOU DIED', 20, y += 20);
-      this.drawTextCentered('Press <enter> to try again', 14, y += 20);
+      if (!this.game.stageCompleted) {
+        this.drawTextCentered('Press <enter> to try again', 14, y += 20);
+      }
     }
   }
 

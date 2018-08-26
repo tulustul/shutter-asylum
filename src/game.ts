@@ -21,7 +21,7 @@ import { ActionsSystem } from "./systems/actions";
 import { DoorsSystem } from "./systems/doors";
 import { FlashlightSystem } from "./systems/flashlight";
 
-const LEVELS_COUNT = 6;
+const LEVELS_COUNT = 8;
 
 const SCORES_KEY = 'scores';
 

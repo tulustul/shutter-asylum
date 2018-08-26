@@ -52,6 +52,6 @@ module.exports = env => {
       path: path.resolve(__dirname, 'dist')
     },
     plugins: plugins,
-    devtool: 'source-map',
+    devtool: isProd ? false : 'source-map',
   };
 };

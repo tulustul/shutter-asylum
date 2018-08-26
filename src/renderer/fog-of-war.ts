@@ -19,7 +19,7 @@ export class FogOfWar {
   visibilityMaskLayer = new Layer('visibilityMask', this.renderer);
 
   fogOfWarLayer = new Layer('fogOfWar', this.renderer, {
-    fill: 'grey',
+    fill: '#aaa',
     followPlayer: false,
   });
 

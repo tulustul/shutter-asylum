@@ -169,20 +169,33 @@ export class SystemsRenderer {
       if (light.enabled) {
         const radius = light.radius;
 
-        const gradient = this.context.createRadialGradient(
-          0, 0, 0,
-          0, radius / 2, radius / 2,
-        );
+        this.context.save()
+        this.context.translate(light.pos.x, light.pos.y)
+
+        let gradient: CanvasGradient;
+        if (light.physical) {
+          this.context.rotate(light.direction.angle());
+          gradient = this.context.createRadialGradient(
+            0, 0, 0,
+            0, radius / 2, radius / 2,
+          );
+        } else {
+          gradient = this.context.createRadialGradient(
+            0, 0, 0,
+            0, 0, radius / 2,
+          );
+        }
         gradient.addColorStop(0, light.power);
         gradient.addColorStop(1, 'transparent');
 
         this.context.fillStyle = gradient;
 
-        this.context.save()
-        this.context.translate(light.pos.x, light.pos.y)
-        this.context.rotate(light.direction.angle());
+        if (light.physical) {
+          this.context.fillRect(-radius / 2, 0, radius, radius);
+        } else {
+          this.context.fillRect(-radius / 2, -radius / 2, radius, radius);
 
-        this.context.fillRect(-radius / 2, 0, radius, radius);
+        }
 
         this.context.restore();
       }
