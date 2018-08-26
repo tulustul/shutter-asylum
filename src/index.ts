@@ -27,10 +27,11 @@ function tick(timestamp: number) {
     game.checkWinConditions();
 
     for (let i = 0; i < steps; i++) {
-      game.engine.update(cumulativeTime);
+      game.engine.update(timeStep);
     }
-  }
 
+    game.camera.update();
+  }
   game.renderer.render();
   requestAnimationFrame(tick);
 }

@@ -31,7 +31,7 @@ export class Control {
         if (playerSystem.player) {
           playerSystem.player.agent.toggleWalkRun();
         }
-      } else if (event.key === 'Enter') {
+      } else if (event.key === 'Enter' && !this.game.paused) {
         if (this.game.stageCompleted) {
           this.game.loadNextLevel();
         } else if (this.game.isPlayerDead) {

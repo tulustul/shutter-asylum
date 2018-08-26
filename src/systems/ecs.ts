@@ -35,14 +35,15 @@ export class EntityEngine {
     }
   }
 
-  update(time: number) {
-    this.time = time;
+  update(timeStep: number) {
+    this.time += timeStep;
     for (const system of this.systems) {
       system.update();
     }
   }
 
   clear() {
+    this.time = 0;
     this.systems = [];
     this.systemsMap.clear();
   }

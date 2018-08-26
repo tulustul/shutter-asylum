@@ -35,11 +35,9 @@ export class Game {
 
   isPlayerDead = false;
 
-  currentLevel = 0;
+  currentLevel: number;
 
   isLoading = true;
-
-  levelStartTime: number;
 
   levelFinishDuration: number;
 
@@ -59,7 +57,6 @@ export class Game {
 
   constructor(public canvas: HTMLCanvasElement) {
     this.control.init();
-    this.start(this.currentLevel);
 
     this.scores = JSON.parse(localStorage.getItem(SCORES_KEY));
     if (!this.scores) {
@@ -67,6 +64,12 @@ export class Game {
     }
 
     this.menu = this.makeMainMenu();
+
+    // just let the logic flow
+    this.engine.worldWidth = 1;
+    this.engine.worldHeight = 1;
+    this.start(null);
+    this.paused = true;
     this.menu.active = true;
   }
 
@@ -76,10 +79,13 @@ export class Game {
     this.newBestTime = false;
     this.isLoading = true;
     this.engine.clear();
+
+    const playerSystem = new PlayerSystem();
+
     this.engine.register(new PropsSystem());
     this.engine.register(new BarrierSystem());
     this.engine.register(new AgentSystem());
-    this.engine.register(new PlayerSystem());
+    this.engine.register(playerSystem);
     this.engine.register(new VelocitySystem());
     this.engine.register(new ProjectileSystem());
     this.engine.register(new ColisionSystem());
@@ -92,11 +98,15 @@ export class Game {
     this.engine.register(new FlashlightSystem());
     this.engine.init();
 
-    await loadLevel(this.engine, `level${level}`);
+    if (level) {
+      await loadLevel(this.engine, `level${level}`);
+      this.camera.connectWithAgent(playerSystem.player.agent);
+    }
+
     this.renderer.init();
     this.isLoading = false;
-
-    this.levelStartTime = this.engine.time;
+    this.paused = false;
+    this.menu.active = false;
   }
 
   makeMainMenu() {
@@ -128,8 +138,6 @@ export class Game {
         callback: () => {
           this.currentLevel = i;
           this.start(this.currentLevel);
-          this.paused = false;
-          menu.active = false;
         },
       });
     }
@@ -140,7 +148,7 @@ export class Game {
     const aiSystem = this.engine.getSystem<AISystem>(AISystem);
     if (!this.stageCompleted && !this.isLoading && aiSystem.entities.length === 0) {
       this.stageCompleted = true;
-      this.levelFinishDuration = this.engine.time - this.levelStartTime;
+      this.levelFinishDuration = this.engine.time;
       const previousScore = this.scores[difficulty.name][this.currentLevel];
       if (!previousScore || this.levelFinishDuration < previousScore) {
         this.newBestTime = true;

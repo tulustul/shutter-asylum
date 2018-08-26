@@ -113,7 +113,6 @@ export class PlayerSystem extends EntitySystem<PlayerComponent> {
       this.updateControls(player);
       this.updateVisibility(player);
       this.makeStep(player);
-      this.engine.game.camera.setOnPlayer(player);
     }
   }
 

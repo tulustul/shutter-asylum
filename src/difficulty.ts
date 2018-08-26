@@ -26,7 +26,7 @@ export const difficultyOptions: {[key: string]: DifficultyOptions} = {
   hard: {
     name: 'hard',
     playerHealthMultiplier: 0.6,
-    enemyHealthMultiplier: 1.5,
+    enemyHealthMultiplier: 1.2,
     visibilityLevel: 40,
     aiReactionTime: 300,
   },
