@@ -79,7 +79,6 @@ export class LightComponent extends Entity {
         pos: this.pos,
         shape: Shape.circle,
         radius: 5,
-        shouldDecouple: false,
         parent: this,
         mask: AGENTS_MASK,
       });

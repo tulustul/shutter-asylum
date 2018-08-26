@@ -12,20 +12,16 @@ export enum Shape {
 export interface Collidable {
   pos: Vector2;
   shape: Shape;
-  radius: number;
-  shouldDecouple: boolean;
-  parent: any;
+  radius?: number;
+  shouldDecouple?: boolean;
+  parent?: any;
   mask?: number;
   canHit?: number;
 }
 
 export interface Colision<H, R> {
-  hitterCol: Collidable;
-  receiverCol: Collidable;
   hitter: H;
   receiver: R;
-  penetration: number;
-  vec: Vector2;
 }
 
 type ColisionGrid = Map<number, Collidable[]>;
@@ -145,7 +141,7 @@ export class ColisionSystem extends EntitySystem<Collidable> {
     if (hitter.shouldDecouple) {
       this.decouple(hitter);
     }
-    this.emitColision(hitter, receiver, null, 0);
+    this.emitColision(hitter, receiver);
   }
 
   private decouple(hitter: Collidable) {
@@ -234,8 +230,6 @@ export class ColisionSystem extends EntitySystem<Collidable> {
       const minY = Math.floor((entity.pos.y - entity.radius) / TILE_SIZE);
       const maxY = Math.floor((entity.pos.y + entity.radius - 1) / TILE_SIZE);
 
-      // console.log(`${entity.pos.x}x${entity.pos.y} ${minX}-${maxX} ${minY}-${maxY}`)
-
       for (let x = minX; x <= maxX; x++) {
         for (let y = minY; y <= maxY; y++) {
           yield this.getIndexOfCell(x, y);
@@ -255,17 +249,13 @@ export class ColisionSystem extends EntitySystem<Collidable> {
     );
   }
 
-  private emitColision(hitter: Collidable, receiver: Collidable, vec: Vector2, penetration: number) {
+  private emitColision(hitter: Collidable, receiver: Collidable) {
     for (const parent of hitter.parent.getAncestors()) {
       const key = parent.constructor;
       if (this.listeners.has(key)) {
         const colision: Colision<any, any> = {
-          hitterCol: hitter,
-          receiverCol: receiver,
           hitter: parent,
           receiver: receiver.parent,
-          penetration,
-          vec,
         }
         for (const callback of this.listeners.get(key)) {
           callback(colision);

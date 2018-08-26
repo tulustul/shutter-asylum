@@ -39,8 +39,6 @@ export class DoorComponent extends Entity {
     this.collidable = this.engine.getSystem<ColisionSystem>(ColisionSystem).makeCollidable({
       pos: this.pos,
       shape: Shape.gridCell,
-      radius: 0,
-      shouldDecouple: false,
       parent: this,
       mask: BARRIER_MASK,
     });
