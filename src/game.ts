@@ -21,13 +21,17 @@ import { ActionsSystem } from "./systems/actions";
 import { DoorsSystem } from "./systems/doors";
 import { FlashlightSystem } from "./systems/flashlight";
 
-const LEVELS_COUNT = 5;
+const LEVELS_COUNT = 6;
 
 export class Game {
 
   paused = true;
 
   stageCompleted = false;
+
+  gameCompleted = false;
+
+  isPlayerDead = false;
 
   currentLevel = 0;
 
@@ -46,6 +50,7 @@ export class Game {
 
   async start(level: number) {
     this.stageCompleted = false;
+    this.gameCompleted = false;
     this.isLoading = true;
     this.engine.clear();
     this.engine.register(new PropsSystem());
@@ -93,16 +98,23 @@ export class Game {
     const aiSystem = this.engine.getSystem<AISystem>(AISystem);
     if (!this.isLoading && aiSystem.entities.length === 0) {
       this.stageCompleted = true;
+      if (this.currentLevel === LEVELS_COUNT) {
+        this.gameCompleted = true;
+      }
     }
   }
 
   loadNextLevel() {
-    this.currentLevel++;
-    if (this.currentLevel >= LEVELS_COUNT) {
-      console.log('finished');
-    } else {
-      this.start(this.currentLevel);
+    if (this.gameCompleted) {
+      return;
     }
+
+    this.currentLevel++;
+    this.start(this.currentLevel);
+  }
+
+  restartLevel() {
+    this.start(this.currentLevel);
   }
 
 }

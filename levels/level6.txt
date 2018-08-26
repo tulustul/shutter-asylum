@@ -1,0 +1,11 @@
+#
+XXXXXXXXXXXXX
+X..L.....L..X
+X.....e.....X
+XL.........LX
+X...........X
+X...........X
+XL....S....LX
+X...........X
+X..L.....L..X
+XXXXXXXXXXXXX

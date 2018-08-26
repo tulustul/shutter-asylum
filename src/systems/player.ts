@@ -86,9 +86,13 @@ export class PlayerSystem extends EntitySystem<PlayerComponent> {
   remove(entity: PlayerComponent) {
     super.remove(entity);
     this.player = null;
+    this.engine.game.isPlayerDead = true;
   }
 
   nextWeapon() {
+    if (!this.player) {
+      return;
+    }
     const weapon = new Gun(this.engine, WEAPONS[this.weaponIndex]);
     weapon.setOwner(this.player.agent);
 

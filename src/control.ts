@@ -28,9 +28,15 @@ export class Control {
         this.game.paused = !this.game.paused;
         this.game.menu.active = this.game.paused;
       } else if (event.code === 'KeyC' || event.key === 'Shift') {
-        playerSystem.player.agent.toggleWalkRun();
-      } else if (event.key === 'Enter' && this.game.stageCompleted) {
-        this.game.loadNextLevel();
+        if (playerSystem.player) {
+          playerSystem.player.agent.toggleWalkRun();
+        }
+      } else if (event.key === 'Enter') {
+        if (this.game.stageCompleted) {
+          this.game.loadNextLevel();
+        } else if (this.game.isPlayerDead) {
+          this.game.restartLevel();
+        }
       }
 
     });
@@ -40,7 +46,9 @@ export class Control {
       this.keys.set(event.code, false);
 
       if (event.key === 'Shift') {
-        playerSystem.player.agent.toggleWalkRun();
+        if (playerSystem.player) {
+          playerSystem.player.agent.toggleWalkRun();
+        }
       }
     });
 
@@ -51,6 +59,10 @@ export class Control {
 
       const playerSystem = this.game.engine.getSystem<PlayerSystem>(PlayerSystem);
       const actionsSystem = this.game.engine.getSystem<ActionsSystem>(ActionsSystem);
+
+      if (!playerSystem.player) {
+        return;
+      }
 
       if (event.code === 'KeyQ') {
         playerSystem.nextWeapon();
@@ -83,7 +95,7 @@ export class Control {
       const playerSystem = this.game.engine.getSystem<PlayerSystem>(PlayerSystem);
 
       this.mouseButtons.set(event.button, true);
-      if (event.button === 1) {
+      if (event.button === 1 && playerSystem.player) {
         playerSystem.player.agent.toggleFlashlight();
       }
     });

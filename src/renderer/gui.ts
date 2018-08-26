@@ -32,7 +32,7 @@ export class GuiRenderer {
 
     this.context.textBaseline = 'top';
     this.context.shadowColor = 'black';
-    this.context.shadowBlur = 5;
+    this.context.shadowBlur = 4;
 
     if (this.game.paused) {
       this.renderMenu();
@@ -52,6 +52,7 @@ export class GuiRenderer {
     const titleWidth = this.context.measureText(title).width;
     this.context.fillText(title, (this.canvas.width - titleWidth) / 2, 20);
 
+    this.context.fillStyle = 'white';
     this.context.font = '15px sans-serif';
 
     let y = 60;
@@ -78,12 +79,17 @@ export class GuiRenderer {
     const player = this.engine.getSystem<PlayerSystem>(PlayerSystem).entities[0];
     const action = this.engine.getSystem<ActionsSystem>(ActionsSystem).action;
 
-    if (this.game.stageCompleted) {
+    this.context.fillStyle = 'white';
+
+    if (this.game.gameCompleted) {
+      this.drawTextCentered('THAT\'S ALL', 20, 100);
+      this.drawTextCentered('This was the last level.', 14, 130);
+      this.drawTextCentered('Try harder difficulty for more challenges.', 14, 150);
+    } else if (this.game.stageCompleted) {
       this.drawTextCentered('STAGE CLEARED', 20, 100);
-      this.drawTextCentered('Press <enter> to proceed', 12, 130);
+      this.drawTextCentered('Press <enter> to proceed', 14, 130);
     }
 
-    this.context.fillStyle = 'red';
     this.context.font = '12px sans-serif';
     if (player) {
       const weapon = player.agent.weapon;
@@ -121,6 +127,7 @@ export class GuiRenderer {
       this.context.fillText(text, 0, 380);
     } else {
       this.drawTextCentered('YOU DIED', 20, 150);
+      this.drawTextCentered('Press <enter> to try again', 14, 180);
     }
   }
 
