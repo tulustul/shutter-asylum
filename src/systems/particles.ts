@@ -48,8 +48,6 @@ export class ParticleComponent extends Entity {
     this.collidable = this.engine.getSystem<ColisionSystem>(ColisionSystem).makeCollidable({
       pos: pos,
       shape: Shape.point,
-      radius: 0,
-      shouldDecouple: false,
       parent: this,
       canHit: options.canHit,
     });

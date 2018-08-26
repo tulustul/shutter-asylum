@@ -23,6 +23,8 @@ import { FlashlightSystem } from "./systems/flashlight";
 
 const LEVELS_COUNT = 6;
 
+const SCORES_KEY = 'scores';
+
 export class Game {
 
   paused = true;
@@ -37,20 +39,41 @@ export class Game {
 
   isLoading = true;
 
+  levelStartTime: number;
+
+  levelFinishDuration: number;
+
+  newBestTime = false;
+
+  scores: any;
+
+  menu: Menu;
+
   engine = new EntityEngine(this);
+
   camera = new Camera(this.canvas);
-  menu = this.makeMainMenu();
+
   control = new Control(this);
+
   renderer = new Renderer(this);
 
   constructor(public canvas: HTMLCanvasElement) {
     this.control.init();
     this.start(this.currentLevel);
+
+    this.scores = JSON.parse(localStorage.getItem(SCORES_KEY));
+    if (!this.scores) {
+      this.scores = {easy: {}, normal: {}, hard: {}};
+    }
+
+    this.menu = this.makeMainMenu();
+    this.menu.active = true;
   }
 
   async start(level: number) {
     this.stageCompleted = false;
     this.gameCompleted = false;
+    this.newBestTime = false;
     this.isLoading = true;
     this.engine.clear();
     this.engine.register(new PropsSystem());
@@ -72,17 +95,36 @@ export class Game {
     await loadLevel(this.engine, `level${level}`);
     this.renderer.init();
     this.isLoading = false;
+
+    this.levelStartTime = this.engine.time;
   }
 
   makeMainMenu() {
     const menu = new Menu();
     menu.addOption({
       text: () => `Difficulty: ${difficulty.name}`,
-      callback: setNextDifficulty, 
+      callback: () => {
+        setNextDifficulty();
+        this.menu = this.makeMainMenu();
+        this.menu.active = true;
+      }, 
     })
-    for (let i = 1; i <= LEVELS_COUNT; i++) {
+
+    const levelsCount = Math.min(
+      LEVELS_COUNT,
+      Object.keys(this.scores[difficulty.name]).length + 1,
+    );
+
+    for (let i = 1; i <= levelsCount; i++) {
       menu.addOption({
-        text: `level ${i}`,
+        text: () => {
+          let bestTime = this.scores[difficulty.name][i];
+          let text = `level ${i}`;
+          if (bestTime) {
+            text += ` (best time: ${(bestTime / 1000).toFixed(1)}s)`;
+          }
+          return text;
+        },
         callback: () => {
           this.currentLevel = i;
           this.start(this.currentLevel);
@@ -96,8 +138,14 @@ export class Game {
 
   checkWinConditions() {
     const aiSystem = this.engine.getSystem<AISystem>(AISystem);
-    if (!this.isLoading && aiSystem.entities.length === 0) {
+    if (!this.stageCompleted && !this.isLoading && aiSystem.entities.length === 0) {
       this.stageCompleted = true;
+      this.levelFinishDuration = this.engine.time - this.levelStartTime;
+      const previousScore = this.scores[difficulty.name][this.currentLevel];
+      if (!previousScore || this.levelFinishDuration < previousScore) {
+        this.newBestTime = true;
+      }
+      this.saveScore();
       if (this.currentLevel === LEVELS_COUNT) {
         this.gameCompleted = true;
       }
@@ -115,6 +163,12 @@ export class Game {
 
   restartLevel() {
     this.start(this.currentLevel);
+  }
+
+  saveScore() {
+    this.scores[difficulty.name][this.currentLevel] = this.levelFinishDuration;
+    localStorage.setItem(SCORES_KEY, JSON.stringify(this.scores));
+    this.menu = this.makeMainMenu();
   }
 
 }

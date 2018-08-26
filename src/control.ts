@@ -39,6 +39,15 @@ export class Control {
         }
       }
 
+      if (this.game.menu.active) {
+        if (event.code === 'KeyW' || event.key === 'ArrowUp') {
+          this.game.menu.movePointer(-1);
+        } else if (event.code === 'KeyS' || event.key === 'ArrowDown') {
+          this.game.menu.movePointer(1);
+        } else if (event.key === 'Enter' || event.key === ' ' || event.code === 'KeyE') {
+          this.game.menu.select();
+        }
+      }
     });
 
     window.addEventListener('keyup', event => {

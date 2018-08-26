@@ -80,22 +80,30 @@ export class GuiRenderer {
 
     this.context.fillStyle = 'white';
 
+    let y = 50;
+
+    if (this.game.stageCompleted) {
+      const duration = (this.game.levelFinishDuration / 1000).toFixed(1);
+      this.drawTextCentered(`STAGE CLEARED in ${duration}s`, 20, y);
+      if (this.game.newBestTime) {
+        this.drawTextCentered('New best time!', 18, y += 20);
+      }
+      this.drawTextCentered('Press <enter> to proceed', 14, y += 20);
+    }
+
     if (this.game.gameCompleted) {
-      this.drawTextCentered('THAT\'S ALL', 20, 100);
-      this.drawTextCentered('This was the last level.', 14, 130);
-      this.drawTextCentered('Try harder difficulty for more challenges.', 14, 150);
-    } else if (this.game.stageCompleted) {
-      this.drawTextCentered('STAGE CLEARED', 20, 100);
-      this.drawTextCentered('Press <enter> to proceed', 14, 130);
+      this.drawTextCentered('THAT\'S ALL', 20, y += 40);
+      this.drawTextCentered('This was the last level', 14, y += 20);
+      this.drawTextCentered('Try harder difficulty for more challenges', 14, y += 20);
     }
 
     this.context.font = '12px sans-serif';
     if (player) {
       this.renderPlayerContext(player);
       this.renderBottomBar(player);
-    } else {
-      this.drawTextCentered('YOU DIED', 20, 150);
-      this.drawTextCentered('Press <enter> to try again', 14, 180);
+    } else if (!this.game.isLoading) {
+      this.drawTextCentered('YOU DIED', 20, y += 20);
+      this.drawTextCentered('Press <enter> to try again', 14, y += 20);
     }
   }
 

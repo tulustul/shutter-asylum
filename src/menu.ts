@@ -7,23 +7,7 @@ interface MenuOption {
 
 export class Menu {
 
-  constructor() {
-    window.addEventListener('keydown', event => {
-      if (!this.active) {
-        return;
-      }
-
-      if (event.code === 'KeyW' || event.key === 'ArrowUp') {
-        this.movePointer(-1);
-      } else if (event.code === 'KeyS' || event.key === 'ArrowDown') {
-        this.movePointer(1);
-      } else if (event.key === 'Enter' || event.key === ' ' || event.code === 'KeyE') {
-        this.select();
-      }
-    });
-  }
-
-  active = true;
+  active = false;
 
   pointer = 0;
 
