@@ -123,7 +123,21 @@ function makeCell(
   if (cell === "S") {
     new PlayerComponent(engine, Object.create(pos));
   } else if (cell === "E") {
-    new AIComponent(engine, {pos: Object.create(pos)});
+    new AIComponent(engine, {
+      pos: Object.create(pos),
+      weapon: 'mg',
+    });
+  } else if (cell === "e") {
+    new AIComponent(engine, {
+      pos: Object.create(pos),
+      weapon: 'pistol',
+    });
+  } else if (cell === "M") {
+    new AIComponent(engine, {
+      pos: Object.create(pos),
+      weapon: 'minigun',
+      maxHealth: 100,
+    });
   } else if (cell === "P") {
     new AIComponent(engine, {pos: Object.create(pos), canPatrol: true});
   } else if (cell === "B") {
@@ -140,6 +154,12 @@ function makeCell(
       pos,
       physical: true,
       wallDirection: wallDirection as any,
+    });
+  } else if (cell === "H") {
+    const wallDirection = getWallDirection(cells, x, y);
+    new LightComponent(engine, {
+      pos,
+      physical: false,
     });
   } else if (cell === "l") {
     new LightComponent(engine, {pos});

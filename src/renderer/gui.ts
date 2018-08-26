@@ -6,7 +6,6 @@ import { ActionsSystem } from '../systems/actions';
 
 import { Menu } from '../menu';
 import { SPRITES_MAP } from '../sprites';
-import { mgOptions } from '../weapons';
 
 export class GuiRenderer {
 
@@ -31,6 +30,11 @@ export class GuiRenderer {
 
   render() {
     this.interfaceLayer.activate();
+
+    this.context.textBaseline = 'top';
+    this.context.shadowColor = 'black';
+    this.context.shadowBlur = 5;
+
     if (this.engine.paused) {
       this.renderMenu();
     } else {
@@ -47,11 +51,11 @@ export class GuiRenderer {
 
     const title = 'Welcome to Shutter Asylum'
     const titleWidth = this.context.measureText(title).width;
-    this.context.fillText(title, (this.canvas.width - titleWidth) / 2, 50);
+    this.context.fillText(title, (this.canvas.width - titleWidth) / 2, 20);
 
     this.context.font = '15px sans-serif';
 
-    let y = 100;
+    let y = 60;
     for (const option of this.menu.options) {
       let text: string;
       if (typeof option.text === 'string') {
@@ -64,7 +68,7 @@ export class GuiRenderer {
       this.context.fillText(text, x, y);
       if (this.menu.selectedOption === option) {
         this.context.beginPath();
-        this.context.arc(x - 10, y - 5, 5, 0, Math.PI * 2);
+        this.context.arc(x - 10, y + 8, 5, 0, Math.PI * 2);
         this.context.fill();
       }
       y += 20;
@@ -102,7 +106,7 @@ export class GuiRenderer {
       this.context.fillText(
         contextText,
         this.canvas.width / 2 - contextTextWidth / 2,
-        this.canvas.height / 2 + 33,
+        this.canvas.height / 2 + 20,
       );
 
       const text = `

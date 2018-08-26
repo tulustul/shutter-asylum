@@ -8,12 +8,12 @@ X---------XXXXX--LX
 X---------X   X---X
 XXXXXX_XXXX   XX_XXXXXXXXXXXXXXXXXXX
     X...X     X-------B------------X
-    X..LX     X----E-E-E-EE--------X
-    X...X     X-----E-E--E---------X
+    X..LX     X----e-e-e-ee--------X
+    X...X     X-----e-e--e---------X
     X...X     XX_XX----------------X
 XXXXX...XXXXXXX...X----------------X
 X.................XXXXXXXXXXXXXX_XXX
-X..........E................X.....LX
+X..........e................X.....LX
 X6....X............................X
 X..................LXXXXX..........X
 X...................X   X....XXXXXXX

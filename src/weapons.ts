@@ -9,7 +9,9 @@ import {
   BARRIER_OR_ENEMY_MASK,
 } from './colisions-masks';
 
-interface GunOptions {
+export type GunType = 'pistol' | 'mg' | 'minigun';
+
+export interface GunOptions {
   name: string;
   shootSpeed: number;
   bulletSpeed: number;
@@ -19,34 +21,34 @@ interface GunOptions {
   spread: number;
 }
 
-export const pistolOptions: GunOptions = {
-  name: 'Pistol',
-  magazineCapacity: 6,
-  reloadTime: 2000,
-  shootSpeed: 250,
-  bulletSpeed: 6,
-  bulletLifetime: 10000,
-  spread: 0,
-}
-
-export const mgOptions: GunOptions = {
-  name: 'MG',
-  magazineCapacity: 30,
-  reloadTime: 3000,
-  shootSpeed: 80,
-  bulletSpeed: 8,
-  bulletLifetime: 15000,
-  spread: Math.PI / 20,
-}
-
-export const minigunOptions: GunOptions = {
-  name: 'Minigun',
-  magazineCapacity: 500,
-  reloadTime: 5000,
-  shootSpeed: 20,
-  bulletSpeed: 10,
-  bulletLifetime: 15000,
-  spread: Math.PI / 15,
+export const GUNS: {[key: string]: GunOptions} = {
+  pistol: {
+    name: 'Pistol',
+    magazineCapacity: 6,
+    reloadTime: 2000,
+    shootSpeed: 250,
+    bulletSpeed: 6,
+    bulletLifetime: 10000,
+    spread: 0,
+  },
+  mg: {
+    name: 'MG',
+    magazineCapacity: 30,
+    reloadTime: 3000,
+    shootSpeed: 80,
+    bulletSpeed: 8,
+    bulletLifetime: 15000,
+    spread: Math.PI / 20,
+  },
+  minigun: {
+    name: 'Minigun',
+    magazineCapacity: 500,
+    reloadTime: 5000,
+    shootSpeed: 20,
+    bulletSpeed: 10,
+    bulletLifetime: 15000,
+    spread: Math.PI / 15,
+  },
 }
 
 export class Gun {

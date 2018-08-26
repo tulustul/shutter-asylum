@@ -3,16 +3,12 @@ import { EntitySystem, EntityEngine, Entity } from './ecs';
 import { Control } from '../control';
 import { Camera } from '../camera';
 import { Vector2 } from '../vector';
-import { Gun, pistolOptions, mgOptions, minigunOptions } from '../weapons';
+import { Gun, GUNS, GunOptions } from '../weapons';
 import { PLAYER_MASK } from '../colisions-masks';
 import { TILE_SIZE } from '../constants';
 import { difficulty } from '../difficulty';
 
-const WEAPONS = [
-  pistolOptions,
-  mgOptions,
-  minigunOptions,
-];
+const WEAPONS: GunOptions[] = Object.values(GUNS);
 
 const FLOOR_MAP: {[key: string]: string} = {
   '.': 'stone',

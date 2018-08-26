@@ -3,7 +3,7 @@ import { AgentComponent } from "./agent";
 import { PlayerSystem } from "./player";
 import { ColisionSystem } from "./colision";
 import { Vector2 } from "../vector";
-import { Gun, mgOptions } from "../weapons";
+import { Gun, GUNS, GunType } from "../weapons";
 import { difficulty } from "../difficulty";
 
 import { ENEMY_MASK } from "../colisions-masks";
@@ -26,6 +26,8 @@ enum AIState {
 interface AIOptions {
   pos: Vector2;
   canPatrol?: boolean;
+  weapon?: GunType;
+  maxHealth?: number;
 }
 
 export class AIComponent extends Entity {
@@ -73,11 +75,11 @@ export class AIComponent extends Entity {
 
     this.agent = new AgentComponent(engine, options.pos, {
       colisionMask: ENEMY_MASK,
-      maxHealth: 5 * difficulty.enemyHealthMultiplier,
+      maxHealth: (options.maxHealth || 5) * difficulty.enemyHealthMultiplier,
     });
     this.agent.parent = this;
     this.agent.onHit = () => this.state = AIState.alerted;
-    this.weapon = new Gun(this.engine, mgOptions);
+    this.weapon = new Gun(this.engine, GUNS[options.weapon || 'pistol']);
     this.weapon.setOwner(this.agent);
 
     if (this.canPatrol) {

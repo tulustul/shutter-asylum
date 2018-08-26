@@ -9,7 +9,7 @@ import { Gun } from "../weapons";
 import { BARRIER_MASK, OBSTACLE_MASK } from "../colisions-masks";
 import { FlashlightComponent } from "./flashlight";
 
-interface AgentOptions {
+export interface AgentOptions {
   maxHealth?: number;
   colisionMask: number;
 }
