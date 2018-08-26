@@ -1,31 +1,30 @@
 import { Layer } from './layer';
-import { Renderer } from './renderer';
 
 import { PlayerSystem } from '../systems/player';
 import { ActionsSystem } from '../systems/actions';
 
-import { Menu } from '../menu';
+import { Game } from '../game';
 import { SPRITES_MAP } from '../sprites';
 
 export class GuiRenderer {
 
-  interfaceLayer = new Layer('interface', this.renderer, {
+  interfaceLayer = new Layer('interface', this.game.renderer, {
     followPlayer: false,
     clear: true,
   });
 
-  constructor(private renderer: Renderer, private menu: Menu) { }
+  constructor(private game: Game) { }
 
   get context() {
-    return this.renderer.context;
+    return this.game.renderer.context;
   }
 
   get engine() {
-    return this.renderer.engine;
+    return this.game.engine;
   }
 
   get canvas() {
-    return this.renderer.canvas;
+    return this.game.canvas;
   }
 
   render() {
@@ -35,7 +34,7 @@ export class GuiRenderer {
     this.context.shadowColor = 'black';
     this.context.shadowBlur = 5;
 
-    if (this.engine.paused) {
+    if (this.game.paused) {
       this.renderMenu();
     } else {
       this.renderGameGui();
@@ -56,7 +55,7 @@ export class GuiRenderer {
     this.context.font = '15px sans-serif';
 
     let y = 60;
-    for (const option of this.menu.options) {
+    for (const option of this.game.menu.options) {
       let text: string;
       if (typeof option.text === 'string') {
         text = option.text as string;
@@ -66,7 +65,7 @@ export class GuiRenderer {
       const optionWidth = this.context.measureText(text).width;
       const x = (this.canvas.width - optionWidth) / 2;
       this.context.fillText(text, x, y);
-      if (this.menu.selectedOption === option) {
+      if (this.game.menu.selectedOption === option) {
         this.context.beginPath();
         this.context.arc(x - 10, y + 8, 5, 0, Math.PI * 2);
         this.context.fill();
@@ -78,6 +77,11 @@ export class GuiRenderer {
   renderGameGui() {
     const player = this.engine.getSystem<PlayerSystem>(PlayerSystem).entities[0];
     const action = this.engine.getSystem<ActionsSystem>(ActionsSystem).action;
+
+    if (this.game.stageCompleted) {
+      this.drawTextCentered('STAGE CLEARED', 20, 100);
+      this.drawTextCentered('Press <enter> to proceed', 12, 130);
+    }
 
     this.context.fillStyle = 'red';
     this.context.font = '12px sans-serif';
@@ -116,25 +120,28 @@ export class GuiRenderer {
   `;
       this.context.fillText(text, 0, 380);
     } else {
-      this.context.font = '20px sans-serif';
-      const gameoverText = 'YOU DIED';
-      const textWidth = this.context.measureText(gameoverText).width;
-      this.context.fillText(
-        gameoverText, this.renderer.canvas.width / 2 - textWidth / 2, 150,
-      );
+      this.drawTextCentered('YOU DIED', 20, 150);
     }
   }
 
   drawContextIcon(iconName: string, offset: number) {
     const sprite = SPRITES_MAP[iconName];
     this.context.drawImage(
-      this.renderer.texture,
+      this.game.renderer.texture,
       sprite.x, sprite.y,
       sprite.w, sprite.h,
       this.canvas.width / 2 + offset,
       this.canvas.height / 2 + 18,
       sprite.w, sprite.h,
     );
+  }
+
+  drawTextCentered(text: string, fontSize: number, y: number) {
+    this.context.font = `${fontSize}px sans-serif`;
+      const textWidth = this.context.measureText(text).width;
+      this.context.fillText(
+        text, this.game.canvas.width / 2 - textWidth / 2, y,
+      );
   }
 
 }

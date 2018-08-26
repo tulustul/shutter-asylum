@@ -4,6 +4,7 @@ import { EntityEngine } from "./systems/ecs";
 import { PlayerSystem } from "./systems/player";
 import { ActionsSystem } from "./systems/actions";
 import { Menu } from "./menu";
+import { Game } from "./game";
 
 export class Control {
 
@@ -15,29 +16,27 @@ export class Control {
 
   rot = 0;
 
-  constructor(
-    private engine: EntityEngine,
-    private canvas: HTMLCanvasElement,
-    private menu: Menu,
-  ) {}
+  constructor(private game: Game) {}
 
   init() {
     window.addEventListener('keydown', event => {
-      const playerSystem = this.engine.getSystem<PlayerSystem>(PlayerSystem);
+      const playerSystem = this.game.engine.getSystem<PlayerSystem>(PlayerSystem);
 
       this.keys.set(event.code, true);
 
       if (event.key === 'Escape') {
-        this.engine.paused = !this.engine.paused;
-        this.menu.active = this.engine.paused;
+        this.game.paused = !this.game.paused;
+        this.game.menu.active = this.game.paused;
       } else if (event.code === 'KeyC' || event.key === 'Shift') {
         playerSystem.player.agent.toggleWalkRun();
+      } else if (event.key === 'Enter' && this.game.stageCompleted) {
+        this.game.loadNextLevel();
       }
 
     });
 
     window.addEventListener('keyup', event => {
-      const playerSystem = this.engine.getSystem<PlayerSystem>(PlayerSystem);
+      const playerSystem = this.game.engine.getSystem<PlayerSystem>(PlayerSystem);
       this.keys.set(event.code, false);
 
       if (event.key === 'Shift') {
@@ -46,12 +45,12 @@ export class Control {
     });
 
     window.addEventListener('keypress', event => {
-      if (this.engine.paused) {
+      if (this.game.paused) {
         return;
       }
 
-      const playerSystem = this.engine.getSystem<PlayerSystem>(PlayerSystem);
-      const actionsSystem = this.engine.getSystem<ActionsSystem>(ActionsSystem);
+      const playerSystem = this.game.engine.getSystem<PlayerSystem>(PlayerSystem);
+      const actionsSystem = this.game.engine.getSystem<ActionsSystem>(ActionsSystem);
 
       if (event.code === 'KeyQ') {
         playerSystem.nextWeapon();
@@ -67,21 +66,21 @@ export class Control {
     });
 
     window.addEventListener('mousemove', event => {
-      this.mousePos.x = Math.round(this.canvas.width * event.clientX / window.innerWidth);
-      this.mousePos.y = Math.round(this.canvas.height * event.clientY / window.innerHeight);
+      this.mousePos.x = Math.round(this.game.canvas.width * event.clientX / window.innerWidth);
+      this.mousePos.y = Math.round(this.game.canvas.height * event.clientY / window.innerHeight);
 
       this.rot = Math.atan2(
-        this.canvas.height / 2 - this.mousePos.y,
-        this.canvas.width / 2 - this.mousePos.x,
+        this.game.canvas.height / 2 - this.mousePos.y,
+        this.game.canvas.width / 2 - this.mousePos.x,
       ) + Math.PI / 2;
     });
 
     window.addEventListener('mousedown', event => {
-      if (this.engine.paused) {
+      if (this.game.paused) {
         return;
       }
 
-      const playerSystem = this.engine.getSystem<PlayerSystem>(PlayerSystem);
+      const playerSystem = this.game.engine.getSystem<PlayerSystem>(PlayerSystem);
 
       this.mouseButtons.set(event.button, true);
       if (event.button === 1) {

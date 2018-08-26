@@ -78,11 +78,11 @@ export class Compositor {
   layers: {[key: string]: Layer} = {};
 
   get camera() {
-    return this.renderer.camera;
+    return this.renderer.game.camera;
   }
 
   get canvas() {
-    return this.renderer.canvas;
+    return this.renderer.game.canvas;
   }
 
   init() {

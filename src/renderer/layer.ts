@@ -37,11 +37,11 @@ export class Layer {
 
   init() {
     if (this.renderWholeWorld) {
-      this.canvas.width = this.renderer.engine.worldWidth;
-      this.canvas.height = this.renderer.engine.worldHeight;
+      this.canvas.width = this.renderer.game.engine.worldWidth;
+      this.canvas.height = this.renderer.game.engine.worldHeight;
     } else {
-      this.canvas.width = this.renderer.canvas.width;
-      this.canvas.height = this.renderer.canvas.height;
+      this.canvas.width = this.renderer.game.canvas.width;
+      this.canvas.height = this.renderer.game.canvas.height;
     }
     this.clearCanvas();
   }
@@ -69,7 +69,7 @@ export class Layer {
 
     if (this.followPlayer) {
       this.context.save();
-      this.context.translate(this.renderer.camera.pos.x, this.renderer.camera.pos.y);
+      this.context.translate(this.renderer.game.camera.pos.x, this.renderer.game.camera.pos.y);
     }
   }
 }

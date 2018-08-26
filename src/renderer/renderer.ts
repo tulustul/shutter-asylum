@@ -5,9 +5,7 @@ import { FogOfWar } from './fog-of-war';
 import { GuiRenderer } from './gui';
 import { Compositor } from './compositor';
 
-import { Camera } from '../camera';
-import { EntityEngine } from '../systems/ecs';
-import { Menu } from '../menu';
+import { Game } from '../game';
 
 export class Renderer {
 
@@ -33,27 +31,7 @@ export class Renderer {
 
   ready = false;
 
-  constructor(
-    public engine: EntityEngine,
-    public camera: Camera,
-    public canvas: HTMLCanvasElement,
-    public menu: Menu,
-  ) {
-    this.compositor = new Compositor(this);
-
-    this.postprocessing = new Postprocessing(this.canvas);
-
-    this.guiRenderer = new GuiRenderer(this, menu);
-
-    this.systemsRenderer = new SystemsRenderer(this);
-
-    this.fogOfWar = new FogOfWar(this);
-
-    this.baseLayer = new Layer('base', this, {
-      followPlayer: false,
-      fill: 'black',
-    });
-
+  constructor(public game: Game) {
     // DEBUG
     // this.checkColorsLayer = new Layer('', this);
 
@@ -84,17 +62,30 @@ export class Renderer {
   }
 
   init() {
+    this.compositor = new Compositor(this);
+
+    this.postprocessing = new Postprocessing(this.game.canvas);
+
+    this.guiRenderer = new GuiRenderer(this.game);
+
+    this.systemsRenderer = new SystemsRenderer(this);
+
+    this.fogOfWar = new FogOfWar(this);
+
+    this.baseLayer = new Layer('base', this, {
+      followPlayer: false,
+      fill: 'black',
+    });
+
     this.compositor.init();
-    // this.systemsRenderer = ;
-    // this.fogOfWar = new FogOfWar(this);
   }
 
   checkDistinctColors() {
     this.checkColorsLayer.context.drawImage(
-      this.canvas, 0, 0, this.canvas.width, this.canvas.height,
+      this.game.canvas, 0, 0, this.game.canvas.width, this.game.canvas.height,
     );
     const data = this.checkColorsLayer.context.getImageData(
-      0, 0, this.canvas.width, this.canvas.height,
+      0, 0, this.game.canvas.width, this.game.canvas.height,
     ).data;
     const colors = new Set<string>();
     for (let i = 0; i < data.length; i += 4) {

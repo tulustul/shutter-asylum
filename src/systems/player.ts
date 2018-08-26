@@ -73,7 +73,7 @@ export class PlayerSystem extends EntitySystem<PlayerComponent> {
 
   player: PlayerComponent;
 
-  constructor(private control: Control, private camera: Camera) {
+  constructor() {
     super();
   }
 
@@ -104,17 +104,17 @@ export class PlayerSystem extends EntitySystem<PlayerComponent> {
         player.isNoisy = false;
       }
 
-      player.agent.rot = this.control.rot;
+      player.agent.rot = this.engine.game.control.rot;
 
       this.updateControls(player);
       this.updateVisibility(player);
       this.makeStep(player);
-      this.camera.setOnPlayer(player);
+      this.engine.game.camera.setOnPlayer(player);
     }
   }
 
   updateVisibility(player: PlayerComponent) {
-    const lightsLayer = this.engine.renderer.compositor.layers.combinedLights;
+    const lightsLayer = this.engine.game.renderer.compositor.layers.combinedLights;
     const lightsCanvas = lightsLayer.canvas;
 
     if (this.engine.time - player.lastVisibilityUpdateTime > VISIBILITY_UPDATE_TIME) {
@@ -129,19 +129,20 @@ export class PlayerSystem extends EntitySystem<PlayerComponent> {
   }
 
   updateControls(player: PlayerComponent) {
-    if (this.control.keys.get('KeyW')) {
+    const control = this.engine.game.control;
+    if (control.keys.get('KeyW')) {
       player.agent.moveToDirection(Math.PI);
     }
-    if (this.control.keys.get("KeyA")) {
+    if (control.keys.get("KeyA")) {
       player.agent.moveToDirection(Math.PI * 0.5);
     }
-    if (this.control.keys.get("KeyS")) {
+    if (control.keys.get("KeyS")) {
       player.agent.moveToDirection(0);
     }
-    if (this.control.keys.get("KeyD")) {
+    if (control.keys.get("KeyD")) {
       player.agent.moveToDirection(Math.PI * 1.5);
     }
-    if (this.control.mouseButtons.get(0) || this.control.keys.get(" ")) {
+    if (control.mouseButtons.get(0) || control.keys.get(" ")) {
       const shootSuccessed = player.agent.shoot();
       if (shootSuccessed) {
         player.makeNoise();

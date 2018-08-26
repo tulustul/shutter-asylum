@@ -28,15 +28,15 @@ export class FogOfWar {
   }
 
   get engine() {
-    return this.renderer.engine;
+    return this.renderer.game.engine;
   }
 
   get canvas() {
-    return this.renderer.canvas;
+    return this.renderer.game.canvas;
   }
 
   get camera() {
-    return this.renderer.camera;
+    return this.renderer.game.camera;
   }
 
   render() {

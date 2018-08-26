@@ -298,6 +298,7 @@ export class AISystem extends EntitySystem<AIComponent> {
     if (!this.playerSystem.player) {
       return;
     }
+
     for (const entity of this.entities) {
       if (this.engine.time - entity.lastThinking > difficulty.aiReactionTime) {
         this.process(entity);

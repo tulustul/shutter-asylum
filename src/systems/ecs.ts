@@ -1,5 +1,5 @@
 import { Sound } from '../sound';
-import { Renderer } from '../renderer/renderer';
+import { Game } from '../game';
 
 export class EntityEngine {
 
@@ -17,9 +17,7 @@ export class EntityEngine {
 
   sound = new Sound();
 
-  renderer: Renderer;
-
-  paused = true;
+  constructor(public game: Game) {}
 
   getSystem<T extends EntitySystem<any>>(systemClass: Function) {
     return this.systemsMap.get(systemClass) as T;
@@ -47,9 +45,6 @@ export class EntityEngine {
   clear() {
     this.systems = [];
     this.systemsMap.clear();
-    // for (const system of this.systems) {
-    //   system.clear();
-    // }
   }
 }
 

@@ -57,7 +57,7 @@ export class SystemsRenderer {
   }
 
   get engine() {
-    return this.renderer.engine;
+    return this.renderer.game.engine;
   }
 
   renderLowerProps() {
