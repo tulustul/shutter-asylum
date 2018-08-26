@@ -1,6 +1,6 @@
 import { Layer } from './layer';
 
-import { PlayerSystem } from '../systems/player';
+import { PlayerSystem, PlayerComponent } from '../systems/player';
 import { ActionsSystem } from '../systems/actions';
 
 import { Game } from '../game';
@@ -77,7 +77,6 @@ export class GuiRenderer {
 
   renderGameGui() {
     const player = this.engine.getSystem<PlayerSystem>(PlayerSystem).entities[0];
-    const action = this.engine.getSystem<ActionsSystem>(ActionsSystem).action;
 
     this.context.fillStyle = 'white';
 
@@ -92,43 +91,53 @@ export class GuiRenderer {
 
     this.context.font = '12px sans-serif';
     if (player) {
-      const weapon = player.agent.weapon;
-      let contextText = '';
-
-      let iconOffset = -8;
-      if (weapon.reloading) {
-        this.drawContextIcon('reload', iconOffset);
-        iconOffset += 8;
-      }
-
-      if (!player.agent.isRunning) {
-        if (player.isVisible) {
-          this.drawContextIcon('visible', iconOffset);
-        } else {
-          this.drawContextIcon('hidden', iconOffset);
-        }
-      }
-
-      if (action) {
-        contextText += `${action.text} (E)`;
-      }
-      const contextTextWidth = this.context.measureText(contextText).width;
-      this.context.fillText(
-        contextText,
-        this.canvas.width / 2 - contextTextWidth / 2,
-        this.canvas.height / 2 + 20,
-      );
-
-      const text = `
-  ${weapon.options.name}
-  ${weapon.bulletsInMagazine} / ${weapon.options.magazineCapacity}
-  (${weapon.totalBullets})
-  `;
-      this.context.fillText(text, 0, 380);
+      this.renderPlayerContext(player);
+      this.renderBottomBar(player);
     } else {
       this.drawTextCentered('YOU DIED', 20, 150);
       this.drawTextCentered('Press <enter> to try again', 14, 180);
     }
+  }
+
+  renderPlayerContext(player: PlayerComponent) {
+    const action = this.engine.getSystem<ActionsSystem>(ActionsSystem).action;
+    const weapon = player.agent.weapon;
+    let contextText = '';
+
+    let iconOffset = -8;
+    if (weapon.reloading) {
+      this.drawContextIcon('reload', iconOffset);
+      iconOffset += 8;
+    }
+
+    if (!player.agent.isRunning) {
+      if (player.isVisible) {
+        this.drawContextIcon('visible', iconOffset);
+      } else {
+        this.drawContextIcon('hidden', iconOffset);
+      }
+    }
+
+    if (action) {
+      contextText += `${action.text} (E)`;
+    }
+    const contextTextWidth = this.context.measureText(contextText).width;
+    this.context.fillText(
+      contextText,
+      this.canvas.width / 2 - contextTextWidth / 2,
+      this.canvas.height / 2 + 20,
+    );
+  }
+
+  renderBottomBar(player: PlayerComponent) {
+    const weapon = player.agent.weapon;
+
+    const weaponName = weapon.options.name;
+    const bullets = weapon.bulletsInMagazine;
+    const capacity = weapon.options.magazineCapacity;
+    const total = weapon.totalBullets;
+    const text = `${weaponName} ${bullets} / ${capacity} (${total})`;
+    this.context.fillText(text, 10, 380);
   }
 
   drawContextIcon(iconName: string, offset: number) {
