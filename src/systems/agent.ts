@@ -88,10 +88,12 @@ export class AgentComponent extends Entity {
       this.flashlight.destroy();
     }
 
-    new PickableComponent(this.engine, {
-      pos: this.posAndVel.pos.copy(),
-      gun: this.currentWeapon,
-    });
+    if (this.currentWeapon) {
+      new PickableComponent(this.engine, {
+        pos: this.posAndVel.pos.copy(),
+        gun: this.currentWeapon,
+      });
+    }
 
     super.destroy();
   }

@@ -46,9 +46,9 @@ export class GuiRenderer {
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     this.context.fillStyle = 'red';
-    this.context.font = '22px sans-serif';
+    this.context.font = '26px sans-serif';
 
-    const title = 'Welcome to Shutter Asylum'
+    const title = 'Shutter Asylum'
     const titleWidth = this.context.measureText(title).width;
     this.context.fillText(title, (this.canvas.width - titleWidth) / 2, 20);
 
