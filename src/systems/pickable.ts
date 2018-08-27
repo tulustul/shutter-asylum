@@ -27,7 +27,7 @@ export class PickableComponent extends Entity {
       this.engine, {
         pos: this.pos,
         changing: true,
-        sprite: `gun${this.gun.options.name}`,
+        sprite: `pickable${this.gun.options.name}`,
         pivot: new Vector2(8, 3),
       },
     );

@@ -138,6 +138,18 @@ export class SystemsRenderer {
         -TILE_SIZE / 2, -TILE_SIZE / 2,
         sprite.w, sprite.h,
       )
+
+      if (agent.currentWeapon) {
+        const gunSprite = SPRITES_MAP[`gun${agent.currentWeapon.options.name}`];
+        this.context.drawImage(
+          this.renderer.texture,
+          gunSprite.x, gunSprite.y,
+          gunSprite.w, gunSprite.h,
+          -4, 8,
+          gunSprite.w, gunSprite.h,
+        )
+      }
+
       this.context.restore();
 
       this.context.fillStyle = 'red';
