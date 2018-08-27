@@ -105,6 +105,18 @@ export class SystemsRenderer {
     }
   }
 
+  renderCharProps() {
+    this.context.font = '16px sans-serif';
+    this.context.fillStyle = 'white';
+    this.context.textBaseline = 'top';
+    const propsSystem = this.engine.getSystem<PropsSystem>(PropsSystem);
+    for (const prop of propsSystem.charsToRender) {
+      const charWidth = this.context.measureText(prop.text).width;
+      this.context.fillText(prop.text, prop.pos.x, prop.pos.y);
+    }
+    propsSystem.charsToRender = [];
+  }
+
   renderAgents() {
     const sprite = SPRITES_MAP.agent;
 
@@ -248,6 +260,7 @@ export class SystemsRenderer {
 
     this.propsLayer.activate();
     this.renderLowerProps();
+    this.renderCharProps();
 
     this.movingPropsLayer.activate();
     this.renderAgents();

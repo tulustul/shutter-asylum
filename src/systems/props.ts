@@ -2,8 +2,9 @@ import { EntitySystem, EntityEngine, Entity } from './ecs';
 import { Vector2 } from '../vector';
 
 interface PropOptions {
-  sprite: string;
   pos: Vector2;
+  sprite?: string;
+  text?: string;
   rot?: number;
   changing?: boolean;
   pivot?: Vector2;
@@ -14,9 +15,11 @@ interface PropOptions {
 
 export class PropComponent extends Entity {
 
+  pos: Vector2;
+
   sprite: string;
 
-  pos: Vector2;
+  text: string;
 
   rot: number = null;
 
@@ -48,6 +51,8 @@ export class PropComponent extends Entity {
 
 export class PropsSystem extends EntitySystem<PropComponent> {
 
+  charsToRender: PropComponent[] = [];
+
   toRender: {[zIndex: number]: PropComponent[]} = {};
 
   higherToRender: PropComponent[] = [];
@@ -60,6 +65,8 @@ export class PropsSystem extends EntitySystem<PropComponent> {
       super.add(entity);
     } else if (entity.aboveLevel) {
       this.higherToRender.push(entity);
+    } else if (entity.text) {
+      this.charsToRender.push(entity);
     } else {
       this.updateZIndexes(entity.zIndex);
       this.toRender[entity.zIndex].push(entity);

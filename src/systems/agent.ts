@@ -8,6 +8,7 @@ import { TILE_SIZE } from "../constants";
 import { Gun } from "../weapons";
 import { BARRIER_MASK, OBSTACLE_MASK } from "../colisions-masks";
 import { FlashlightComponent } from "./flashlight";
+import { PickableComponent } from "./pickable";
 
 export interface AgentOptions {
   maxHealth?: number;
@@ -22,7 +23,7 @@ export class AgentComponent extends Entity {
 
   maxSpeed = this.maxRunSpeed;
 
-  ACCELERATION = 0.2;
+  ACCELERATION = 0.5;
 
   posAndVel: PosAndVel;
 
@@ -30,7 +31,13 @@ export class AgentComponent extends Entity {
 
   rot = 0;
 
-  weapon: Gun;
+  weaponsMap = new Map<string, Gun>();
+
+  weapons: Gun[] = [];
+
+  weaponIndex = 0;
+
+  currentWeapon: Gun;
 
   maxHealth = 5;
 
@@ -50,7 +57,7 @@ export class AgentComponent extends Entity {
     this.health = this.maxHealth;
 
     this.engine.getSystem(AgentSystem).add(this);
-    this.posAndVel = new PosAndVel(this.engine, pos, 1.1);
+    this.posAndVel = new PosAndVel(this.engine, pos, 1.3);
     const colisionSystem = this.engine.getSystem<ColisionSystem>(ColisionSystem);
 
     this.collidable = colisionSystem.makeCollidable({
@@ -81,6 +88,11 @@ export class AgentComponent extends Entity {
       this.flashlight.destroy();
     }
 
+    new PickableComponent(this.engine, {
+      pos: this.posAndVel.pos.copy(),
+      gun: this.currentWeapon,
+    });
+
     super.destroy();
   }
 
@@ -90,8 +102,8 @@ export class AgentComponent extends Entity {
   }
 
   shoot() {
-    if (this.weapon) {
-      return this.weapon.shoot();
+    if (this.currentWeapon) {
+      return this.currentWeapon.shoot();
     }
     return false;
   }
@@ -138,6 +150,32 @@ export class AgentComponent extends Entity {
   walk() {
     this.maxSpeed = this.maxWalkSpeed;
     this.isRunning = false;
+  }
+
+  addWeapon(weapon: Gun) {
+    if (!this.weaponsMap.has(weapon.options.name)) {
+      // add new weapon
+      this.weaponsMap.set(weapon.options.name, weapon);
+      this.weapons.push(weapon);
+      this.currentWeapon = weapon;
+      this.currentWeapon.setOwner(this);
+      this.weaponIndex = this.weapons.length - 1;
+    } else {
+      // collect ammo
+      const possesedWeapon = this.weaponsMap.get(weapon.options.name);
+      possesedWeapon.totalBullets += weapon.totalBullets;
+    }
+  }
+
+  nextWeapon() {
+    if (this.weapons.length) {
+      this.weaponIndex++;
+      if (this.weaponIndex >= this.weapons.length) {
+        this.weaponIndex = 0;
+      }
+      this.currentWeapon = this.weapons[this.weaponIndex];
+    }
+
   }
 
 }

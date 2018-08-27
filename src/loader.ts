@@ -3,13 +3,14 @@ import { TILE_SIZE } from './constants';
 import { SPRITES_MAP } from './sprites';
 
 import { EntityEngine } from "./systems/ecs";
-import { PlayerComponent } from "./systems/player";
+import { PlayerComponent, PlayerSystem } from "./systems/player";
 import { PropComponent } from "./systems/props";
 import { BarrierComponent } from './systems/barrier';
 import { AIComponent, AISystem } from './systems/ai';
 import { LightComponent } from './systems/lighting';
 import { DoorComponent, DoorOrientation } from './systems/doors';
 import { OBSTACLE_MASK } from './colisions-masks';
+import { GUNS, Gun, GunOptions } from './weapons';
 
 const FLOOR_TYPES = '.+-;[';
 
@@ -31,9 +32,19 @@ const OBSTACLES_MAP: {[key: string]: string} = {
 
 const PROPS_WITH_BORDERS = ';[';
 
+const WEAPONS_MAP: {[key: string]: GunOptions} = {
+  P: GUNS.pistol,
+  G: GUNS.mg,
+  M: GUNS.minigun,
+}
+
+let lastCell: string;
+let propText: string = null;
+let propTextPos: Vector2;
+
 export async function loadLevel(engine: EntityEngine, levelName: string): Promise<void> {
   const data = await fetchLevel(levelName);
-  const [header, cellsData] = data.split('#');
+  const [weaponHeader, header, cellsData] = data.split('#');
   const cells = cellsData.split('\n').map(line => Array.from(line)) as string[][];
 
   const multiCellsMap = new Map<string, string[]>();
@@ -47,9 +58,6 @@ export async function loadLevel(engine: EntityEngine, levelName: string): Promis
     for (let x = 0; x < line.length; x++) {
       maxWidth = Math.max(maxWidth, line.length);
       const cell = line[x];
-      if (cell === ' ') {
-        continue;
-      }
       if (multiCellsMap.has(cell)) {
         const multiCells = multiCellsMap.get(cell);
         for (const multiCell of multiCells) {
@@ -68,6 +76,13 @@ export async function loadLevel(engine: EntityEngine, levelName: string): Promis
   engine.worldHeight = cells.length * TILE_SIZE;
   engine.worldWidth = maxWidth * TILE_SIZE;
   engine.level = cells;
+
+  const weapon = weaponHeader.trim();
+  if (weapon) {
+    const playerSystem = engine.getSystem<PlayerSystem>(PlayerSystem);
+    const gun = new Gun(engine, WEAPONS_MAP[weapon]);
+    playerSystem.player.agent.addWeapon(gun);
+  }
 }
 
 async function fetchLevel(levelName: string) {
@@ -96,19 +111,39 @@ function makeCell(
   const aiSystem = engine.getSystem<AISystem>(AISystem);
   const pos = new Vector2(x * TILE_SIZE, y * TILE_SIZE);
 
+  if (cell === '{') {
+    propText = '';
+    propTextPos = pos;
+    new PropComponent(engine, {pos, sprite: FLOOR_MAP[lastCell]});
+    return;
+  }
+
+  if (propText !== null) {
+    new PropComponent(engine, {pos, sprite: FLOOR_MAP[lastCell]});
+    if (cell === '}') {
+      new PropComponent(engine, {pos: propTextPos.copy(), text: propText});
+      propText = null;
+    } else {
+      propText += cell;
+    }
+    return;
+  }
+
+  if (cell === ' ') {
+    return;
+  }
+
+  lastCell = cell;
+
   if (cell === "X") {
     new BarrierComponent(engine, {pos});
   } else if (OBSTACLES_TYPES.includes(cell)) {
-    const barrier = new BarrierComponent(engine, {
+    new BarrierComponent(engine, {
       pos,
       colisionMask: OBSTACLE_MASK,
       sprite: OBSTACLES_MAP[cell],
       zIndex: 1,
     });
-    // if (cell === 'c') {
-    //   barrier.prop.rot = Math.PI * 2 * Math.random();
-    //   barrier.prop.pivot = new Vector2(9, 8);
-    // }
   } else if (FLOOR_TYPES.includes(cell)) {
     new PropComponent(engine, {pos, sprite: FLOOR_MAP[cell]});
   }

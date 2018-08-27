@@ -1,14 +1,9 @@
 import { AgentComponent } from './agent';
 import { EntitySystem, EntityEngine, Entity } from './ecs';
-import { Control } from '../control';
-import { Camera } from '../camera';
 import { Vector2 } from '../vector';
-import { Gun, GUNS, GunOptions } from '../weapons';
 import { PLAYER_MASK } from '../colisions-masks';
 import { TILE_SIZE } from '../constants';
 import { difficulty } from '../difficulty';
-
-const WEAPONS: GunOptions[] = Object.values(GUNS);
 
 const FLOOR_MAP: {[key: string]: string} = {
   '.': 'stone',
@@ -80,26 +75,12 @@ export class PlayerSystem extends EntitySystem<PlayerComponent> {
   add(entity: PlayerComponent) {
     super.add(entity)
     this.player = entity;
-    this.nextWeapon();
   }
 
   remove(entity: PlayerComponent) {
     super.remove(entity);
     this.player = null;
     this.engine.game.isPlayerDead = true;
-  }
-
-  nextWeapon() {
-    if (!this.player) {
-      return;
-    }
-    const weapon = new Gun(this.engine, WEAPONS[this.weaponIndex]);
-    weapon.setOwner(this.player.agent);
-
-    this.weaponIndex++;
-    if (this.weaponIndex >= WEAPONS.length) {
-      this.weaponIndex = 0;
-    }
   }
 
   update() {

@@ -19,6 +19,7 @@ export interface GunOptions {
   reloadTime: number;
   bulletLifetime: number;
   spread: number;
+  defaultAmmo: number;
 }
 
 export const GUNS: {[key: string]: GunOptions} = {
@@ -30,6 +31,7 @@ export const GUNS: {[key: string]: GunOptions} = {
     bulletSpeed: 6,
     bulletLifetime: 10000,
     spread: 0,
+    defaultAmmo: 36,
   },
   mg: {
     name: 'MG',
@@ -39,6 +41,7 @@ export const GUNS: {[key: string]: GunOptions} = {
     bulletSpeed: 8,
     bulletLifetime: 15000,
     spread: Math.PI / 20,
+    defaultAmmo: 120,
   },
   minigun: {
     name: 'Minigun',
@@ -48,6 +51,7 @@ export const GUNS: {[key: string]: GunOptions} = {
     bulletSpeed: 10,
     bulletLifetime: 15000,
     spread: Math.PI / 15,
+    defaultAmmo: 500,
   },
 }
 
@@ -61,13 +65,14 @@ export class Gun {
 
   lastShootTime = 0;
 
-  totalBullets = 1000;
+  totalBullets: number;
 
   reloading = false;
 
   canHit: number;
 
   constructor(private engine: EntityEngine, public options: GunOptions) {
+    this.totalBullets = options.defaultAmmo;
     this.bulletsInMagazine = this.options.magazineCapacity;
     this.projectileSystem = engine.getSystem<ProjectileSystem>(ProjectileSystem);
   }
@@ -76,7 +81,7 @@ export class Gun {
     const onCooldown =
       this.engine.time - this.lastShootTime < this.options.shootSpeed;
 
-    if (onCooldown || this.bulletsInMagazine === 0 || this.reloading) {
+    if (onCooldown || this.bulletsInMagazine === 0) {
       return false;
     }
 
@@ -118,7 +123,7 @@ export class Gun {
     const isPlayer = agent.parent instanceof PlayerComponent;
     this.canHit = isPlayer ? BARRIER_OR_ENEMY_MASK : BARRIER_OR_PLAYER_MASK;
     this.owner = agent;
-    agent.weapon = this;
+    agent.currentWeapon = this;
   }
 
   makeLight() {

@@ -37,6 +37,8 @@ export class Control {
         } else if (this.game.isPlayerDead) {
           this.game.restartLevel();
         }
+      } else if (event.key === 'z') {
+        this.game.engine.sound.play('emptyMagazine');
       }
 
       if (this.game.menu.active) {
@@ -74,9 +76,9 @@ export class Control {
       }
 
       if (event.code === 'KeyQ') {
-        playerSystem.nextWeapon();
+        playerSystem.player.agent.nextWeapon();
       } else if (event.code === 'KeyR') {
-        playerSystem.player.agent.weapon.reload();
+        playerSystem.player.agent.currentWeapon.reload();
       } else if (event.code === 'KeyE') {
         if (actionsSystem.action) {
           actionsSystem.action.trigger();

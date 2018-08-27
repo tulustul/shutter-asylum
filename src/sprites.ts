@@ -25,4 +25,7 @@ export const SPRITES_MAP: SpriteMap = {
   hidden: {x: 30, y: 24, w: 9, h: 4},
   visible: {x: 30, y: 28, w: 9, h: 5},
   reload: {x: 30, y: 33, w: 7, h: 4},
+  gunPistol: {x: 0, y: 60, w: 16, h: 7},
+  gunMG: {x: 0, y: 67, w: 16, h: 7},
+  gunMinigun: {x: 0, y: 73, w: 16, h: 7},
 }

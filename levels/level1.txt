@@ -1,36 +1,51 @@
-1_-
-||.
 #
-            XXXXXXXXXXX     XXXXX
-            Xp---L----XXXXXXX+EBX
-            X---------|+++++X+++X
-            X---------XXXXX+X+++X
-            XP-------pX   XEXX_XX
-            XXXX1XXXXXX   X+++++X
-              X.;.X       XXXXX+X
-              X.;LX           X+X
-       XXXXXXXX.;.XXXXXXXXX   X+X
-       X........;.....L...X   X+X
-XXXXXXXX.p......;......p..XXXXX_X
-X-[[[-EX...XXXX.;.XXX.....X-ELE-X
-X-[[[--X...XX...;...X.....X--;;;X
-XL--E--|...XX...;...X..P...--;[;X
-X------X...XX...;...X......--;[cX
-X-----EXL..XXL..;..LX..p...X-;[;X
-XX_XXXXX...XX...;...X......X-;;;X
-Xp+++++X...XX...;...X..XXXXX-E-LX
-X+++++EX.p.XX...;...X...X.......X
-XL+++++|...XXL..;..LX...X.E.....X
-X++++++XL..XX...;..[X.........E.X
-X++++++X...XX...;..[X..L..E...L.X
-X[[+++pX...XX...;...XXXXXXXXXXXXX
-XXXXXXXXL..XXL..;..LX
-X--E-E-X...XX...;...X
-X------X...XX...;...X
-XE;;;;-X.p.XX...;...X
-X-;[[;-X...XXXXX1XXXX
-XL;[[;-XX_X  X----cX
-X-;[[;----X  XL;;;[X
-X-;;;;----X  X-;;;[X
-Xp--------X  X--S--X
-XXXXXXXXXXX  XXXXXXX
+1{Use WASD to move}
+2{and mouse to aim}
+3-{Use doors (E)}
+4-{here →}
+5{Quite dark, isn't it?}
+6{Press (F) or (MMB)}
+7{to toggle flashlight}
+8{Here's the guard ↘}
+9{Sneak (C or shift)}
+!{Avoid the lights}
+@{Kill him a take his gun}
+${You can shoot or}
+%{turn off the lights}
+^{Press (R) to reload}
+#
+
+
+
+                                        XXXXXXXXXXXXX
+                                        X+++++++++++X
+                                        X+++++e++++LX
+                                        X+;;;+++++++X
+XXXXXXXXXXXX                            XL;;;++XXXXXX
+X--L----L--X                            X+;;;++X++++X
+X-1--------X                            X+;;;++X++e+X
+X---------cX                            X+e+++++++++X
+X-2-------[X                            XXXX++++++++X
+X---------[X                            X+++++++;;++X
+X---;;;;;--X                            XL+[[+++;;+LX
+XL-S;;;;;-LX                            X++[[+++;;++X
+X---;;;;;--X                            X+++++++++++X
+X----------X XXXXXXXXXXXXXXXXX          XXXXXX_XXXXXX
+X----XXXX--XXX...X...........X              Xp;.X
+X[---X-3-----X...B..5........X              X.;.XXXX
+X[c--XL--4---|;;;;;;;;;;;;;;.X         XXXXXX.;P...X
+X[-L-X-------X......6......;.X         X^.....;LX..X
+XXXXXXXXXXXXXX......7......;.X         XXXXXX.;.X..X
+             X.............;.X              X.;....X
+             XXXXXXXXXXXXX.;.X              X.;.X..X
+                         X.;.X        XXXXXXX.;LX..X
+                   XXXXXXX.;.X        X$B.....;p...X
+                   X.8.....;.X        X%......;....X
+                   X.9.....;.X        XXXXXXX.;.XXXX
+                   XXXXXXX.;.XXXXXXXXXXXXXXXX.;.X
+                         X.;..p.!......PB.....;.X
+                         X.;;;;;;;;;;;;;;;;;;;;.X
+                         X............@....p....X
+                         X....X....X....X....X..X
+                         X......................X
+                         XXXXXXXXXXXXXXXXXXXXXXXX

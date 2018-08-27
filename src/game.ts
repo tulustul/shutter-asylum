@@ -20,8 +20,9 @@ import { BloodSystem } from "./systems/blood";
 import { ActionsSystem } from "./systems/actions";
 import { DoorsSystem } from "./systems/doors";
 import { FlashlightSystem } from "./systems/flashlight";
+import { PickableSystem } from "./systems/pickable";
 
-const LEVELS_COUNT = 8;
+const LEVELS_COUNT = 9;
 
 const SCORES_KEY = 'scores';
 
@@ -96,6 +97,7 @@ export class Game {
     this.engine.register(new ActionsSystem());
     this.engine.register(new DoorsSystem());
     this.engine.register(new FlashlightSystem());
+    this.engine.register(new PickableSystem());
     this.engine.init();
 
     if (level) {

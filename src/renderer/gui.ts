@@ -111,11 +111,11 @@ export class GuiRenderer {
 
   renderPlayerContext(player: PlayerComponent) {
     const action = this.engine.getSystem<ActionsSystem>(ActionsSystem).action;
-    const weapon = player.agent.weapon;
+    const weapon = player.agent.currentWeapon;
     let contextText = '';
 
     let iconOffset = -8;
-    if (weapon.reloading) {
+    if (weapon && weapon.reloading) {
       this.drawContextIcon('reload', iconOffset);
       iconOffset += 8;
     }
@@ -140,14 +140,18 @@ export class GuiRenderer {
   }
 
   renderBottomBar(player: PlayerComponent) {
-    const weapon = player.agent.weapon;
+    const weapon = player.agent.currentWeapon;
 
-    const weaponName = weapon.options.name;
-    const bullets = weapon.bulletsInMagazine;
-    const capacity = weapon.options.magazineCapacity;
-    const total = weapon.totalBullets;
-    const text = `${weaponName} ${bullets} / ${capacity} (${total})`;
-    this.context.fillText(text, 10, 380);
+    if (weapon) {
+      const weaponName = weapon.options.name;
+      const bullets = weapon.bulletsInMagazine;
+      const capacity = weapon.options.magazineCapacity;
+      const total = weapon.totalBullets;
+      const text = `${weaponName} ${bullets} / ${capacity} (${total})`;
+      this.context.fillText(text, 10, 380);
+    } else {
+      this.context.fillText('NO WEAPON', 10, 380);
+    }
   }
 
   drawContextIcon(iconName: string, offset: number) {
