@@ -14,6 +14,8 @@ const ALERT_TIME = 7000;
 
 const ALERT_CHANGE_TARGET_TIME = 1500;
 
+const IDLE_CHANGE_ROT_TIME = 3000;
+
 enum AIState {
   idle,
   patroling,
@@ -36,13 +38,17 @@ export class AIComponent extends Entity {
 
   agent: AgentComponent;
 
-  lastThinking = difficulty.aiReactionTime * Math.random();
+  lastThinking = this.engine.time + difficulty.aiReactionTime * Math.random();
+
+  lastRotChange = 0;
+
+  rotTarget = 0;
+
+  rotSpeed = 2;
 
   pos: Vector2;
 
   canPatrol = false;
-
-  weapon: Gun;
 
   playerInRange = false;
 
@@ -80,8 +86,7 @@ export class AIComponent extends Entity {
     this.agent.parent = this;
     this.agent.onHit = () => this.state = AIState.alerted;
     if (options.weapon) {
-      this.weapon = new Gun(this.engine, GUNS[options.weapon]);
-      this.weapon.setOwner(this.agent);
+      this.agent.addWeapon(new Gun(this.engine, GUNS[options.weapon]));
     }
 
     if (this.canPatrol) {
@@ -94,7 +99,7 @@ export class AIComponent extends Entity {
   }
 
   destroy() {
-  super.destroy();
+    super.destroy();
     this.agent.destroy();
     this.destroyAction();
   }
@@ -105,12 +110,17 @@ export class AIComponent extends Entity {
   }
 
   shootAtPlayer() {
+    const weapon = this.agent.currentWeapon;
+    if (weapon && weapon.totalBullets === 0) {
+      this.agent.currentWeapon = null;
+    }
+
     const posAndVel = this.agent.posAndVel;
     const targetPos = this.playerPos.copy();
 
     const distance = posAndVel.pos.distanceTo(this.playerPos);
-    if (this.weapon) {
-      const bulletTravelTime = distance / this.weapon.options.bulletSpeed;
+    if (weapon) {
+      const bulletTravelTime = distance / weapon.options.bulletSpeed;
       targetPos.add(this.playerVel.copy().mul(bulletTravelTime));
       this.shootAt(targetPos);
     } else if (distance > 25) {
@@ -118,7 +128,6 @@ export class AIComponent extends Entity {
     } else {
       this.shootAt(targetPos);
     }
-
   }
 
   think(playerPosAndVel: PosAndVel) {
@@ -154,10 +163,13 @@ export class AIComponent extends Entity {
   }
 
   whenIdle() {
-    this.agent.rot = Math.random() * Math.PI * 2;
+    if (this.engine.time - this.lastRotChange > IDLE_CHANGE_ROT_TIME) {
+      this.rotTarget = Math.random() * Math.PI * 2;
+      this.lastRotChange = this.engine.time;
+    }
 
     if (this.seePlayer || this.hearPlayer) {
-      this.state = AIState.fighting;
+      this.goFighting();
       this.moveTarget = null;
       this.destroyAction();
       this.notifyNeighbours(this.playerPos);
@@ -203,7 +215,7 @@ export class AIComponent extends Entity {
       }
     }
     if (this.moveTarget) {
-      this.agent.rot = this.agentPos.directionTo(this.moveTarget);
+      this.rotTarget = this.agentPos.directionTo(this.moveTarget);
     }
   }
 
@@ -223,16 +235,16 @@ export class AIComponent extends Entity {
 
   whenChasing() {
     if (this.playerInRange) {
-      this.state = AIState.fighting;
+      this.goFighting();
     } else if (!this.moveTarget) {
       this.goAlerted();
     }
   }
 
   whenAlerted() {
-    this.agent.rot = Math.random() * Math.PI * 2;
+    this.rotTarget = Math.random() * Math.PI * 2;
     if (this.seePlayer) {
-      this.state = AIState.fighting;
+      this.goFighting();
     }
     if (this.engine.time - this.alertedAt > ALERT_TIME) {
       this.goIdle();
@@ -249,6 +261,7 @@ export class AIComponent extends Entity {
 
   goAlerted() {
     this.state = AIState.alerted;
+    this.rotSpeed = 10;
     this.alertedAt = this.engine.time;
     this.changedTargetAt = this.engine.time;
     this.destroyAction();
@@ -256,11 +269,17 @@ export class AIComponent extends Entity {
 
   goIdle() {
     this.state = AIState.idle;
+    this.rotSpeed = 0.02;
     this.action = new ActionComponent(this.engine, {
       collidable: this.agent.collidable,
       text: 'kill',
       action: () => this.destroy(),
     });
+  }
+
+  goFighting() {
+    this.state = AIState.fighting;
+    this.rotSpeed = 0.1;
   }
 
   notifyNeighbours(playerPos: Vector2) {
@@ -312,6 +331,7 @@ export class AISystem extends EntitySystem<AIComponent> {
         entity.lastThinking = this.engine.time;
       }
       if (entity.isShooting) {
+        entity.playerPos = this.playerPosAndVel.pos;
         entity.shootAtPlayer();
       }
       if (entity.moveTarget) {
@@ -320,6 +340,20 @@ export class AISystem extends EntitySystem<AIComponent> {
         const distance = entity.agent.posAndVel.pos.distanceTo(entity.moveTarget);
         if (distance < 20) {
           entity.moveTarget = null;
+        }
+      }
+      if (entity.rotTarget !== entity.agent.rot) {
+        const diff = entity.rotTarget - entity.agent.rot;
+        const d1 = Math.abs(diff) > Math.PI ? -1 : 1;
+        const d2 = entity.rotTarget > entity.agent.rot ? 1 : -1;
+        entity.agent.rot += entity.rotSpeed * d1 * d2;
+        if (entity.agent.rot >= Math.PI * 2) {
+          entity.agent.rot -= Math.PI * 2;
+        } else if (entity.agent.rot < 0) {
+          entity.agent.rot += Math.PI * 2;
+        }
+        if (Math.abs(entity.agent.rot - entity.rotTarget) < 0.05) {
+          entity.agent.rot = entity.rotTarget;
         }
       }
     }

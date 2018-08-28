@@ -169,6 +169,12 @@ function makeCell(
       pos: Object.create(pos),
       weapon: 'pistol',
     });
+  } else if (cell === "m") {
+    new AIComponent(engine, {
+      pos: Object.create(pos),
+      weapon: 'minigun',
+      maxHealth: 10,
+    });
   } else if (cell === "M") {
     new AIComponent(engine, {
       pos: Object.create(pos),
