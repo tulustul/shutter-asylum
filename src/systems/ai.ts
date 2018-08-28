@@ -10,7 +10,7 @@ import { ENEMY_MASK } from "../colisions-masks";
 import { PosAndVel } from "./velocity";
 import { ActionComponent } from "./actions";
 
-const ALERT_TIME = 10000;
+const ALERT_TIME = 7000;
 
 const ALERT_CHANGE_TARGET_TIME = 1500;
 
@@ -112,7 +112,6 @@ export class AIComponent extends Entity {
 
     this.shootAt(targetPos);
   }
-
 
   think(playerPosAndVel: PosAndVel) {
     if (this.playerInRange) {
@@ -228,7 +227,7 @@ export class AIComponent extends Entity {
       this.state = AIState.fighting;
     }
     if (this.engine.time - this.alertedAt > ALERT_TIME) {
-      this.state = AIState.idle;
+      this.goIdle();
     }
     if (this.engine.time - this.changedTargetAt > ALERT_CHANGE_TARGET_TIME) {
       const newTarget = new Vector2(

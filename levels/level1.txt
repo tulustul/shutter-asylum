@@ -8,11 +8,9 @@
 7{to toggle flashlight}
 8{Here's the guard ↘}
 9{Sneak (C or shift)}
-!{Avoid the lights}
-@{Kill him a take his gun}
-${You can shoot or}
-%{turn off the lights}
-^{Press (R) to reload}
+$.{Shoot the lights}
+%.{to destroy them}
+^.{Press (R) to reload}
 #
 
 
@@ -24,7 +22,7 @@ ${You can shoot or}
 XXXXXXXXXXXX                            XL;;;++XXXXXX
 X--L----L--X                            X+;;;++X++++X
 X-1--------X                            X+;;;++X++e+X
-X---------cX                            X+e+++++++++X
+X---------cX                            X+++++++++++X
 X-2-------[X                            XXXX++++++++X
 X---------[X                            X+++++++;;++X
 X---;;;;;--X                            XL+[[+++;;+LX
@@ -33,19 +31,21 @@ X---;;;;;--X                            X+++++++++++X
 X----------X XXXXXXXXXXXXXXXXX          XXXXXX_XXXXXX
 X----XXXX--XXX...X...........X              Xp;.X
 X[---X-3-----X...B..5........X              X.;.XXXX
-X[c--XL--4---|;;;;;;;;;;;;;;.X         XXXXXX.;P...X
-X[-L-X-------X......6......;.X         X^.....;LX..X
-XXXXXXXXXXXXXX......7......;.X         XXXXXX.;.X..X
-             X.............;.X              X.;....X
-             XXXXXXXXXXXXX.;.X              X.;.X..X
-                         X.;.X        XXXXXXX.;LX..X
-                   XXXXXXX.;.X        X$B.....;p...X
-                   X.8.....;.X        X%......;....X
-                   X.9.....;.X        XXXXXXX.;.XXXX
-                   XXXXXXX.;.XXXXXXXXXXXXXXXX.;.X
-                         X.;..p.!......PB.....;.X
+X[c--XL--4---|;;;;;;;;;;;;;;.X      XXXXXXXX..;P...X
+X[-L-X-------X......6......;.X      X^........;LX..X
+XXXXXXXXXXXXXX......7......;.X      X.........;.X..X
+             X.............;.X      X.........;....X
+             XXXXXXXXXXXXX.;.X      X.........;.X..X
+                         X.;.X      XX........;LX..X
+                   XXXXXXX.;.X      X$B.......;p...X
+                   X.8.....;.X      X%........;....X
+                   X.9.....;.X      XXXXXXXXX.;.XXXX
+                   XXXXXXX.;.X              X.;.X
+                         X.;.X              X.;.X
+                         X.;.XXXXXXXXXXXXXXXX.;.X
+                         X.;..p........PB.....;.X
                          X.;;;;;;;;;;;;;;;;;;;;.X
-                         X............@....p....X
+                         X.................p....X
                          X....X....X....X....X..X
                          X......................X
                          XXXXXXXXXXXXXXXXXXXXXXXX

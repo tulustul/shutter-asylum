@@ -33,7 +33,7 @@ export const difficultyOptions: {[key: string]: DifficultyOptions} = {
 };
 
 export let difficulty: DifficultyOptions =
-  difficultyOptions[localStorage.getItem(DIFFICULTY_KEY) || 'normal'];
+  difficultyOptions[localStorage.getItem(DIFFICULTY_KEY) || 'easy'];
 
 export function setNextDifficulty() {
   switch (difficulty.name) {
