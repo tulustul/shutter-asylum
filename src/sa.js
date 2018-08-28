@@ -1,13 +1,8 @@
-const script = document.createElement('script');
-script.onload = () => {
-  fetch('bundle.js').then(r => {
-    r.arrayBuffer().then(d => {
-      d = new Uint8Array(d);
-      LZMA.decompress(d, result => {
-        eval(result);
-      });
-    });
-  });
+const s = document.createElement('script')
+s.onload = async () => {
+  const r = await fetch('bundle.js')
+  const b = await r.arrayBuffer()
+  LZMA.decompress(new Uint8Array(b), r => eval(r))
 }
-script.src = 'lzma.js';
-document.body.appendChild(script);
+s.src = 'lzma.js'
+document.body.appendChild(s)
