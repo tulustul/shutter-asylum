@@ -38,6 +38,20 @@ const SAMPLES_PARAMS: {[key: string]: ProduceduralSampleParams} = {
     gainParams: [0, 0, 0.0, 0.001, 0.5, 0.1, 0, 0.2],
     volume: 0.6,
   },
+  fist: {
+    biquadType: 'highpass',
+    biquadQ: 1,
+    frequency: 8500,
+    gainParams: [0, 0, 0.0, 0.001, 0.5, 0.1, 0, 0.2],
+    volume: 0.3,
+  },
+  fistHit: {
+    biquadType: 'bandpass',
+    biquadQ: 1,
+    frequency: 300,
+    gainParams: [0, 0, 0.0, 0.001, 0.5, 0.1, 0, 0.2],
+    volume: 0.9,
+  },
 };
 
 function makeSteps(stepType: string, stepParams: ProduceduralSampleParams) {

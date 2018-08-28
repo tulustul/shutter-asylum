@@ -17,6 +17,12 @@ export interface AgentOptions {
 
 export class AgentComponent extends Entity {
 
+  FISTS_COOLDOWN = 600;
+
+  isFisting = false;
+
+  lastFistHit = 0;
+
   maxRunSpeed = 3;
 
   maxWalkSpeed = 0.5;
@@ -107,10 +113,10 @@ export class AgentComponent extends Entity {
     if (this.currentWeapon) {
       return this.currentWeapon.shoot();
     }
-    return false;
+    return this.hitWithFists();
   }
 
-  hit() {
+  decreaseHealth() {
     this.health--;
     if (this.health <= 0) {
       this.getTopParent().destroy();
@@ -154,6 +160,10 @@ export class AgentComponent extends Entity {
     this.isRunning = false;
   }
 
+  get stepsRate() {
+    return this.maxSpeed * 100;
+  }
+
   addWeapon(weapon: Gun) {
     if (!this.weaponsMap.has(weapon.options.name)) {
       // add new weapon
@@ -173,11 +183,47 @@ export class AgentComponent extends Entity {
     if (this.weapons.length) {
       this.weaponIndex++;
       if (this.weaponIndex >= this.weapons.length) {
-        this.weaponIndex = 0;
+        this.weaponIndex = -1;
+        this.currentWeapon = null;
+      } else {
+        this.currentWeapon = this.weapons[this.weaponIndex];
       }
-      this.currentWeapon = this.weapons[this.weaponIndex];
     }
+  }
 
+  hitWithFists() {
+    if (this.engine.time - this.lastFistHit > this.FISTS_COOLDOWN) {
+      this.lastFistHit = this.engine.time;
+      this.isFisting = true;
+      setTimeout(() => this.isFisting = false, 300);
+      this.engine.sound.play('fist');
+
+      const pos = this.posAndVel.pos;
+      for (const agent of this.system.entities) {
+        if (pos.distanceTo(agent.posAndVel.pos) > 25) {
+          continue;
+        }
+
+        // Quick mask comparison so that ai don't hit ai, and player don't
+        // hit himself.
+        if (this.collidable.mask === agent.collidable.mask) {
+          continue
+        }
+
+        const rot = this.rot > 0 ? this.rot : 2 * Math.PI + this.rot;
+
+        const angleDiff = Math.abs(pos.directionTo(agent.posAndVel.pos) - rot);
+        if (angleDiff < 1 || angleDiff > 5) {
+          agent.decreaseHealth();
+          this.engine.sound.play('fistHit');
+          const bloodSystem = this.engine.getSystem<BloodSystem>(BloodSystem);
+          bloodSystem.emitBlood(
+            agent.posAndVel.pos,
+            new Vector2((Math.random() - 0.5) * 5, (Math.random() - 0.5) * 5),
+          );
+        }
+      }
+    }
   }
 
 }

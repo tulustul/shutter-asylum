@@ -45,7 +45,7 @@ export class ProjectileSystem extends EntitySystem<ProjectileComponent> {
 
     colisionSystem.listenColisions<ProjectileComponent, any>(ProjectileComponent, colision => {
       if (colision.receiver instanceof AgentComponent) {
-        colision.receiver.hit();
+        colision.receiver.decreaseHealth();
         bloodSystem.emitBlood(
           colision.hitter.particle.posAndVel.pos,
           colision.hitter.particle.posAndVel.vel,

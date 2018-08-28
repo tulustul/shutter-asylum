@@ -79,8 +79,10 @@ export class AIComponent extends Entity {
     });
     this.agent.parent = this;
     this.agent.onHit = () => this.state = AIState.alerted;
-    this.weapon = new Gun(this.engine, GUNS[options.weapon || 'pistol']);
-    this.weapon.setOwner(this.agent);
+    if (options.weapon) {
+      this.weapon = new Gun(this.engine, GUNS[options.weapon]);
+      this.weapon.setOwner(this.agent);
+    }
 
     if (this.canPatrol) {
       this.agent.toggleFlashlight();
@@ -103,14 +105,16 @@ export class AIComponent extends Entity {
   }
 
   shootAtPlayer() {
-    const posAndVel = this.agent.posAndVel;
-    const targetPos = this.playerPos.copy();
-    const distance = posAndVel.pos.distanceTo(this.playerPos);
-    const bulletTravelTime = distance / this.weapon.options.bulletSpeed;
+    if (this.weapon) {
+      const posAndVel = this.agent.posAndVel;
+      const targetPos = this.playerPos.copy();
+      const distance = posAndVel.pos.distanceTo(this.playerPos);
+      const bulletTravelTime = distance / this.weapon.options.bulletSpeed;
 
-    targetPos.add(this.playerVel.copy().mul(bulletTravelTime));
+      targetPos.add(this.playerVel.copy().mul(bulletTravelTime));
 
-    this.shootAt(targetPos);
+      this.shootAt(targetPos);
+    }
   }
 
   think(playerPosAndVel: PosAndVel) {

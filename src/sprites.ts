@@ -1,4 +1,4 @@
-interface SpriteMetadata {
+export interface SpriteMetadata {
   x: number;
   y: number;
   w: number;
@@ -16,8 +16,11 @@ export const SPRITES_MAP: SpriteMap = {
   tableBorder: {x: 60, y: 45, w: 20, h: 2},
   table: {x: 60, y: 47, w: 47, h: 20},
   wall: {x: 0, y: 20, w: 20, h: 20},
-  agent: {x: 20, y: 0, w: 17, h: 19},
-  corpse: {x: 38, y: 0, w: 35, h: 21},
+  body: {x: 20, y: 0, w: 17, h: 10},
+  armsFisting: {x: 20, y: 10, w: 16, h: 12},
+  armsFree: {x: 34, y: 60, w: 16, h: 6},
+  armsGrabbing: {x: 34, y: 66, w: 16, h: 9},
+  corpse: {x: 42, y: 0, w: 35, h: 21},
   door: {x: 20, y: 40, w: 20, h: 20},
   light: {x: 20, y: 30, w: 5, h: 10},
   lightBroken: {x: 25, y: 30, w: 5, h: 10},

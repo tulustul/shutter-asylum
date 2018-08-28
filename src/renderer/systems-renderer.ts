@@ -2,7 +2,7 @@ import { Layer } from './layer';
 import { Renderer } from './renderer';
 
 import { TILE_SIZE } from '../constants';
-import { SPRITES_MAP } from '../sprites';
+import { SPRITES_MAP, SpriteMetadata } from '../sprites';
 
 import { AgentSystem } from '../systems/agent';
 import { PropsSystem, PropComponent } from '../systems/props';
@@ -111,18 +111,29 @@ export class SystemsRenderer {
     this.context.textBaseline = 'top';
     const propsSystem = this.engine.getSystem<PropsSystem>(PropsSystem);
     for (const prop of propsSystem.charsToRender) {
-      const charWidth = this.context.measureText(prop.text).width;
       this.context.fillText(prop.text, prop.pos.x, prop.pos.y);
     }
     propsSystem.charsToRender = [];
   }
 
   renderAgents() {
-    const sprite = SPRITES_MAP.agent;
+    const bodySprite = SPRITES_MAP.body;
+    const armsFreeSprite = SPRITES_MAP.armsFree;
+    const armsGrabbingSprite = SPRITES_MAP.armsGrabbing;
+    const armsFistingSprite = SPRITES_MAP.armsFisting;
 
     this.context.globalCompositeOperation = 'source-over';
 
     for (const agent of this.engine.getSystem<AgentSystem>(AgentSystem).entities) {
+      let armsSprite: SpriteMetadata;
+      if (agent.isFisting) {
+        armsSprite = armsFistingSprite;
+      } else if (agent.currentWeapon) {
+        armsSprite = armsGrabbingSprite;
+      } else {
+        armsSprite = armsFreeSprite;
+      }
+
       this.context.save();
       this.context.translate(
         agent.posAndVel.pos.x,
@@ -133,10 +144,17 @@ export class SystemsRenderer {
       this.context.rotate(agent.rot);
       this.context.drawImage(
         this.renderer.texture,
-        sprite.x, sprite.y,
-        sprite.w, sprite.h,
-        -TILE_SIZE / 2, -TILE_SIZE / 2,
-        sprite.w, sprite.h,
+        bodySprite.x, bodySprite.y,
+        bodySprite.w, bodySprite.h,
+        -TILE_SIZE / 2 + 2, -TILE_SIZE / 2 + 3,
+        bodySprite.w, bodySprite.h,
+      )
+      this.context.drawImage(
+        this.renderer.texture,
+        armsSprite.x, armsSprite.y,
+        armsSprite.w, armsSprite.h,
+        -TILE_SIZE / 2 + 2, -TILE_SIZE / 2 + 10,
+        armsSprite.w, armsSprite.h,
       )
 
       if (agent.currentWeapon) {
@@ -145,7 +163,7 @@ export class SystemsRenderer {
           this.renderer.texture,
           gunSprite.x, gunSprite.y,
           gunSprite.w, gunSprite.h,
-          -4, 8,
+          -3, 8,
           gunSprite.w, gunSprite.h,
         )
       }

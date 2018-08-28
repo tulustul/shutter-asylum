@@ -174,7 +174,11 @@ function makeCell(
       maxHealth: 100,
     });
   } else if (cell === "P") {
-    new AIComponent(engine, {pos: Object.create(pos), canPatrol: true});
+    new AIComponent(engine, {
+      pos: Object.create(pos),
+      canPatrol: true,
+      weapon: 'pistol',
+    });
   } else if (cell === "D") {
     new AIComponent(engine, {
       pos: Object.create(pos),
