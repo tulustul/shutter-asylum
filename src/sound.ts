@@ -43,7 +43,7 @@ const SAMPLES_PARAMS: {[key: string]: ProduceduralSampleParams} = {
     biquadQ: 1,
     frequency: 8500,
     gainParams: [0, 0, 0.0, 0.001, 0.5, 0.1, 0, 0.2],
-    volume: 0.3,
+    volume: 0.1,
   },
   fistHit: {
     biquadType: 'bandpass',

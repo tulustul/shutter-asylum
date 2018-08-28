@@ -157,6 +157,8 @@ function makeCell(
 
   if (cell === "S") {
     new PlayerComponent(engine, Object.create(pos));
+  } else if (cell === "z") {
+    new AIComponent(engine, {pos: Object.create(pos)});
   } else if (cell === "E") {
     new AIComponent(engine, {
       pos: Object.create(pos),

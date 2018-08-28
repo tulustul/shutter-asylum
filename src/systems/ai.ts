@@ -105,16 +105,20 @@ export class AIComponent extends Entity {
   }
 
   shootAtPlayer() {
+    const posAndVel = this.agent.posAndVel;
+    const targetPos = this.playerPos.copy();
+
+    const distance = posAndVel.pos.distanceTo(this.playerPos);
     if (this.weapon) {
-      const posAndVel = this.agent.posAndVel;
-      const targetPos = this.playerPos.copy();
-      const distance = posAndVel.pos.distanceTo(this.playerPos);
       const bulletTravelTime = distance / this.weapon.options.bulletSpeed;
-
       targetPos.add(this.playerVel.copy().mul(bulletTravelTime));
-
+      this.shootAt(targetPos);
+    } else if (distance > 25) {
+      this.moveTarget = targetPos;
+    } else {
       this.shootAt(targetPos);
     }
+
   }
 
   think(playerPosAndVel: PosAndVel) {
