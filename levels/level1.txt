@@ -1,7 +1,7 @@
 #
 1{Use WASD to move}
 2{and mouse to aim}
-3-{Use doors (E)}
+3-{Open doors (E)}
 4-{here →}
 5{Quite dark, isn't it?}
 6{Press (F) or (MMB)}
