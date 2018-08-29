@@ -79,6 +79,7 @@ export class Game {
   }
 
   async start(level: number) {
+    this.currentLevel = level;
     this.stageCompleted = false;
     this.gameCompleted = false;
     this.newBestTime = false;
@@ -179,10 +180,7 @@ export class Game {
           }
           return text;
         },
-        callback: () => {
-          this.currentLevel = i;
-          this.start(this.currentLevel);
-        },
+        callback: () => this.start(i),
       });
     }
 
