@@ -169,9 +169,15 @@ export class AgentComponent extends Entity {
       // add new weapon
       this.weaponsMap.set(weapon.options.name, weapon);
       this.weapons.push(weapon);
-      this.currentWeapon = weapon;
-      this.currentWeapon.setOwner(this);
-      this.weaponIndex = this.weapons.length - 1;
+      weapon.setOwner(this);
+
+      const currentWeaponPriority =
+        this.currentWeapon ? this.currentWeapon.options.priority : 0;
+
+      if (weapon.options.priority > currentWeaponPriority) {
+        this.currentWeapon = weapon;
+        this.weaponIndex = this.weapons.length - 1;
+      }
     } else {
       // collect ammo
       const possesedWeapon = this.weaponsMap.get(weapon.options.name);

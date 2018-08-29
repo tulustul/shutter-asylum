@@ -78,7 +78,9 @@ export class Control {
       if (event.code === 'KeyQ') {
         playerSystem.player.agent.nextWeapon();
       } else if (event.code === 'KeyR') {
-        playerSystem.player.agent.currentWeapon.reload();
+        if (playerSystem.player.agent.currentWeapon) {
+          playerSystem.player.agent.currentWeapon.reload();
+        }
       } else if (event.code === 'KeyE') {
         if (actionsSystem.action) {
           actionsSystem.action.trigger();
