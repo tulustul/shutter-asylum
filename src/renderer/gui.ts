@@ -45,12 +45,7 @@ export class GuiRenderer {
     this.context.fillStyle = 'rgba(0, 0, 0, 0.5)';
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    this.context.fillStyle = 'red';
-    this.context.font = '26px sans-serif';
-
-    const title = 'Shutter Asylum'
-    const titleWidth = this.context.measureText(title).width;
-    this.context.fillText(title, (this.canvas.width - titleWidth) / 2, 20);
+    this.drawBloodyText('Shutter Asylum', 26, 20);
 
     this.context.fillStyle = 'white';
     this.context.font = '15px sans-serif';
@@ -102,9 +97,9 @@ export class GuiRenderer {
       this.renderPlayerContext(player);
       this.renderBottomBar(player);
     } else if (!this.game.isLoading) {
-      this.drawTextCentered('YOU DIED', 20, y += 20);
+      this.drawBloodyText('YOU DIED', 26, y += 20);
       if (!this.game.stageCompleted) {
-        this.drawTextCentered('Press <enter> to try again', 14, y += 20);
+        this.drawTextCentered('Press <enter> to try again', 14, y += 40);
       }
     }
   }
@@ -168,10 +163,19 @@ export class GuiRenderer {
 
   drawTextCentered(text: string, fontSize: number, y: number) {
     this.context.font = `${fontSize}px sans-serif`;
-      const textWidth = this.context.measureText(text).width;
-      this.context.fillText(
-        text, this.game.canvas.width / 2 - textWidth / 2, y,
-      );
+    const textWidth = this.context.measureText(text).width;
+    const x = this.game.canvas.width / 2 - textWidth / 2;
+    this.context.fillText(text, x, y);
+    return [x, textWidth];
+  }
+
+  drawBloodyText(text: string, fontSize: number, y: number) {
+    this.context.font = `${fontSize}px sans-serif`;
+    this.context.fillStyle = 'red';
+
+    this.drawTextCentered(text, fontSize, y);
+
+    this.context.fillStyle = 'white';
   }
 
 }
