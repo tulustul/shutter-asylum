@@ -51,13 +51,15 @@ export class GuiRenderer {
     this.context.font = '15px sans-serif';
 
     let y = 60;
-    for (const option of this.game.menu.options) {
+    for (const option of this.game.menu.activeMenu.options) {
       let text: string;
       if (typeof option.text === 'string') {
         text = option.text as string;
       } else {
         text = (option.text as Function)();
       }
+
+      this.drawTextCentered(text, 15, y);
       const optionWidth = this.context.measureText(text).width;
       const x = (this.canvas.width - optionWidth) / 2;
       this.context.fillText(text, x, y);
@@ -66,6 +68,12 @@ export class GuiRenderer {
         this.context.arc(x - 10, y + 8, 5, 0, Math.PI * 2);
         this.context.fill();
       }
+      y += 20;
+    }
+
+    this.context.fillStyle = 'grey';
+    for (const option of this.game.menu.activeMenu.staticOptions) {
+      this.drawTextCentered(option, 15, y);
       y += 20;
     }
   }

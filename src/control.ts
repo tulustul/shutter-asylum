@@ -25,8 +25,11 @@ export class Control {
       this.keys.set(event.code, true);
 
       if (event.key === 'Escape') {
-        this.game.paused = !this.game.paused;
-        this.game.menu.active = this.game.paused;
+        if (this.game.isStarted) {
+          this.game.paused = !this.game.paused;
+          this.game.menu.active = this.game.paused;
+          this.game.menu.activeMenu.backToParent();
+        }
       } else if (event.code === 'KeyC' || event.key === 'Shift') {
         if (playerSystem.player) {
           playerSystem.player.agent.toggleWalkRun();

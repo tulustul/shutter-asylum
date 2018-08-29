@@ -40,6 +40,8 @@ export class Game {
 
   isLoading = true;
 
+  isStarted = false;
+
   levelFinishDuration: number;
 
   newBestTime = false;
@@ -47,6 +49,8 @@ export class Game {
   scores: any;
 
   menu: Menu;
+
+  levelsMenu: Menu;
 
   engine = new EntityEngine(this);
 
@@ -64,7 +68,7 @@ export class Game {
       this.scores = {easy: {}, normal: {}, hard: {}};
     }
 
-    this.menu = this.makeMainMenu();
+    this.makeMainMenu();
 
     // just let the logic flow
     this.engine.worldWidth = 1;
@@ -103,6 +107,7 @@ export class Game {
     if (level) {
       await loadLevel(this.engine, `level${level}`);
       this.camera.connectWithAgent(playerSystem.player.agent);
+      this.isStarted = true;
     }
 
     this.renderer.init();
@@ -112,23 +117,60 @@ export class Game {
   }
 
   makeMainMenu() {
-    const menu = new Menu();
-    menu.addOption({
+    this.menu = new Menu();
+    this.levelsMenu = new Menu();
+    const controlsMenu = new Menu();
+
+    this.menu.addOption({
+      text: 'Start new game',
+      callback: () => this.start(1),
+    });
+
+    this.menu.addSubmenu('Levels selection', this.levelsMenu);
+
+    this.menu.addOption({
       text: () => `Difficulty: ${difficulty.name}`,
       callback: () => {
         setNextDifficulty();
-        this.menu = this.makeMainMenu();
+        this.updateLevelsList();
         this.menu.active = true;
       }, 
-    })
+    });
 
+    this.menu.addSubmenu('Show controls', controlsMenu);
+
+    controlsMenu.addOption({
+      text: 'Back',
+      callback: () => this.levelsMenu.backToParent(),
+    })
+    controlsMenu.addStaticOption('WASD - movement');
+    controlsMenu.addStaticOption('mouse - aiming');
+    controlsMenu.addStaticOption('SPACE, LMB - shooting');
+    controlsMenu.addStaticOption('F, MMB - flashlight');
+    controlsMenu.addStaticOption('Q - change weapon');
+    controlsMenu.addStaticOption('E - use');
+    controlsMenu.addStaticOption('C - toggle sneak/run');
+    controlsMenu.addStaticOption('SHIFT - sneak/run');
+    controlsMenu.addStaticOption('ESC - pause and show menu');
+
+    this.updateLevelsList();
+  }
+
+  updateLevelsList() {
     const levelsCount = Math.min(
       LEVELS_COUNT,
       Object.keys(this.scores[difficulty.name]).length + 1,
     );
 
+    this.levelsMenu.clear();
+
+    this.levelsMenu.addOption({
+      text: 'Back',
+      callback: () => this.levelsMenu.backToParent(),
+    });
+
     for (let i = 1; i <= levelsCount; i++) {
-      menu.addOption({
+      this.levelsMenu.addOption({
         text: () => {
           let bestTime = this.scores[difficulty.name][i];
           let text = `level ${i}`;
@@ -143,7 +185,10 @@ export class Game {
         },
       });
     }
-    return menu;
+
+    for (let i = levelsCount + 1; i <= LEVELS_COUNT; i++) {
+      this.levelsMenu.addStaticOption(`level ${i}`);
+    }
   }
 
   checkWinConditions() {
@@ -178,7 +223,7 @@ export class Game {
   saveScore() {
     this.scores[difficulty.name][this.currentLevel] = this.levelFinishDuration;
     localStorage.setItem(SCORES_KEY, JSON.stringify(this.scores));
-    this.menu = this.makeMainMenu();
+    this.updateLevelsList();
   }
 
 }
