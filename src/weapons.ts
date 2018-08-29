@@ -85,7 +85,13 @@ export class Gun {
     const onCooldown =
       this.engine.time - this.lastShootTime < this.options.shootSpeed;
 
-    if (onCooldown || this.bulletsInMagazine === 0) {
+    if (onCooldown) {
+      return false;
+    }
+
+    if (this.bulletsInMagazine === 0) {
+      this.lastShootTime = this.engine.time;
+      this.engine.sound.play('noAmmo');
       return false;
     }
 

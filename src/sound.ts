@@ -52,6 +52,13 @@ const SAMPLES_PARAMS: {[key: string]: ProduceduralSampleParams} = {
     gainParams: [0, 0, 0.0, 0.001, 0.5, 0.1, 0, 0.2],
     volume: 0.9,
   },
+  noAmmo: {
+    biquadType: 'lowpass',
+    biquadQ: 1,
+    frequency: 13000,
+    gainParams: [0, 0, 0.0, 0.001, 0.5, 0.04, 0, 0.07],
+    volume: 0.6,
+  },
 };
 
 function makeSteps(stepType: string, stepParams: ProduceduralSampleParams) {

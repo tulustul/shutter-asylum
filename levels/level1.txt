@@ -43,7 +43,7 @@ XXXXXXXXXXXXXX......7......;.X      X.........;.X..X
                    XXXXXXX.;.X              X.;.X
                          X.;.X              X.;.X
                          X.;.XXXXXXXXXXXXXXXX.;.X
-                         X.;..p........PB.....;.X
+                         X.;..p..B.....P.L....;.X
                          X.;;;;;;;;;;;;;;;;;;;;.X
                          X.................p....X
                          X....X....X....X....X..X

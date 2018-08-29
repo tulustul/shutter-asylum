@@ -81,7 +81,7 @@ export async function loadLevel(engine: EntityEngine, levelName: string): Promis
   if (weapon) {
     const playerSystem = engine.getSystem<PlayerSystem>(PlayerSystem);
     const gun = new Gun(engine, WEAPONS_MAP[weapon]);
-    playerSystem.player.agent.addWeapon(gun);
+    playerSystem.player.agent.addWeapon(gun, 0.5);
   }
 }
 
