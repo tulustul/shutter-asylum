@@ -1,7 +1,8 @@
 P
 #
 1;_
-#           XXXXXXXXXXXXX
+#
+            XXXXXXXXXXXXX
     XXXXXXXXX+++X+++++++X
     X;;;;;;;|++BX+++++E+X
     X;XXXXXXX+++++++++++X

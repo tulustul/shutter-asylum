@@ -77,8 +77,8 @@ export async function loadLevel(engine: EntityEngine, levelName: string): Promis
   engine.worldWidth = maxWidth * TILE_SIZE;
   engine.level = cells;
 
-  const weapon = weaponHeader.trim();
-  if (weapon) {
+  const weapons = weaponHeader.trim();
+  for (const weapon of weapons) {
     const playerSystem = engine.getSystem<PlayerSystem>(PlayerSystem);
     const gun = new Gun(engine, WEAPONS_MAP[weapon]);
     playerSystem.player.agent.addWeapon(gun, 0.5);
@@ -180,6 +180,7 @@ function makeCell(
       pos: Object.create(pos),
       weapon: 'minigun',
       maxHealth: 100,
+      canBeAssasinated: false,
     });
   } else if (cell === "P") {
     new AIComponent(engine, {

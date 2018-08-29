@@ -30,6 +30,7 @@ interface AIOptions {
   canPatrol?: boolean;
   weapon?: GunType;
   maxHealth?: number;
+  canBeAssasinated?: boolean;
 }
 
 export class AIComponent extends Entity {
@@ -73,6 +74,8 @@ export class AIComponent extends Entity {
   pointsVisitCount = new Map<Vector2, number>();
 
   action: ActionComponent;
+
+  canBeAssasinated = true;
 
   constructor(private engine: EntityEngine, options: AIOptions) {
     super();
@@ -243,7 +246,7 @@ export class AIComponent extends Entity {
 
   whenAlerted() {
     this.rotTarget = Math.random() * Math.PI * 2;
-    if (this.seePlayer) {
+    if (this.seePlayer || this.hearPlayer) {
       this.goFighting();
     }
     if (this.engine.time - this.alertedAt > ALERT_TIME) {
@@ -270,11 +273,13 @@ export class AIComponent extends Entity {
   goIdle() {
     this.state = AIState.idle;
     this.rotSpeed = 0.02;
-    this.action = new ActionComponent(this.engine, {
-      collidable: this.agent.collidable,
-      text: 'kill',
-      action: () => this.destroy(),
-    });
+    if (this.canBeAssasinated) {
+      this.action = new ActionComponent(this.engine, {
+        collidable: this.agent.collidable,
+        text: 'kill',
+        action: () => this.destroy(),
+      });
+    }
   }
 
   goFighting() {
