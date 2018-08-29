@@ -109,7 +109,10 @@ export class AIComponent extends Entity {
 
   shootAt(pos: Vector2) {
     this.agent.rot = this.agent.posAndVel.pos.directionTo(pos);
-    this.agent.shoot();
+    const weapon = this.agent.currentWeapon;
+    if (!weapon || !weapon.reloading) {
+      this.agent.shoot();
+    }
   }
 
   shootAtPlayer() {
