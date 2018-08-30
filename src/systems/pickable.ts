@@ -27,7 +27,7 @@ export class PickableComponent extends Entity {
       this.engine, {
         pos: this.pos,
         changing: true,
-        sprite: `pickable${this.gun.options.name}`,
+        sprite: `pickable${this.gun.options.code}`,
         pivot: new Vector2(8, 3),
       },
     );
@@ -52,6 +52,9 @@ export class PickableSystem extends EntitySystem<PickableComponent> {
     for (const entity of this.entities) {
       entity.prop.rot += 0.03;
       if (playerAgent.posAndVel.pos.distanceTo(entity.pos) < 10) {
+        if (!playerAgent.weaponsMap.has(entity.gun.options.code)) {
+          this.engine.game.notifyNewWeapon(entity.gun);
+        }
         playerAgent.addWeapon(entity.gun, 0.4);
         entity.destroy();
         this.engine.sound.play('collect');

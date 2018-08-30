@@ -12,6 +12,7 @@ import {
 export type GunType = 'pistol' | 'mg' | 'minigun';
 
 export interface GunOptions {
+  code: string;
   name: string;
   shootSpeed: number;
   bulletSpeed: number;
@@ -26,6 +27,7 @@ export interface GunOptions {
 
 export const GUNS: {[key: string]: GunOptions} = {
   pistol: {
+    code: 'Pistol',
     name: 'Pistol',
     magazineCapacity: 6,
     reloadTime: 2000,
@@ -38,7 +40,8 @@ export const GUNS: {[key: string]: GunOptions} = {
     weight: 1,
   },
   mg: {
-    name: 'MG',
+    code: 'MG',
+    name: 'Machine gun',
     magazineCapacity: 30,
     reloadTime: 3000,
     shootSpeed: 80,
@@ -50,6 +53,7 @@ export const GUNS: {[key: string]: GunOptions} = {
     weight: 1,
   },
   minigun: {
+    code: 'Minigun',
     name: 'Minigun',
     magazineCapacity: 500,
     reloadTime: 5000,
@@ -114,7 +118,7 @@ export class Gun {
     this.lastShootTime = this.engine.time;
 
     this.makeLight();
-    this.engine.sound.play('shoot' + this.options.name);
+    this.engine.sound.play('shoot' + this.options.code);
 
     if (this.bulletsInMagazine === 0) {
       this.reload();

@@ -22,8 +22,14 @@ import { DoorsSystem } from "./systems/doors";
 import { FlashlightSystem } from "./systems/flashlight";
 import { PickableSystem } from "./systems/pickable";
 import { MainMenu } from "./main-menu";
+import { Gun } from "./weapons";
 
 const SCORES_KEY = 'scores';
+
+interface Notification {
+  text: string;
+  timestamp: number;
+}
 
 export class Game {
 
@@ -48,6 +54,8 @@ export class Game {
   scores: any;
 
   mainMenu: MainMenu;
+
+  notification: Notification;
 
   engine = new EntityEngine(this);
 
@@ -147,6 +155,13 @@ export class Game {
     this.scores[difficulty.name][this.currentLevel] = this.levelFinishDuration;
     localStorage.setItem(SCORES_KEY, JSON.stringify(this.scores));
     this.mainMenu.updateLevelsList();
+  }
+
+  notifyNewWeapon(weapon: Gun) {
+    this.notification = {
+      text: weapon.options.name,
+      timestamp: this.engine.time,
+    }
   }
 
 }

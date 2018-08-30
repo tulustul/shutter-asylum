@@ -6,6 +6,8 @@ import { ActionsSystem } from '../systems/actions';
 import { Game } from '../game';
 import { SPRITES_MAP } from '../sprites';
 
+const NOTIFICATION_DISPLAY_TIME = 1500;
+
 export class GuiRenderer {
 
   interfaceLayer = new Layer('interface', this.game.renderer, {
@@ -110,6 +112,18 @@ export class GuiRenderer {
       this.drawBloodyText('YOU DIED', 26, y += 20);
       if (!this.game.stageCompleted) {
         this.drawTextCentered('Press <enter> to try again', 14, y += 40);
+      }
+    }
+
+    if (this.game.notification) {
+      const timeDiff = this.engine.time - this.game.notification.timestamp;
+      const progress = timeDiff / NOTIFICATION_DISPLAY_TIME;
+      const fontSize = 22;
+      this.context.fillStyle = `rgba(255, 255, 255, ${1 - progress})`;
+      this.drawTextCentered(this.game.notification.text, fontSize, 185 - fontSize);
+
+      if (timeDiff > NOTIFICATION_DISPLAY_TIME) {
+        this.game.notification = null;
       }
     }
   }

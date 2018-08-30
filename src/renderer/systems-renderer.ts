@@ -158,7 +158,7 @@ export class SystemsRenderer {
       )
 
       if (agent.currentWeapon) {
-        const gunSprite = SPRITES_MAP[`gun${agent.currentWeapon.options.name}`];
+        const gunSprite = SPRITES_MAP[`gun${agent.currentWeapon.options.code}`];
         this.context.drawImage(
           this.renderer.texture,
           gunSprite.x, gunSprite.y,

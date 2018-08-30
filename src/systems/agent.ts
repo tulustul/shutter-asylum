@@ -163,9 +163,9 @@ export class AgentComponent extends Entity {
 
   addWeapon(weapon: Gun, ammoMultiplier = 1) {
     const ammo = Math.round(weapon.totalBullets * ammoMultiplier);
-    if (!this.weaponsMap.has(weapon.options.name)) {
+    if (!this.weaponsMap.has(weapon.options.code)) {
       // add new weapon
-      this.weaponsMap.set(weapon.options.name, weapon);
+      this.weaponsMap.set(weapon.options.code, weapon);
       this.weapons.push(weapon);
       weapon.setOwner(this);
       weapon.totalBullets = ammo;
@@ -182,7 +182,7 @@ export class AgentComponent extends Entity {
       }
     } else {
       // collect ammo
-      const possesedWeapon = this.weaponsMap.get(weapon.options.name);
+      const possesedWeapon = this.weaponsMap.get(weapon.options.code);
       possesedWeapon.totalBullets += ammo;
     }
   }
