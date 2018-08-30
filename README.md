@@ -1,6 +1,8 @@
 # Shutter Asylum
 
-A 30kB shooter challenge.
+A 30kB JS stealth shooter challenge.
+
+Made for [Gynvael's Summer GameDev Challenge 2018](https://gynvael.coldwind.pl/?lang=en&id=686)
 
 ## Getting started
  * `npm install`
@@ -25,3 +27,6 @@ Ready to use bundle is located in `/dist` directory.
  * `C` toggle run/sneak
  * `SHIFT` run/sneak
  * `ESC` menu
+
+## Game objective
+Just kill everyone in sight.
