@@ -203,12 +203,13 @@ function makeCell(
       wallDirection: wallDirection as any,
       radius: 125,
     });
-  } else if (cell === "L") {
+  } else if (cell === "L" || cell === "l") {
     const wallDirection = getWallDirection(cells, x, y);
     new LightComponent(engine, {
       pos,
       physical: true,
       wallDirection: wallDirection as any,
+      radius: cell === 'L' ? 250 : 125,
     });
   } else if (cell === "H") {
     new LightComponent(engine, {

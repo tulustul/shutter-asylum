@@ -21,6 +21,7 @@ export interface GunOptions {
   spread: number;
   defaultAmmo: number;
   priority: number;
+  weight: number;
 }
 
 export const GUNS: {[key: string]: GunOptions} = {
@@ -34,6 +35,7 @@ export const GUNS: {[key: string]: GunOptions} = {
     spread: 0,
     defaultAmmo: 36,
     priority: 1,
+    weight: 1,
   },
   mg: {
     name: 'MG',
@@ -45,6 +47,7 @@ export const GUNS: {[key: string]: GunOptions} = {
     spread: Math.PI / 20,
     defaultAmmo: 120,
     priority: 2,
+    weight: 1,
   },
   minigun: {
     name: 'Minigun',
@@ -56,6 +59,7 @@ export const GUNS: {[key: string]: GunOptions} = {
     spread: Math.PI / 15,
     defaultAmmo: 500,
     priority: 3,
+    weight: 3,
   },
 }
 

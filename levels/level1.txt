@@ -8,6 +8,7 @@
 7{to toggle flashlight}
 8{Here's the guard ↘}
 9{Sneak (C or shift)}
+&{and kill him}
 $.{Shoot the lights}
 %.{to destroy them}
 ^.{Press (R) to reload}
@@ -40,10 +41,10 @@ XXXXXXXXXXXXXX......7......;.X      X.........;.X..X
                    XXXXXXX.;.X      X$B.......;p...X
                    X.8.....;.X      X%........;....X
                    X.9.....;.X      XXXXXXXXX.;.XXXX
+                   X.&.....;.X              X.;.X
                    XXXXXXX.;.X              X.;.X
-                         X.;.X              X.;.X
                          X.;.XXXXXXXXXXXXXXXX.;.X
-                         X.;..p..B.....P.L....;.X
+                         X.;..pl...B..Pl...l..;.X
                          X.;;;;;;;;;;;;;;;;;;;;.X
                          X.................p....X
                          X....X....X....X....X..X

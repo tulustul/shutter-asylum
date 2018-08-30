@@ -137,7 +137,7 @@ export class AIComponent extends Entity {
   }
 
   think(playerPosAndVel: PosAndVel) {
-    if (this.playerInRange) {
+    if (playerPosAndVel && this.playerInRange) {
       this.playerPos = playerPosAndVel.pos.copy();
       this.playerVel = playerPosAndVel.vel.copy();
     }
@@ -400,7 +400,7 @@ export class AISystem extends EntitySystem<AIComponent> {
   }
 
   get playerPosAndVel() {
-    return this.player.agent.posAndVel;
+    return this.player ? this.player.agent.posAndVel : null;
   }
 
   addPatrolPoint(pos: Vector2) {

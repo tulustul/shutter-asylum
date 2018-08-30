@@ -248,10 +248,16 @@ export class SystemsRenderer {
   renderBlood() {
     const bloodSystem = this.engine.getSystem<BloodSystem>(BloodSystem);
 
-    this.context.fillStyle = 'red';
+    this.context.strokeStyle = 'red';
+    this.context.lineWidth = 1;
     for (const blood of bloodSystem.toRender) {
-      this.context.fillRect(blood.x, blood.y, 2, 2);
+      this.context.beginPath();
+      this.context.moveTo(blood.from.x, blood.from.y);
+      this.context.lineTo(blood.to.x, blood.to.y);
+      this.context.stroke();
     }
+
+    this.context.fillStyle = 'red';
     for (const leak of bloodSystem.leaksToRender) {
       this.context.beginPath();
       this.context.arc(leak.pos.x, leak.pos.y, leak.size, 0, 2 * Math.PI);

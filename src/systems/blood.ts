@@ -3,6 +3,11 @@ import { ParticlesSystem } from "./particles";
 import { BARRIER_MASK } from "../colisions-masks";
 import { Vector2 } from "../vector";
 
+interface Line {
+  from: Vector2;
+  to: Vector2;
+}
+
 interface BloodLeak {
   pos: Vector2;
   lastLeak: number;
@@ -14,7 +19,7 @@ const LEAK_SPEED = 300;
 
 export class BloodSystem extends EntitySystem<void> {
 
-  toRender: Vector2[] = [];
+  toRender: Line[] = [];
 
   leaks: BloodLeak[] = [];
 
@@ -26,16 +31,19 @@ export class BloodSystem extends EntitySystem<void> {
     particlesSystem.emit({
       pos,
       color: 'red',
-      lifetime: 800,
+      lifetime: 150,
       canHitDynamic: false,
       canHit: BARRIER_MASK,
-      onDeath: pos => this.toRender.push(pos),
+      onDeath: pos => this.toRender.push({
+        from: pos, to:
+        pos.copy().add(vel.copy().mul(0.6)),
+      }),
     }, {
-      count: Math.ceil(Math.random() * 50),
-      direction: vel.copy().mul(0.2),
-      spread: 0.9,
-      speedSpread: 0.5,
-      lifetimeSpread: 0.5,
+      count: Math.ceil(Math.random() * 50) + 5,
+      direction: vel.copy().mul(0.35),
+      spread: 1.2,
+      speedSpread: 0.8,
+      lifetimeSpread: 0.9,
     });
   }
 

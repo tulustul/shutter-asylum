@@ -135,7 +135,9 @@ export class PlayerSystem extends EntitySystem<PlayerComponent> {
   }
 
   makeStep(player: PlayerComponent) {
-    const stepsRate = this.STEPS_RATE * (player.agent.isRunning ? 1 : 1.6);
+    const agent = player.agent;
+    const weight = Math.max(1, agent.weight / 2);
+    const stepsRate = this.STEPS_RATE * weight * (agent.isRunning ? 1 : 1.6);
     if (this.engine.time - this.lastStepTime > stepsRate) {
       if (player.agent.posAndVel.vel.getLength() > 0.5) {
         this.lastStepTime = this.engine.time;

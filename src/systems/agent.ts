@@ -29,6 +29,8 @@ export class AgentComponent extends Entity {
 
   maxSpeed = this.maxRunSpeed;
 
+  weight = 1;
+
   ACCELERATION = 0.5;
 
   posAndVel: PosAndVel;
@@ -127,13 +129,12 @@ export class AgentComponent extends Entity {
   }
 
   private updateVelocity(acc: Vector2) {
+    const speed = this.maxSpeed / this.weight;
     this.posAndVel.vel.x = Math.min(
-      this.maxSpeed,
-      Math.max(-this.maxSpeed, this.posAndVel.vel.x + acc.x),
+      speed, Math.max(-speed, this.posAndVel.vel.x + acc.x),
     );
     this.posAndVel.vel.y = Math.min(
-      this.maxSpeed,
-      Math.max(-this.maxSpeed, this.posAndVel.vel.y + acc.y),
+      speed, Math.max(-speed, this.posAndVel.vel.y + acc.y),
     );
   }
 
@@ -160,10 +161,6 @@ export class AgentComponent extends Entity {
     this.isRunning = false;
   }
 
-  get stepsRate() {
-    return this.maxSpeed * 100;
-  }
-
   addWeapon(weapon: Gun, ammoMultiplier = 1) {
     const ammo = Math.round(weapon.totalBullets * ammoMultiplier);
     if (!this.weaponsMap.has(weapon.options.name)) {
@@ -180,7 +177,7 @@ export class AgentComponent extends Entity {
         this.currentWeapon ? this.currentWeapon.options.priority : 0;
 
       if (weapon.options.priority > currentWeaponPriority) {
-        this.currentWeapon = weapon;
+        this.setWeapon(weapon);
         this.weaponIndex = this.weapons.length - 1;
       }
     } else {
@@ -195,10 +192,19 @@ export class AgentComponent extends Entity {
       this.weaponIndex++;
       if (this.weaponIndex >= this.weapons.length) {
         this.weaponIndex = -1;
-        this.currentWeapon = null;
+        this.setWeapon(null);
       } else {
-        this.currentWeapon = this.weapons[this.weaponIndex];
+        this.setWeapon(this.weapons[this.weaponIndex]);
       }
+    }
+  }
+
+  setWeapon(weapon: Gun) {
+    this.currentWeapon = weapon;
+    if (weapon) {
+      this.weight = weapon.options.weight;
+    } else {
+      this.weight = 1;
     }
   }
 
