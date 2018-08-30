@@ -25,7 +25,6 @@ export function renderVisibilityMask(
   }
   if (angle !== Math.PI * 2) {
     context.lineTo(pov.x, pov.y);
-    context.lineTo(points[0].x, points[0].y);
   }
   context.closePath();
   context.fill();

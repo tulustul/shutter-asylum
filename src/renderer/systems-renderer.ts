@@ -290,7 +290,7 @@ export class SystemsRenderer {
       this.context.fillStyle = gradient;
 
       renderVisibilityMask(
-        this.context, colisionSystem, pos, direction, Math.PI / 2, 150,
+        this.context, colisionSystem, pos, direction, Math.PI / 2, lightSize,
       )
     }
   }

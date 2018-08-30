@@ -145,12 +145,12 @@ export class Gun {
   }
 
   makeLight() {
-    const offset = new Vector2(0, 13).rotate(this.owner.rot);
+    const offset = new Vector2(0, 16).rotate(this.owner.rot);
     const pos = this.owner.posAndVel.pos.copy().add(offset);
     const light = new LightComponent(this.engine, {
       pos,
       enabled: true,
-      radius: 50,
+      radius: 60,
     });
 
     setTimeout(() => light.destroy());
