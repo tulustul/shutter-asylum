@@ -34,10 +34,13 @@ export class BloodSystem extends EntitySystem<void> {
       lifetime: 150,
       canHitDynamic: false,
       canHit: BARRIER_MASK,
-      onDeath: pos => this.toRender.push({
-        from: pos, to:
-        pos.copy().add(vel.copy().mul(0.6)),
-      }),
+      onDeath: bloodPos => {
+        const bloodVel = new Vector2(0, vel.getLength() * 0.6).rotate(bloodPos.directionTo(pos));
+        this.toRender.push({
+          from: bloodPos, to:
+          bloodPos.copy().add(bloodVel),
+        });
+      },
     }, {
       count: Math.ceil(Math.random() * 50) + 5,
       direction: vel.copy().mul(0.35),

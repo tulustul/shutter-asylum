@@ -280,6 +280,7 @@ export class AIComponent extends Entity {
       this.action = new ActionComponent(this.engine, {
         collidable: this.agent.collidable,
         text: 'kill',
+        priority: 9,
         action: () => this.destroy(),
       });
     }

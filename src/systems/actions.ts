@@ -1,11 +1,15 @@
 import { EntitySystem, EntityEngine, Entity } from "./ecs";
 import { PropComponent } from "./props";
-import { Collidable } from "./colision";
+import { Collidable, Shape } from "./colision";
 import { PlayerSystem } from "./player";
+
+import { Vector2 } from "../vector";
+import { TILE_SIZE } from "../constants";
 
 interface ActionOptions {
   collidable: Collidable;
   text: string;
+  priority: number;
   action: (entity: Entity) => void;
 }
 
@@ -13,16 +17,26 @@ export class ActionComponent extends Entity {
 
   collidable: Collidable;
 
+  pos: Vector2;
+
   prop: PropComponent;
 
   text: string;
 
+  priority: number;
+
   action: (entity: Entity) => void;
 
-  constructor(private engine: EntityEngine, options: ActionOptions) {
+  constructor(engine: EntityEngine, options: ActionOptions) {
     super();
 
     Object.assign(this, options);
+
+    this.pos = this.collidable.pos;
+
+    if (this.collidable.shape === Shape.gridCell) {
+      this.pos = this.pos.copy().add(new Vector2(TILE_SIZE / 2, TILE_SIZE / 2));
+    }
 
     engine.getSystem(ActionsSystem).add(this);
   }
@@ -43,15 +57,19 @@ export class ActionsSystem extends EntitySystem<ActionComponent> {
     }
     const playerPos = player.agent.posAndVel.pos;
 
-    let minDistance = 40;
+    let minDistance = 25;
+    let minPriority = 0;
 
     this.action = null;
 
-    for (const entity of this.entities) {
-      const distance = playerPos.distanceTo(entity.collidable.pos);
+    for (const action of this.entities) {
+      const distance = playerPos.distanceTo(action.pos);
       if (distance < minDistance) {
-        minDistance = distance;
-        this.action = entity;
+        if (action.priority >= minPriority) {
+          minDistance = distance;
+          minPriority = action.priority;
+          this.action = action;
+        }
       }
     }
   }

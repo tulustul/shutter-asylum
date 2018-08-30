@@ -56,7 +56,8 @@ export class DoorComponent extends Entity {
     this.action = new ActionComponent(this.engine, {
       collidable: this.collidable,
       text: 'open',
-      action: entity => this.open(),
+      priority: 5,
+      action: () => this.open(),
     });
 
     engine.getSystem(DoorsSystem).add(this);

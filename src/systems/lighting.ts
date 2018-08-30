@@ -94,6 +94,7 @@ export class LightComponent extends Entity {
       this.action = new ActionComponent(this.engine, {
         collidable: this.collidable,
         text: 'toggle',
+        priority: 1,
         action: () => this.toggle(),
       })
     }
