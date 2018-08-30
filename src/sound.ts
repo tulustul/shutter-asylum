@@ -52,18 +52,32 @@ const SAMPLES_PARAMS: {[key: string]: ProduceduralSampleParams} = {
     gainParams: [0, 0, 0.0, 0.001, 0.5, 0.1, 0, 0.2],
     volume: 0.1,
   },
-  fistHit: {
+  fistHitA: {
     biquadType: 'bandpass',
     biquadQ: 1,
     frequency: 300,
     gainParams: [0, 0, 0.0, 0.001, 0.5, 0.1, 0, 0.2],
     volume: 0.9,
   },
-  noAmmo: {
+  fistHitB: {
     biquadType: 'lowpass',
     biquadQ: 1,
-    frequency: 13000,
-    gainParams: [0, 0, 0.0, 0.001, 0.5, 0.04, 0, 0.07],
+    frequency: 500,
+    gainParams: [0, 0, 0.0, 0.1, 0.5, 0.2, 0, 0.25],
+    volume: 0.9,
+  },
+  noAmmoA: {
+    biquadType: 'bandpass',
+    biquadQ: 1,
+    frequency: 1200,
+    gainParams: [0, 0, 0.0, 0.001, 0.5, 0.04, 0, 0.12],
+    volume: 0.6,
+  },
+  noAmmoB: {
+    biquadType: 'lowpass',
+    biquadQ: 1,
+    frequency: 7000,
+    gainParams: [0, 0, 0.0, 0.1, 0.5, 0.08, 0, 0.12],
     volume: 0.6,
   },
 };
@@ -74,7 +88,7 @@ function makeSteps(stepType: string, stepParams: ProduceduralSampleParams) {
     biquadQ: 1,
     frequency: 300,
     gainParams: [0, 0, 1, 0.001, 0.3, 0.101, 0, 0.2],
-    volume: 0.5,
+    volume: 0.25,
   };
   Object.assign(params, stepParams);
 
@@ -100,17 +114,17 @@ makeSteps('stone', {});
 makeSteps('wood', {
   frequency: 550,
   gainParams: [0, 0, 1, 0.001, 0.3, 0.151, 0, 0.2],
-  volume: 0.3,
+  volume: 0.2,
 });
 makeSteps('carpet', {
   frequency: 100,
   gainParams: [0, 0, 1, 0.001, 0.3, 0.151, 0, 0.2],
-  volume: 0.3,
+  volume: 0.15,
 });
 makeSteps('tiles', {
   frequency: 450,
   gainParams: [0, 0, 1, 0.001, 0.2, 0.151, 0, 0.2],
-  volume: 0.25,
+  volume: 0.15,
 });
 
 const VOICE_COUNT = 5;

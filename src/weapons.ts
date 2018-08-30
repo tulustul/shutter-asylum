@@ -99,7 +99,8 @@ export class Gun {
 
     if (this.bulletsInMagazine === 0) {
       this.lastShootTime = this.engine.time;
-      this.engine.sound.play('noAmmo');
+      this.engine.sound.play('noAmmoA');
+      this.engine.sound.play('noAmmoB');
       return false;
     }
 

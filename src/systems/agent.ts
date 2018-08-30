@@ -232,7 +232,8 @@ export class AgentComponent extends Entity {
         const angleDiff = Math.abs(pos.directionTo(agent.posAndVel.pos) - rot);
         if (angleDiff < 1 || angleDiff > 5) {
           agent.decreaseHealth();
-          this.engine.sound.play('fistHit');
+          this.engine.sound.play('fistHitA');
+          this.engine.sound.play('fistHitB');
           const bloodSystem = this.engine.getSystem<BloodSystem>(BloodSystem);
           bloodSystem.emitBlood(
             agent.posAndVel.pos,
