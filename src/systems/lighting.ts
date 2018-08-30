@@ -91,12 +91,14 @@ export class LightComponent extends Entity {
         rot,
       });
 
-      this.action = new ActionComponent(this.engine, {
-        collidable: this.collidable,
-        text: 'toggle',
-        priority: 1,
-        action: () => this.toggle(),
-      })
+      if (!this.broken) {
+        this.action = new ActionComponent(this.engine, {
+          collidable: this.collidable,
+          text: 'toggle',
+          priority: 1,
+          action: () => this.toggle(),
+        })
+      }
     }
 
     engine.getSystem(LightsSystem).add(this);
