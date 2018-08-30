@@ -1,2 +1,2 @@
 export const TILE_SIZE = 20;
-export const LEVELS_COUNT = 9;
+export const LEVELS_COUNT = 8;

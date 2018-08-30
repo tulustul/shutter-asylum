@@ -169,6 +169,18 @@ function makeCell(
       pos: Object.create(pos),
       weapon: 'pistol',
     });
+  } else if (cell === "a") {
+    new AIComponent(engine, {
+      pos: Object.create(pos),
+      weapon: 'pistol',
+      superAggresive: true,
+    });
+  } else if (cell === "A") {
+    new AIComponent(engine, {
+      pos: Object.create(pos),
+      weapon: 'mg',
+      superAggresive: true,
+    });
   } else if (cell === "m") {
     new AIComponent(engine, {
       pos: Object.create(pos),
@@ -179,8 +191,9 @@ function makeCell(
     new AIComponent(engine, {
       pos: Object.create(pos),
       weapon: 'minigun',
-      maxHealth: 100,
+      maxHealth: 40,
       canBeAssasinated: false,
+      superAggresive: true,
     });
   } else if (cell === "P") {
     new AIComponent(engine, {

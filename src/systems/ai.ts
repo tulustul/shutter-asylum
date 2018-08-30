@@ -20,7 +20,6 @@ enum AIState {
   idle,
   patroling,
   alerted,
-  hiding,
   chasing,
   fighting,
 }
@@ -31,6 +30,7 @@ interface AIOptions {
   weapon?: GunType;
   maxHealth?: number;
   canBeAssasinated?: boolean;
+  superAggresive?: boolean;
 }
 
 export class AIComponent extends Entity {
@@ -76,6 +76,8 @@ export class AIComponent extends Entity {
   action: ActionComponent;
 
   canBeAssasinated = true;
+
+  superAggresive = false;
 
   constructor(private engine: EntityEngine, options: AIOptions) {
     super();
@@ -156,9 +158,6 @@ export class AIComponent extends Entity {
       case AIState.fighting:
         this.whenFighting();
         break;
-      case AIState.hiding:
-        this.whenHiding();
-        break;
       case AIState.chasing:
         this.whenChasing();
         break;
@@ -230,13 +229,8 @@ export class AIComponent extends Entity {
     if (this.playerInRange) {
       this.isShooting = true;
     } else {
-      this.state = AIState.chasing;
-      this.moveTarget = this.playerPos;
+      this.goChasing();
     }
-  }
-
-  whenHiding() {
-
   }
 
   whenChasing() {
@@ -267,7 +261,7 @@ export class AIComponent extends Entity {
 
   goAlerted() {
     this.state = AIState.alerted;
-    this.rotSpeed = 10;
+    this.rotSpeed = 0.1;
     this.alertedAt = this.engine.time;
     this.changedTargetAt = this.engine.time;
     this.destroyAction();
@@ -287,8 +281,17 @@ export class AIComponent extends Entity {
   }
 
   goFighting() {
-    this.state = AIState.fighting;
+    if (this.superAggresive) {
+      this.goChasing();
+    } else {
+      this.state = AIState.fighting;
+    }
     this.rotSpeed = 0.1;
+  }
+
+  goChasing() {
+    this.state = AIState.chasing;
+    this.moveTarget = this.playerPos;
   }
 
   notifyNeighbours(playerPos: Vector2) {

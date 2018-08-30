@@ -1,29 +1,30 @@
 #
 #
-    XXXXXXXXXXXXXXXXXXX
-XXXXX.................X
-X+L+|..X..X..X..X..X..X
-XS++X..L..X..B..X..L..X
-X[[[X..p......P......pXXXXXX
-XXXXX.................|++++X
-X+++XXXXXXXXXXXXXX....XXXX+X
-X+e+++++++e++++++X....XXXX_XXXXXXXX
-X+++++X+++++X++e+X....X..L..X-E-e-X
-X[[+++X+++++X++++XB...X.....X--;;;X
-X[[+++++;;;;;;e++X...pXp.D...--;[;X
-X+++e+++;;;;;;+++X....X......--;[cX
-X+++L+++++L++++++X....X......X-;[;X
-XXXXXXX_XXXXXXXXXX...pX......X-;;;X
-X.........X---L-cX....X..XXXXX-e-LX
-X.........X-E[[--X....X...X.......X
-X..X....e.X--[[--X..P.Xp..X.e.....X
-X..XL.....X------XXX.pX.........E.X
-X..X....XXXXX_XXXX....X..L..e...L.X
-XXXX..P.e..E.........pXX_XXXXXXXXXX
-   X...B..E..L....L....X.X
-   X...X....X....X.....X.X
-   X...................|.X
-   XXXXXXXXXXXXXXXXXXXXXXX
+      XXXXXXXXXXXXXXXXXXX
+XXXXXXX.................X
+X+S+++X.................X
+XB++++|..XX..XXX...XXX..X
+X+++++X..L....B.....L...X
+X[[[++X..p......P......pXXXXXX
+  XXXXX.................|++++X
+  X+++XXXXXXXXXXXXXX....XXXX+X
+  X+a+++++++e++++++X....XXXX_XXXXXXXX
+  X+++++X+++++X++e+X....X..L..X-E-e-X
+  X[[+++X+++++X++++XB...X.....X--;;;X
+  X[[+++++;;;;;;a++X...pX.pD...--;[;X
+  X+++e+++;;;;;;+++X....X......--;[cX
+  X+++L+++++L++++++X....X......X-;[;X
+  XXXXXXX_XXXXXXXXXX...pX......X-;;;X
+  X.........X---L-cX....X..XXXXX-e-LX
+  X.........X-E[[--X....X...X.......X
+  X..X....e.X--[[--X..P.Xp..X.e.....X
+  X..XL.....X------XXX.pX.........A.X
+  X..X....XXXXX_XXXX....X..L..e...L.X
+  XXXX..P.e..E.........pXX_XXXXXXXXXX
+     X...B..E.L....L.....X.X
+     X...X....X....X.....X.X
+     X...................|.X
+     XXXXXXXXXXXXXXXXXXXXXXX
 
 
 
