@@ -1,5 +1,6 @@
 import { Layer } from './layer';
 import { Renderer } from './renderer';
+import { renderVisibilityMask } from './visibility-mask';
 
 import { TILE_SIZE } from '../constants';
 import { SPRITES_MAP, SpriteMetadata } from '../sprites';
@@ -10,6 +11,7 @@ import { LightsSystem } from '../systems/lighting';
 import { ParticlesSystem } from '../systems/particles';
 import { BloodSystem } from '../systems/blood';
 import { FlashlightSystem } from '../systems/flashlight';
+import { ColisionSystem } from '../systems/colision';
 
 export class SystemsRenderer {
 
@@ -269,25 +271,27 @@ export class SystemsRenderer {
 
   renderFlashlights() {
     this.context.globalCompositeOperation = 'lighten';
-    const flashlightSystem = this.engine.getSystem<FlashlightSystem>(FlashlightSystem);
-    const lightSize = 120;
-    const gradient = this.context.createRadialGradient(
-      0, 0, 20,
-      0, 0, lightSize,
-    );
-    gradient.addColorStop(0, '#ddd');
-    gradient.addColorStop(1, 'transparent');
 
-    this.context.fillStyle = gradient;
+    const flashlightSystem = this.engine.getSystem<FlashlightSystem>(FlashlightSystem);
+    const colisionSystem = this.engine.getSystem<ColisionSystem>(ColisionSystem);
+
+    const lightSize = 120;
+
     for (const flashlight of flashlightSystem.entities) {
       const pos = flashlight.agent.posAndVel.pos;
       const direction = flashlight.agent.rot;
-      this.context.save();
-      this.context.translate(pos.x, pos.y);
-      this.context.rotate(direction + Math.PI / 4);
 
-      this.context.fillRect(0, 0, lightSize, lightSize);
-      this.context.restore();
+      const gradient = this.context.createRadialGradient(
+        pos.x, pos.y, 20,
+        pos.x, pos.y, lightSize,
+      );
+      gradient.addColorStop(0, '#ddd');
+      gradient.addColorStop(1, 'transparent');
+      this.context.fillStyle = gradient;
+
+      renderVisibilityMask(
+        this.context, colisionSystem, pos, direction, Math.PI / 2, 150,
+      )
     }
   }
 

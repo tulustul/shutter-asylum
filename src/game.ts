@@ -89,6 +89,7 @@ export class Game {
     this.gameCompleted = false;
     this.newBestTime = false;
     this.isLoading = true;
+    this.notification= null;
     this.engine.clear();
 
     const playerSystem = new PlayerSystem();
