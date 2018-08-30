@@ -57,6 +57,7 @@ export class Menu {
   }
 
   clear() {
+    this.pointer = 0;
     this.options = [];
     this.staticOptions = [];
   }

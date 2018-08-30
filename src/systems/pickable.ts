@@ -52,7 +52,7 @@ export class PickableSystem extends EntitySystem<PickableComponent> {
     for (const entity of this.entities) {
       entity.prop.rot += 0.03;
       if (playerAgent.posAndVel.pos.distanceTo(entity.pos) < 10) {
-        playerAgent.addWeapon(entity.gun, 0.25);
+        playerAgent.addWeapon(entity.gun, 0.4);
         entity.destroy();
         this.engine.sound.play('collect');
       }

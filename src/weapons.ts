@@ -59,7 +59,7 @@ export const GUNS: {[key: string]: GunOptions} = {
     spread: Math.PI / 15,
     defaultAmmo: 500,
     priority: 3,
-    weight: 3,
+    weight: 2.5,
   },
 }
 
