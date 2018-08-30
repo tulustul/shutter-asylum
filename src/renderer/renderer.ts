@@ -32,9 +32,6 @@ export class Renderer {
   ready = false;
 
   constructor(public game: Game) {
-    // DEBUG
-    // this.checkColorsLayer = new Layer('', this);
-
     this.texture = new Image();
     this.texture.src = 'tex.png';
     this.texture.onload = () => this.ready = true;
@@ -56,12 +53,13 @@ export class Renderer {
     this.postprocessing.postprocess(this.baseLayer);
 
     // DEBUG
-    // if (Math.round(this.engine.time) % 300 === 0) {
+    // if (Math.round(this.game.engine.time) % 300 === 0) {
     //   this.checkDistinctColors();
     // }
   }
 
   init() {
+
     this.compositor = new Compositor(this);
 
     this.postprocessing = new Postprocessing(this.game.canvas);
@@ -76,6 +74,9 @@ export class Renderer {
       followPlayer: false,
       fill: 'black',
     });
+
+    // DEBUG
+    // this.checkColorsLayer = new Layer('', this);
 
     this.compositor.init();
   }
