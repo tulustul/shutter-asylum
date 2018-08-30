@@ -9,9 +9,9 @@ X[[[++X..p......P......pXXXXXX
   XXXXX.................|++++X
   X+++XXXXXXXXXXXXXX....XXXX+X
   X+a+++++++e++++++X....XXXX_XXXXXXXX
-  X+++++X+++++X++e+X....X..L..X-E-e-X
+  X+++++X+++++X++e+X....X.pL..X-E-e-X
   X[[+++X+++++X++++XB...X.....X--;;;X
-  X[[+++++;;;;;;a++X...pX.pD...--;[;X
+  X[[+++++;;;;;;a++X...pX..D...--;[;X
   X+++e+++;;;;;;+++X....X......--;[cX
   X+++L+++++L++++++X....X......X-;[;X
   XXXXXXX_XXXXXXXXXX...pX......X-;;;X
