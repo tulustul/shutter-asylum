@@ -2,8 +2,8 @@ import { loadLevel } from "./loader";
 import { Renderer } from "./renderer/renderer";
 import { Control } from "./control";
 import { Camera } from "./camera";
-import { Menu } from "./menu";
-import { difficulty, setNextDifficulty } from "./difficulty";
+import { difficulty } from "./difficulty";
+import { LEVELS_COUNT } from "./constants";
 
 import { EntityEngine } from "./systems/ecs";
 import { AgentSystem } from "./systems/agent";
@@ -21,8 +21,7 @@ import { ActionsSystem } from "./systems/actions";
 import { DoorsSystem } from "./systems/doors";
 import { FlashlightSystem } from "./systems/flashlight";
 import { PickableSystem } from "./systems/pickable";
-
-const LEVELS_COUNT = 9;
+import { MainMenu } from "./main-menu";
 
 const SCORES_KEY = 'scores';
 
@@ -48,9 +47,7 @@ export class Game {
 
   scores: any;
 
-  menu: Menu;
-
-  levelsMenu: Menu;
+  mainMenu: MainMenu;
 
   engine = new EntityEngine(this);
 
@@ -68,14 +65,14 @@ export class Game {
       this.scores = {easy: {}, normal: {}, hard: {}};
     }
 
-    this.makeMainMenu();
+    this.mainMenu = new MainMenu(this);
 
     // just let the logic flow
     this.engine.worldWidth = 1;
     this.engine.worldHeight = 1;
     this.start(null);
     this.paused = true;
-    this.menu.active = true;
+    this.mainMenu.menu.active = true;
   }
 
   async start(level: number) {
@@ -114,79 +111,7 @@ export class Game {
     this.renderer.init();
     this.isLoading = false;
     this.paused = false;
-    this.menu.active = false;
-  }
-
-  makeMainMenu() {
-    this.menu = new Menu();
-    this.levelsMenu = new Menu();
-    const controlsMenu = new Menu();
-
-    this.menu.addOption({
-      text: 'Start new game',
-      callback: () => this.start(1),
-    });
-
-    this.menu.addSubmenu('Levels selection', this.levelsMenu);
-
-    this.menu.addOption({
-      text: () => `Difficulty: ${difficulty.name}`,
-      callback: () => {
-        setNextDifficulty();
-        this.updateLevelsList();
-        this.menu.active = true;
-      }, 
-    });
-
-    this.menu.addSubmenu('Show controls', controlsMenu);
-
-    controlsMenu.addOption({
-      text: 'Back',
-      callback: () => this.levelsMenu.backToParent(),
-    })
-    controlsMenu.addStaticOption('WASD - movement');
-    controlsMenu.addStaticOption('mouse - aiming');
-    controlsMenu.addStaticOption('SPACE, LMB - shooting');
-    controlsMenu.addStaticOption('F, MMB - flashlight');
-    controlsMenu.addStaticOption('Q - change weapon');
-    controlsMenu.addStaticOption('E - use');
-    controlsMenu.addStaticOption('C - toggle sneak/run');
-    controlsMenu.addStaticOption('SHIFT - sneak/run');
-    controlsMenu.addStaticOption('ESC - pause and show menu');
-
-    this.updateLevelsList();
-  }
-
-  updateLevelsList() {
-    const levelsCount = Math.min(
-      LEVELS_COUNT,
-      Object.keys(this.scores[difficulty.name]).length + 1,
-    );
-
-    this.levelsMenu.clear();
-
-    this.levelsMenu.addOption({
-      text: 'Back',
-      callback: () => this.levelsMenu.backToParent(),
-    });
-
-    for (let i = 1; i <= levelsCount; i++) {
-      this.levelsMenu.addOption({
-        text: () => {
-          let bestTime = this.scores[difficulty.name][i];
-          let text = `level ${i}`;
-          if (bestTime) {
-            text += ` (best time: ${(bestTime / 1000).toFixed(1)}s)`;
-          }
-          return text;
-        },
-        callback: () => this.start(i),
-      });
-    }
-
-    for (let i = levelsCount + 1; i <= LEVELS_COUNT; i++) {
-      this.levelsMenu.addStaticOption(`level ${i}`);
-    }
+    this.mainMenu.menu.active = false;
   }
 
   checkWinConditions() {
@@ -221,7 +146,7 @@ export class Game {
   saveScore() {
     this.scores[difficulty.name][this.currentLevel] = this.levelFinishDuration;
     localStorage.setItem(SCORES_KEY, JSON.stringify(this.scores));
-    this.updateLevelsList();
+    this.mainMenu.updateLevelsList();
   }
 
 }

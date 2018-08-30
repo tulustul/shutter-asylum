@@ -14,7 +14,7 @@ async function init() {
 
   window.addEventListener('visibilitychange', () => {
     game.paused = true;
-    game.menu.active = true;
+    game.mainMenu.menu.active = true;
   });
 }
 

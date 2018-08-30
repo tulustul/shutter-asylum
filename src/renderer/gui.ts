@@ -50,8 +50,10 @@ export class GuiRenderer {
     this.context.fillStyle = 'white';
     this.context.font = '15px sans-serif';
 
+    const menu = this.game.mainMenu.menu;
+
     let y = 60;
-    for (const option of this.game.menu.activeMenu.options) {
+    for (const option of menu.activeMenu.options) {
       let text: string;
       if (typeof option.text === 'string') {
         text = option.text as string;
@@ -63,7 +65,7 @@ export class GuiRenderer {
       const optionWidth = this.context.measureText(text).width;
       const x = (this.canvas.width - optionWidth) / 2;
       this.context.fillText(text, x, y);
-      if (this.game.menu.selectedOption === option) {
+      if (menu.selectedOption === option) {
         this.context.beginPath();
         this.context.arc(x - 10, y + 8, 5, 0, Math.PI * 2);
         this.context.fill();
@@ -72,7 +74,7 @@ export class GuiRenderer {
     }
 
     this.context.fillStyle = 'grey';
-    for (const option of this.game.menu.activeMenu.staticOptions) {
+    for (const option of menu.activeMenu.staticOptions) {
       this.drawTextCentered(option, 15, y);
       y += 20;
     }

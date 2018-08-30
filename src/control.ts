@@ -27,8 +27,8 @@ export class Control {
       if (event.key === 'Escape') {
         if (this.game.isStarted) {
           this.game.paused = !this.game.paused;
-          this.game.menu.active = this.game.paused;
-          this.game.menu.activeMenu.backToParent();
+          this.game.mainMenu.menu.active = this.game.paused;
+          this.game.mainMenu.menu.activeMenu.backToParent();
         }
       } else if (event.code === 'KeyC' || event.key === 'Shift') {
         if (playerSystem.player) {
@@ -44,13 +44,13 @@ export class Control {
         this.game.engine.sound.play('emptyMagazine');
       }
 
-      if (this.game.menu.active) {
+      if (this.game.mainMenu.menu.active) {
         if (event.code === 'KeyW' || event.key === 'ArrowUp') {
-          this.game.menu.movePointer(-1);
+          this.game.mainMenu.menu.movePointer(-1);
         } else if (event.code === 'KeyS' || event.key === 'ArrowDown') {
-          this.game.menu.movePointer(1);
+          this.game.mainMenu.menu.movePointer(1);
         } else if (event.key === 'Enter' || event.key === ' ' || event.code === 'KeyE') {
-          this.game.menu.select();
+          this.game.mainMenu.menu.select();
         }
       }
     });
