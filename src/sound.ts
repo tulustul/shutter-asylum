@@ -31,15 +31,22 @@ const SAMPLES_PARAMS: {[key: string]: ProduceduralSampleParams} = {
     gainParams: [0, 0, 1, 0.001, 0.3, 0.101, 0, 0.4],
     volume: 0.2,
   },
-  collect: {
-    biquadType: 'highpass',
+  collectA: {
+    biquadType: 'bandpass',
     biquadQ: 1,
-    frequency: 5500,
-    gainParams: [0, 0, 0.0, 0.001, 0.5, 0.1, 0, 0.2],
+    frequency: 4500,
+    gainParams: [0, 0, 0.0, 0.001, 0.5, 0.1, 0, 0.4],
+    volume: 0.6,
+  },
+  collectB: {
+    biquadType: 'lowpass',
+    biquadQ: 1,
+    frequency: 1500,
+    gainParams: [0, 0, 0.0, 0.1, 0.5, 0.3, 0, 0.4],
     volume: 0.6,
   },
   fist: {
-    biquadType: 'highpass',
+    biquadType: 'bandpass',
     biquadQ: 1,
     frequency: 8500,
     gainParams: [0, 0, 0.0, 0.001, 0.5, 0.1, 0, 0.2],

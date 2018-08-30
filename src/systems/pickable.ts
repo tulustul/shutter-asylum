@@ -57,7 +57,8 @@ export class PickableSystem extends EntitySystem<PickableComponent> {
         }
         playerAgent.addWeapon(entity.gun, 0.4);
         entity.destroy();
-        this.engine.sound.play('collect');
+        this.engine.sound.play('collectA');
+        this.engine.sound.play('collectB');
       }
     }
   }
