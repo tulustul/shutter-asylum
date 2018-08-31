@@ -18,14 +18,14 @@ export const difficultyOptions: {[key: string]: DifficultyOptions} = {
   },
   normal: {
     name: 'normal',
-    playerHealthMultiplier: 1,
+    playerHealthMultiplier: 1.2,
     enemyHealthMultiplier: 0.8,
     visibilityLevel: 60,
     aiReactionTime: 500,
   },
   hard: {
     name: 'hard',
-    playerHealthMultiplier: 0.6,
+    playerHealthMultiplier: 0.9,
     enemyHealthMultiplier: 1.2,
     visibilityLevel: 40,
     aiReactionTime: 300,

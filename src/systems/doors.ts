@@ -27,7 +27,9 @@ export class DoorComponent extends Entity {
 
   collidable: Collidable;
 
-  prop: PropComponent;
+  propA: PropComponent;
+
+  propB: PropComponent;
 
   action: ActionComponent;
 
@@ -43,13 +45,27 @@ export class DoorComponent extends Entity {
       mask: BARRIER_MASK,
     });
 
-    this.prop = new PropComponent(this.engine, {
-      pos: this.pos,
-      rot: this.orientation === DoorOrientation.horizontal ? 0 : Math.PI / 2,
+    const isHor = this.orientation === DoorOrientation.horizontal;
+    const xOffset = isHor ? 0 : TILE_SIZE / 2 + 1;
+    const yOffset = isHor ? TILE_SIZE / 2 + 1 : 0;
+
+    this.propA = new PropComponent(this.engine, {
+      pos: this.pos.copy().add(new Vector2(xOffset, yOffset)),
+      rot: isHor ? 0 : Math.PI / 2,
       sprite: 'door',
       changing: true,
       pivot: new Vector2(0, TILE_SIZE / 2),
-      offset: this.orientation === DoorOrientation.horizontal ?
+      offset: isHor ?
+        new Vector2(0, TILE_SIZE / 2) : new Vector2(TILE_SIZE / 2, 0),
+    });
+
+    this.propB = new PropComponent(this.engine, {
+      pos: this.pos.copy().add(new Vector2(-xOffset, -yOffset)),
+      rot: isHor ? 0 : Math.PI / 2,
+      sprite: 'door',
+      changing: true,
+      pivot: new Vector2(0, TILE_SIZE / 2),
+      offset: isHor ?
         new Vector2(0, TILE_SIZE / 2) : new Vector2(TILE_SIZE / 2, 0),
     });
 
@@ -66,12 +82,12 @@ export class DoorComponent extends Entity {
   open() {
     const colisionSystem = this.engine.getSystem<ColisionSystem>(ColisionSystem);
 
-    this.prop.rot += Math.PI / 2;
+    this.propA.pos = this.pos;
+    this.propA.rot += Math.PI / 2;
+    this.propB.destroy();
     colisionSystem.remove(this.collidable);
     this.action.destroy();
-
   }
-
 }
 
 export class DoorsSystem extends EntitySystem<DoorComponent> {

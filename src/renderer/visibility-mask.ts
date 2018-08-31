@@ -12,7 +12,7 @@ export function renderVisibilityMask(
 ) {
   const points: Vector2[] = [];
 
-  for (let a = -angle / 2; a < angle / 2; a += Math.PI / 50) {
+  for (let a = -angle / 2; a < angle / 2; a += Math.PI / 100) {
     const targetPos = new Vector2(0, maxDistance).rotate(direction + a).add(pov);
     points.push(colisionSystem.castRay(pov, targetPos) || targetPos);
   }

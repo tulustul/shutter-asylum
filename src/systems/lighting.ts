@@ -114,6 +114,7 @@ export class LightComponent extends Entity {
         this.power = '#aaa';
       }
       this.toggle();
+      this.emitSparks(2);
     }
   }
 
@@ -129,7 +130,7 @@ export class LightComponent extends Entity {
     }
   }
 
-  emitSparks() {
+  emitSparks(multiplier = 1) {
     const particlesSystem = this.engine.getSystem<ParticlesSystem>(ParticlesSystem);
 
     particlesSystem.emit({
@@ -140,8 +141,8 @@ export class LightComponent extends Entity {
       canHit: 0,
       friction: 1.1,
     }, {
-      count: Math.ceil(Math.random() * 10),
-      direction: this.direction.copy().mul(5),
+      count: Math.ceil(Math.random() * 10 * multiplier),
+      direction: this.direction.copy().mul(5 * multiplier),
       spread: Math.PI,
       speedSpread: 0.5,
       lifetimeSpread: 0.5,
