@@ -24,8 +24,6 @@ const COMPOSITOR_ENTRIES: CompositorEntry[] = [
   }, {
     target: 'particles',
   }, {
-    target: 'flashlight',
-  }, {
     target: 'combinedLights',
     source: 'flashlight',
     blendMode: 'screen',
