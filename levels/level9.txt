@@ -1,0 +1,18 @@
+M
+#
+#
+      XXXXXXXXXXXXXX
+      X....L.......X
+      X..M.........X
+      X...X........X
+      XL..XH......LX
+XXXXXXX...X........X
+XB++++X.....XXX....X
+XS++++|.....M......X
+X+++++X............X
+XXXXXXX.....HX.....X
+      XL.....X....LX
+      X......X.....X
+      XX...........X
+      X....L.......X
+      XXXXXXXXXXXXXX
