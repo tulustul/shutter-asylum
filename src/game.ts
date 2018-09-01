@@ -90,6 +90,7 @@ export class Game {
     this.newBestTime = false;
     this.isLoading = true;
     this.notification= null;
+    this.isPlayerDead = false;
     this.engine.clear();
 
     const playerSystem = new PlayerSystem();
