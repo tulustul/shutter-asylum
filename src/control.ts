@@ -1,9 +1,7 @@
 import { Vector2 } from "./vector";
 
-import { EntityEngine } from "./systems/ecs";
 import { PlayerSystem } from "./systems/player";
 import { ActionsSystem } from "./systems/actions";
-import { Menu } from "./menu";
 import { Game } from "./game";
 
 export class Control {
@@ -53,6 +51,29 @@ export class Control {
           this.game.mainMenu.menu.select();
         }
       }
+
+      if (!this.game.paused) {
+        const playerSystem = this.game.engine.getSystem<PlayerSystem>(PlayerSystem);
+        const actionsSystem = this.game.engine.getSystem<ActionsSystem>(ActionsSystem);
+
+        if (!playerSystem.player) {
+          return;
+        }
+
+        if (event.code === 'KeyQ') {
+          playerSystem.player.agent.nextWeapon();
+        } else if (event.code === 'KeyR') {
+          if (playerSystem.player.agent.currentWeapon) {
+            playerSystem.player.agent.currentWeapon.reload();
+          }
+        } else if (event.code === 'KeyE') {
+          if (actionsSystem.action) {
+            actionsSystem.action.trigger();
+          }
+        } else if (event.code === 'KeyF') {
+          playerSystem.player.agent.toggleFlashlight();
+        }
+      }
     });
 
     window.addEventListener('keyup', event => {
@@ -63,33 +84,6 @@ export class Control {
         if (playerSystem.player) {
           playerSystem.player.agent.toggleWalkRun();
         }
-      }
-    });
-
-    window.addEventListener('keypress', event => {
-      if (this.game.paused) {
-        return;
-      }
-
-      const playerSystem = this.game.engine.getSystem<PlayerSystem>(PlayerSystem);
-      const actionsSystem = this.game.engine.getSystem<ActionsSystem>(ActionsSystem);
-
-      if (!playerSystem.player) {
-        return;
-      }
-
-      if (event.code === 'KeyQ') {
-        playerSystem.player.agent.nextWeapon();
-      } else if (event.code === 'KeyR') {
-        if (playerSystem.player.agent.currentWeapon) {
-          playerSystem.player.agent.currentWeapon.reload();
-        }
-      } else if (event.code === 'KeyE') {
-        if (actionsSystem.action) {
-          actionsSystem.action.trigger();
-        }
-      } else if (event.code === 'KeyF') {
-        playerSystem.player.agent.toggleFlashlight();
       }
     });
 

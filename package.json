@@ -8,7 +8,7 @@
     "build": "webpack --mode=production --env=prod"
   },
   "author": "Mateusz Tomczyk",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "copy-webpack-plugin": "^4.5.2",
     "imagemin": "^6.0.0",

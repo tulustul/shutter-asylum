@@ -126,7 +126,7 @@ export class PlayerSystem extends EntitySystem<PlayerComponent> {
     if (control.keys.get("KeyD")) {
       player.agent.moveToDirection(Math.PI * 1.5);
     }
-    if (control.mouseButtons.get(0) || control.keys.get(" ")) {
+    if (control.mouseButtons.get(0) || control.keys.get("Space")) {
       const shootSuccessed = player.agent.shoot();
       if (shootSuccessed) {
         player.makeNoise();
