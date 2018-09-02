@@ -1,0 +1,30 @@
+P
+#
+1_-
+||.
+#
+       XXXXXXXXXXXXXX
+       X.p.........pX
+XXXXXXXX........;..PX
+X-[[[--X...XXXXX1XXXX
+X-[[[--X...XX...;...X
+XL-----|...XX...;...X
+X------X...XX...;...X
+X--A---X..LXXL..;..LX
+XX_XXXXX...XX...;...X
+X++++e+X...XX...;...X
+X++++++X.p.XX...;...X
+XL+e+++|...XXL..;..LX
+X++++++X...XX...;..[X
+X++e+++X..LXX...;..[X
+X[[++++X...XX...;...X
+XXXXXXXX.P.XXL..;..LX
+X----e-X...XX...;...X
+X------X...XX...;...X
+XE;;;;-X.p.XX...;...X
+X-;[[;-X...XXXXX1XXXX
+XL;[[;-XX_X  X----cX
+X-;[[;----X  XL;;;[X
+X-;;;;----X  X-;;;[X
+Xp-e------X  X--S--X
+XXXXXXXXXXX  XXXXXXX

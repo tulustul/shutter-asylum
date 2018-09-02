@@ -1,0 +1,52 @@
+#
+1{Use WASD to move}
+2{and mouse to aim}
+3-{Open doors (E)}
+4-{here →}
+5{Quite dark, isn't it?}
+6{Press (F) or (MMB)}
+7{to toggle flashlight}
+8{Here's the guard ↘}
+9{Sneak (C or shift)}
+&{and kill him}
+$.{Shoot the lights}
+%.{to destroy them}
+^.{Press (R) to reload}
+#
+
+
+
+                                        XXXXXXXXXXXXX
+                                        X+++++++++++X
+                                        X+++++e++++LX
+                                        X+;;;+++++++X
+XXXXXXXXXXXX                            XL;;;++XXXXXX
+X--L----L--X                            X+;;;++X++++X
+X-1--------X                            X+;;;++X++e+X
+X---------cX                            X+++++++++++X
+X-2-------[X                            XXXX++++++++X
+X---------[X                            X+++++++;;++X
+X---;;;;;--X                            XL+[[+++;;+LX
+XL-S;;;;;-LX                            X++[[+++;;++X
+X---;;;;;--X                            X+++++++++++X
+X----------X XXXXXXXXXXXXXXXXX          XXXXXX_XXXXXX
+X----XXXX--XXX...X...........X              Xp;.X
+X[---X-3-----X...B..5........X              X.;.XXXX
+X[c--XL--4---|;;;;;;;;;;;;;;.X      XXXXXXXX..;P...X
+X[-L-X-------X......6......;.X      X^........;LX..X
+XXXXXXXXXXXXXX......7......;.X      X.........;.X..X
+             X.............;.X      X.........;....X
+             XXXXXXXXXXXXX.;.X      X.........;.X..X
+                         X.;.X      XX........;LX..X
+                   XXXXXXX.;.X      X$B.......;p...X
+                   X.8.....;.X      X%........;....X
+                   X.9.....;.X      XXXXXXXXX.;.XXXX
+                   X.&.....;.X              X.;.X
+                   XXXXXXX.;.X              X.;.X
+                         X.;.XXXXXXXXXXXXXXXX.;.X
+                         X.;..pl...B..Pl...l..;.X
+                         X.;;;;;;;;;;;;;;;;;;;;.X
+                         X.................p....X
+                         X....X....X....X....X..X
+                         X......................X
+                         XXXXXXXXXXXXXXXXXXXXXXXX

@@ -1,0 +1,35 @@
+P
+#
+#
+XXXXXXXXXXXXXXXXX
+XHS.............X
+X...l...l...l...X
+XXXXXXXXXXXXXXX_X
+X...E..X++++++L+X
+X......X++++++++X
+XB.....X++a++[[+X
+X......X+++++[[+X
+X......Xl++++[[+X
+X......|+++++[[+X
+XXX_XXXX+++++[[eXXXXXXX
+X---l--X+++++l++X.....X
+X------XXXX_XXXXX.....X
+XE-;;--A-------X.....BX
+X--;;----------X..[[..X
+XXL;;------l--aX..[[.aX
+X--;;---XXXX_XXX..[[..X
+X-------X.............X
+XE------X...E.........X
+X---l---X.......L.....X
+XXXXXXX_XXXX_XXXXXXXXXX
+     X.......X
+     X...[[[[X
+     Xl.....lX
+     XXXX....X
+     X.A.....X
+     X[[[[...X
+     X.......X
+     X.....XXX
+     X....A..X
+     X...L...X
+     XXXXXXXXX

@@ -1,0 +1,43 @@
+P
+#
+1;_
+#
+            XXXXXXXXXXXXX
+    XXXXXXXXX+++X+++++++X
+    X;;;;;;;|++BX+++++E+X
+    X;XXXXXXX+++++++++++X
+    X;;;;;;XX++++++E++++X
+    XXXXXX;XX++++++++++LX
+         X;XX++E++++X+++X
+         X;XXL+++++EX+++X
+     XXXXX;XX+++++H+X+E+X
+     X;;;;;XX+++++++X+++X
+     X;XXXXXX+++E+++X+++X
+XXXXXX1XXXXXX+++++++X+B+X
+X---X-;-X---XXXXXX++XXXXX
+X---X-;-X---X+++[[+++EB+X
+X-E-X-;-X-E-X+;;++++++[cX
+X-----;-----X+;;++H+++[+X
+XL----;----LX+++X++++++EX
+X----;;;----X+++X++++X++X
+X--E-;;;--E-X+++X++L+X++X
+X-----------XXXXX_XXXXXXX
+X-----L-----X.......E...X
+XXXXXXXXXXXXX...........X
+X.....L.....X..E........X
+X...........X.....HXXXXXX
+X....;;;m...X..E...X..E.X
+XL...;;;...LX...........X
+X.m..;;;....X...........X
+X....;;;....X........E..X
+X...........X....XXXX...X
+X...........X.E...X.....X
+X...........X.....X.....X
+X...........X.....H.....X
+XXXXXX_XX...X...........X
+    X---X...........E...X
+    X-S-X...............X
+    X---XXXXXXXXXXXXXXXXX
+    X---X
+    X-B-X
+    XXXXX
