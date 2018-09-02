@@ -86,7 +86,7 @@ export async function loadLevel(engine: EntityEngine, levelName: string): Promis
 }
 
 async function fetchLevel(levelName: string) {
-  const response = await fetch(`../levels/${levelName}.txt`, {});
+  const response = await fetch(`levels/${levelName}.txt`, {});
   return await response.text();
 }
 

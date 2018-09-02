@@ -121,8 +121,9 @@ export class GuiRenderer {
       const timeDiff = this.engine.time - this.game.notification.timestamp;
       const progress = timeDiff / NOTIFICATION_DISPLAY_TIME;
       const fontSize = 22;
+      const y = this.game.canvas.height / 2 - fontSize * 1.5;
       this.context.fillStyle = `rgba(255, 255, 255, ${1 - progress})`;
-      this.drawTextCentered(this.game.notification.text, fontSize, 185 - fontSize);
+      this.drawTextCentered(this.game.notification.text, fontSize, y);
 
       if (timeDiff > NOTIFICATION_DISPLAY_TIME) {
         this.game.notification = null;

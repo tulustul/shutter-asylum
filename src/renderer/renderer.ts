@@ -6,6 +6,9 @@ import { GuiRenderer } from './gui';
 import { Compositor } from './compositor';
 
 import { Game } from '../game';
+import { TILE_SIZE } from '../constants';
+
+const VIEWPORT_HEIGHT = 400;
 
 export class Renderer {
 
@@ -97,8 +100,10 @@ export class Renderer {
   }
 
   updateSize() {
-    this.game.canvas.width = Math.floor(window.innerWidth / 3);
-    this.game.canvas.height = Math.floor(window.innerHeight / 3);
+    const width = window.innerWidth / window.innerHeight * VIEWPORT_HEIGHT;
+
+    this.game.canvas.width = Math.floor(width);
+    this.game.canvas.height = VIEWPORT_HEIGHT;
 
     if (this.compositor) {
       for (const layer of Object.values(this.compositor.layers)) {

@@ -5,12 +5,14 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --mode=development",
-    "build": "webpack --mode=production --env=prod"
+    "build": "webpack --mode=production --env=prod",
+    "publish": "npm run build && ./publish.js"
   },
   "author": "Mateusz Tomczyk",
   "license": "MIT",
   "devDependencies": {
     "copy-webpack-plugin": "^4.5.2",
+    "gh-pages": "^1.2.0",
     "imagemin": "^6.0.0",
     "imagemin-pngquant": "^6.0.0",
     "ts-loader": "^4.4.2",
