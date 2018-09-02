@@ -59,7 +59,6 @@ export class Renderer {
   }
 
   init() {
-
     this.compositor = new Compositor(this);
 
     this.postprocessing = new Postprocessing(this.game.canvas);
@@ -95,5 +94,20 @@ export class Renderer {
     }
     const text = `Number of colors: ${colors.size}`;
     colors.size > 32 ? console.error(text) : console.log(text);
+  }
+
+  updateSize() {
+    this.game.canvas.width = Math.floor(window.innerWidth / 3);
+    this.game.canvas.height = Math.floor(window.innerHeight / 3);
+
+    if (this.compositor) {
+      for (const layer of Object.values(this.compositor.layers)) {
+        layer.updateSize(false);
+      }
+    }
+
+    if (this.postprocessing) {
+      this.postprocessing.updateViewport();
+    }
   }
 }

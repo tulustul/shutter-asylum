@@ -1,12 +1,12 @@
-import { Game } from "./game";
+import { Game } from './game';
 
 let cumulativeTime = 0;
 const timeStep = 1000 / 60;
 
 let game: Game;
 
-async function init() {
-  const canvas = document.getElementsByTagName("canvas")[0];
+function init() {
+  const canvas = document.getElementsByTagName('canvas')[0];
 
   game = new Game(canvas);
 
@@ -16,6 +16,8 @@ async function init() {
     game.paused = true;
     game.mainMenu.menu.active = true;
   });
+
+  window.addEventListener('resize', () => game.renderer.updateSize());
 }
 
 function tick(timestamp: number) {

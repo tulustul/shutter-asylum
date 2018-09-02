@@ -66,6 +66,8 @@ export class Game {
   renderer = new Renderer(this);
 
   constructor(public canvas: HTMLCanvasElement) {
+    this.renderer.updateSize();
+
     this.control.init();
 
     this.scores = JSON.parse(localStorage.getItem(SCORES_KEY));

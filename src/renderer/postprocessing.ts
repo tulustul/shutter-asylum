@@ -47,10 +47,10 @@ class Postprocessing {
 
   gl: WebGLRenderingContext;
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(private canvas: HTMLCanvasElement) {
     this.gl = canvas.getContext('webgl');
 
-    this.gl.viewport(0, 0, canvas.width, canvas.height);
+    this.updateViewport();
 
     const fragShader = this.gl.createShader(this.gl.FRAGMENT_SHADER);
     this.gl.shaderSource(fragShader, FRAGMENT_SHADER);
@@ -93,5 +93,9 @@ class Postprocessing {
   postprocess(layer: Layer) {
     this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, layer.canvas);
     this.gl.drawArrays(this.gl.TRIANGLES, 0, VERTS.length / 2);
+  }
+
+  updateViewport() {
+    this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
   }
 }

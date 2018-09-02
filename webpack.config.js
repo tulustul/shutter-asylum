@@ -4,12 +4,9 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const WebpackShellPlugin = require('webpack-shell-plugin');
 
 
-
 module.exports = env => {
 
   const isProd = env === 'prod';
-
-  const bundleName = isProd ? 'bundle.js' : 'sa.js';
 
   const filesToCopy = [
     'src/index.html',
@@ -22,14 +19,8 @@ module.exports = env => {
   ];
 
   if (isProd) {
-    filesToCopy.push({
-      from: 'node_modules/lzma/src/lzma-d-min.js',
-      to: 'lzma.js',
-    });
-    filesToCopy.push('src/sa.js');
-
     plugins.push(new WebpackShellPlugin({
-      onBuildEnd: ['./compress-bundle.js', './compress-tex.js'],
+      onBuildEnd: ['./compress-tex.js'],
     }));
   }
 
@@ -48,7 +39,7 @@ module.exports = env => {
       extensions: ['.ts', '.js']
     },
     output: {
-      filename: bundleName,
+      filename: 'bundle.js',
       path: path.resolve(__dirname, 'dist')
     },
     plugins: plugins,

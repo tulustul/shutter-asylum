@@ -36,14 +36,20 @@ export class Layer {
   }
 
   init() {
+    this.updateSize();
+    this.clearCanvas();
+  }
+
+  updateSize(force = true) {
     if (this.renderWholeWorld) {
-      this.canvas.width = this.renderer.game.engine.worldWidth;
-      this.canvas.height = this.renderer.game.engine.worldHeight;
+      if (force) {
+        this.canvas.width = this.renderer.game.engine.worldWidth;
+        this.canvas.height = this.renderer.game.engine.worldHeight;
+      }
     } else {
       this.canvas.width = this.renderer.game.canvas.width;
       this.canvas.height = this.renderer.game.canvas.height;
     }
-    this.clearCanvas();
   }
 
   clearCanvas() {

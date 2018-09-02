@@ -87,18 +87,7 @@ export async function loadLevel(engine: EntityEngine, levelName: string): Promis
 
 async function fetchLevel(levelName: string) {
   const response = await fetch(`../levels/${levelName}.txt`, {});
-  if ((window as any).LZMA) {
-    const data = await response.arrayBuffer()
-    const binaryData = new Uint8Array(data);
-
-    return new Promise<string>((resolve, reject) => {
-      (window as any).LZMA.decompress(
-        binaryData, (result: any) => resolve(result),
-      );
-    });
-  } else {
-    return await response.text();
-  }
+  return await response.text();
 }
 
 function makeCell(

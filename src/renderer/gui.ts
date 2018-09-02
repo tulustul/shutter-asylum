@@ -95,7 +95,9 @@ export class GuiRenderer {
       if (this.game.newBestTime) {
         this.drawTextCentered('New best time!', 18, y += 20);
       }
-      this.drawTextCentered('Press <enter> to proceed', 14, y += 20);
+      if (!this.game.gameCompleted) {
+        this.drawTextCentered('Press <enter> to proceed', 14, y += 20);
+      }
     }
 
     if (this.game.gameCompleted) {
@@ -161,15 +163,17 @@ export class GuiRenderer {
   renderBottomBar(player: PlayerComponent) {
     const weapon = player.agent.currentWeapon;
 
+    const y = this.canvas.height - 20;
+
     if (weapon) {
       const weaponName = weapon.options.name;
       const bullets = weapon.bulletsInMagazine;
       const capacity = weapon.options.magazineCapacity;
       const total = weapon.totalBullets;
       const text = `${weaponName} ${bullets} / ${capacity} (${total})`;
-      this.context.fillText(text, 10, 380);
+      this.context.fillText(text, 10, y);
     } else {
-      this.context.fillText('NO WEAPON', 10, 380);
+      this.context.fillText('NO WEAPON', 10, y);
     }
   }
 
